@@ -1,31 +1,40 @@
-- hosts: local
-  remote_user: cloud
+- hosts: all
+  remote_user: vagrant
   become: yes
 
   vars:
     os_image_factory:
       packer:
         version: "0.8.6"
-        zip_url: "https://dl.bintray.com/mitchellh/packer/packer_{{ os_image_factory.packer.version }}_linux_amd64.zip"
-      jenkins_url: "http://127.0.0.1:8080"
-
+        zip_url: "https://dl.bintray.com/mitchellh/packer/packer_0.8.6_linux_amd64.zip"
+      jenkins:
+        local_url: "http://127.0.0.1:8080"
+        repository: "deb http://pkg.jenkins-ci.org/debian binary/"
+        repo_key: "http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key"
 
   tasks:
+    - name: toolkit packages present
+      apt: pkg="{{ item }}" state=present
+      with_items:
+        - aptitude
+        - git
+        - python-dev
+        - python-setuptools
+
+    - name: apt package pip is absent
+      apt: pkg=python-pip state=absent purge=yes
+
+    - name: system upgrade
+      apt: update_cache=yes upgrade=full
+
     - name: jenkins key server is known
-      apt_key:
-        url="http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key"
-        state=present
+      apt_key: url="{{ os_image_factory.jenkins.repo_key }}" state=present
 
     - name: jenkins apt server is known
-      apt_repository:
-        repo="deb http://pkg.jenkins-ci.org/debian binary/"
-        state=present
+      apt_repository: repo="{{ os_image_factory.jenkins.repository }}" state=present
 
-    - name: packages installed
-      apt:
-        pkg="{{ item }}"
-        state=present
-        update_cache=yes
+    - name: needed packages installed
+      apt: update_cache=yes pkg="{{ item }}" state=present
       with_items:
         - libguestfs-tools
         - libffi-dev
@@ -33,20 +42,13 @@
         - libssl-dev
         - jenkins
         - unzip
-        - emacs
-      register: result
-      until: result|success
-      retries: 10
-      delay: 2
-
-    - name: jenkins is kvm member
-      user:
-        name=jenkins
-        groups=kvm
-        append=yes
 
     - name: jenkins service is up
       service: name=jenkins state=restarted enabled=yes
+
+    - name: jenkins is kvm member
+      user: name=jenkins groups=kvm append=yes
+      notify: restart jenkins
 
     - name: common aliases
       copy:
@@ -57,35 +59,25 @@
         mode=0644
 
     - name: default sh is bash
-      file:
-        src=/bin/bash
-        dest=/bin/sh
-        state=link
+      file: src=/bin/bash dest=/bin/sh state=link
 
     - name: check packer is installed
       stat: path=/usr/local/bin/packer
       register: packer_bin_check
 
-    - name: setting fact
+    - name: setting fact packer_installed
       set_fact:
         packer_installed="{{ packer_bin_check.stat.exists }}"
 
-    - name: get jenkins plugin list
+    - name: checking installed packer version
+      when: packer_installed
       shell: "/usr/local/bin/packer --version"
+      ignore_errors: true
       register: packer_version
 
-    - name: setting fact
+    - name: setting fact need_to_install_packer
       set_fact:
-        need_to_install_packer="{{(not packer_installed) or (not packer_version.stdout == os_image_factory.packer.version)}}"
-
-    - name: packer dest directory ready
-      when: need_to_install_packer
-      file:
-        path=/usr/local/bin
-        state=directory
-        owner=root
-        group=staff
-        mode=0755
+        need_to_install_packer="{{ (not packer_installed) or (packer_version.stdout != os_image_factory.packer.version) }}"
 
     - name: packer download
       when: need_to_install_packer
@@ -93,6 +85,15 @@
         url="{{ os_image_factory.packer.zip_url }}"
         dest=/tmp/packer.zip
         force=no
+
+    - name: packer destination directory is ready
+      when: need_to_install_packer
+      file:
+        path=/usr/local/bin
+        state=directory
+        owner=root
+        group=staff
+        mode=0755
 
     - name: unzip packer
       when: need_to_install_packer
@@ -104,11 +105,16 @@
         group=staff
         mode=0755
 
-    - name: pip packages installed
-      pip:
-        name="{{ item }}"
-        state=latest
+    - name: pip is installed
+      easy_install: name=pip
+
+    - name: openstack CLI is installed
+      pip: name="{{ item }}" state=latest
       with_items:
+        - pyopenssl
+        - ndg-httpsclient
+        - pyasn1
+        - pip
         - python-glanceclient
         - python-novaclient
         - python-neutronclient
@@ -118,24 +124,28 @@
 
     - name: download jenkins CLI jar file
       get_url:
-        url="{{ jenkins_url }}/jnlpJars/jenkins-cli.jar"
+        url="{{ os_image_factory.jenkins.local_url }}/jnlpJars/jenkins-cli.jar"
         dest=/root/jenkins-cli.jar
         force=no
       register: cli_download
       until: cli_download|success
-      retries: 6
-      delay: 5
+      retries: 10
+      delay: 6
 
     - name: get jenkins plugin list
-      shell: "java -jar /root/jenkins-cli.jar -s {{ jenkins_url }} list-plugins | grep -e ')$' | awk '{ print $1 }' | tr \"\n\" \" \""
+      shell: "java -jar /root/jenkins-cli.jar -s {{ os_image_factory.jenkins.local_url }} list-plugins | grep -e ')$' | awk '{ print $1 }' | tr \"\n\" \" \""
       register: jenkins_plugins
 
     - name: update jenkins
       when: jenkins_plugins.stdout
-      shell: "java -jar /root/jenkins-cli.jar -s {{ jenkins_url }} install-plugin {{ jenkins_plugins.stdout }}"
+      shell: "java -jar /root/jenkins-cli.jar -s {{ os_image_factory.jenkins.local_url }} install-plugin {{ jenkins_plugins.stdout }}"
 
     - name: install jenkins git plugin
-      shell: "java -jar /root/jenkins-cli.jar -s {{ jenkins_url }} install-plugin git-client git"
+      shell: "java -jar /root/jenkins-cli.jar -s {{ os_image_factory.jenkins.local_url }} install-plugin git-client git"
 
     - name: restart jenkins
-      shell: "java -jar /root/jenkins-cli.jar -s {{ jenkins_url }} safe-restart"
+      shell: "java -jar /root/jenkins-cli.jar -s {{ os_image_factory.jenkins.local_url }} safe-restart"
+
+  handlers:
+    - name: restart jenkins
+      service: name=jenkins state=restarted
