@@ -1,0 +1,115 @@
+heat_template_version: 2013-05-23
+
+
+description: Openstack Image Factory
+
+
+parameters:
+  keypair_name:
+    description: Keypair to inject in instances
+    type: string
+
+  image_id:
+    default: "168f7c6b-20a6-4a4e-8052-d1200aa36a1e"
+    description: Image ID of the system (default is Cloudwatt's Debian Jessie)
+    type: string
+
+  flavor_name:
+    default: n1.cw.highcpu-2
+    label: Instance Type (Flavor)
+    description: Flavor to use for the deployed instance
+    type: string
+    constraints:
+      - allowed_values:
+        - n1.cw.highcpu-2
+        - n1.cw.highcpu-4
+        - n1.cw.highcpu-8
+        - n1.cw.standard-1
+        - n1.cw.standard-2
+        - n1.cw.standard-4
+        - n1.cw.standard-8
+        - n1.cw.standard-12
+        - n1.cw.standard-16
+        - n1.cw.highmem-2
+        - n1.cw.highmem-4
+        - n1.cw.highmem-8
+        - n1.cw.highmem-12
+
+resources:
+  dmz:
+    type: OS::Neutron::Net
+
+  dmz_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: dmz }
+      ip_version: 4
+      cidr: 10.42.42.0/24
+      allocation_pools:
+        - { start: 10.42.42.100, end: 10.42.42.199 }
+
+  sg:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      rules:
+        - { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
+        - { direction: egress, protocol: ICMP }
+        - { direction: egress, protocol: TCP }
+        - { direction: egress, protocol: UDP }
+
+  ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network_id: 6ea98324-0f14-49f6-97c0-885d1b8dc517
+
+  server:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: keypair_name }
+      image: { get_param: image_id }
+      flavor: { get_param: flavor_name }
+      networks:
+        - { network: { get_resource: dmz } }
+      security_groups:
+        - { get_resource: sg }
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            export DEBIAN_FRONTEND=noninteractive
+
+            apt-get update
+            apt-get -o Dpkg::Options::="--force-confold" upgrade -y
+            apt-get -o Dpkg::Options::="--force-confold" remove python-pip --purge -y
+            apt-get -o Dpkg::Options::="--force-confold" install aptitude git python-dev python-setuptools -y
+
+            for i in 1 2 3 4 5; do easy_install pip && break || sleep 2; done
+            pip install -U pyopenssl ndg-httpsclient pyasn1
+
+            pip install -U pip ansible
+            mkdir /etc/ansible
+
+            echo "[local]"                             > /etc/ansible/hosts
+            echo "127.0.0.1 ansible_connection=local" >> /etc/ansible/hosts
+
+            echo "export FACTORY_NETWORK_ID=$network_id$"                > /etc/profile.d/factory_os_env.sh
+            echo "export FACTORY_SECURITY_GROUP_ID=$security_group_id$" >> /etc/profile.d/factory_os_env.sh
+
+            git clone https://aurelien_maury@bitbucket.org/aurelien_maury/os_image_factory.git /root/os_image_factory
+            ansible-playbook /root/os_image_factory/setup/os_image_factory.playbook.yml -vvv > /var/log/os_image_factory.setup.log 2>&1
+
+          params:
+            $network_id$: { get_resource: dmz }
+            $security_group_id$: { get_resource: sg }
+
+  factory_internet_surface:
+    type: OS::Nova::FloatingIPAssociation
+    properties:
+      floating_ip: { get_resource: ip }
+      server_id: { get_resource: server }
+
+outputs:
+  floating_ip:
+    description: IP address of the deployed compute instance
+    value: { get_attr: [ip, floating_ip_address] }
