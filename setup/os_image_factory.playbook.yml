@@ -3,7 +3,6 @@
 # Written by the CAT (Cloudwatt's Automation Team)
 #
 - hosts: all
-  remote_user: vagrant
   become: yes
 
   vars:
