@@ -1,6 +1,8 @@
 ---
 #
-# Written by the CAT (Cloudwatt's Automation Team)
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
 #
 - hosts: all
   become: yes

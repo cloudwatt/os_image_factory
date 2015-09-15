@@ -1,11 +1,11 @@
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
 heat_template_version: 2013-05-23
 
-#
-# Written by the CAT (Cloudwatt's Automation Team)
-#
-
 description: Openstack Image Factory
-
 
 parameters:
   keypair_name:
