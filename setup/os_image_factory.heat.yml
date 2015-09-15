@@ -99,7 +99,7 @@ resources:
             echo "export FACTORY_SECURITY_GROUP_ID=$security_group_id$" >> /etc/profile.d/factory_os_env.sh
 
             git clone https://aurelien_maury@bitbucket.org/aurelien_maury/os_image_factory.git /root/os_image_factory
-            ansible-playbook /root/os_image_factory/setup/os_image_factory.playbook.yml -vvv > /var/log/os_image_factory.setup.log 2>&1
+            /usr/local/bin/ansible-playbook /root/os_image_factory/setup/os_image_factory.playbook.yml -vvv > /var/log/os_image_factory.setup.log 2>&1
 
           params:
             $network_id$: { get_resource: dmz }
