@@ -1,3 +1,7 @@
+---
+#
+# Written by the CAT (Cloudwatt's Automation Team)
+#
 - hosts: all
   remote_user: vagrant
   become: yes
@@ -48,7 +52,6 @@
 
     - name: jenkins is kvm member
       user: name=jenkins groups=kvm append=yes
-      notify: restart jenkins
 
     - name: common aliases
       copy:
@@ -136,16 +139,9 @@
       shell: "java -jar /root/jenkins-cli.jar -s {{ os_image_factory.jenkins.local_url }} list-plugins | grep -e ')$' | awk '{ print $1 }' | tr \"\n\" \" \""
       register: jenkins_plugins
 
-    - name: update jenkins
+    - name: install jenkins git plugin and update all installed plugins
       when: jenkins_plugins.stdout
-      shell: "java -jar /root/jenkins-cli.jar -s {{ os_image_factory.jenkins.local_url }} install-plugin {{ jenkins_plugins.stdout }}"
+      shell: "java -jar /root/jenkins-cli.jar -s {{ os_image_factory.jenkins.local_url }} install-plugin {{ jenkins_plugins.stdout }} git-client git"
 
-    - name: install jenkins git plugin
-      shell: "java -jar /root/jenkins-cli.jar -s {{ os_image_factory.jenkins.local_url }} install-plugin git-client git"
-
-    - name: restart jenkins
+    - name: safe-restart jenkins to apply plugins updates
       shell: "java -jar /root/jenkins-cli.jar -s {{ os_image_factory.jenkins.local_url }} safe-restart"
-
-  handlers:
-    - name: restart jenkins
-      service: name=jenkins state=restarted
