@@ -12,7 +12,7 @@
 
   tasks:
     - name: building vm
-      shell: "packer build -var 'source_image={{ bundle_src_img }}' -var 'image_name={{ bundle_img_name }}' -var 'factory_flavor={{ vm_flavor }}' {{ packer_file }} > packer.{{ bundle_img_name }}.log 2>&1"
+      shell: "packer build -var 'bundle_path={{ bundle_path }}' -var 'source_image={{ bundle_src_img }}' -var 'image_name={{ bundle_img_name }}' -var 'factory_flavor={{ vm_flavor }}' {{ packer_file }} > packer.{{ bundle_img_name }}.log 2>&1"
       register: packer
       ignore_errors: yes
 
