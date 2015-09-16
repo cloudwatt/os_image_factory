@@ -4,7 +4,7 @@
         "image_name": "unknown",
         "factory_flavor": "unknown",
         "factory_network": "{{ env `FACTORY_NETWORK_ID` }}",
-        "factory_security_group": "{{ env `FACTORY_SECURITY_GROUP` }}",
+        "factory_security_group": "{{ env `FACTORY_SECURITY_GROUP_ID` }}",
         "bundle_path": "unknown"
     },
     "builders": [
