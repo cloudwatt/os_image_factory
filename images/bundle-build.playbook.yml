@@ -16,6 +16,6 @@
       register: packer
       ignore_errors: yes
 
-    - debug: msg="Packer failed: search packer.{{ bundle_img_name }}.log for debug hints."
+    - debug: msg="Packer failed, search packer.{{ bundle_img_name }}.log for debug hints."
       when: packer|failed
 
