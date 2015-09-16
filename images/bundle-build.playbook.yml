@@ -8,7 +8,7 @@
     bundle_img_os: "default_bundle_img_os"
     vm_flavor: "16"
     bundle_img_name: "{{ bundle_label }}-{{ ansible_date_time.date }}{{ ansible_date_time.hour }}{{ ansible_date_time.minute }}"
-    packer_file: "bundle-bootstrap.packer.json"
+    packer_file: "bundle-ansible.packer.json"
 
   tasks:
     - name: building vm
