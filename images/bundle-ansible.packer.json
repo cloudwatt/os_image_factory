@@ -20,7 +20,7 @@
             "use_floating_ip": "true",
             "communicator": "ssh",
             "ssh_pty": true,
-            "ssh_timeout": "2m"
+            "ssh_timeout": "5m"
         }
     ],
     "provisioners": [
