@@ -14,7 +14,7 @@
             "flavor": "{{ user `factory_flavor` }}",
             "image_name": "{{ user `image_name` }}",
             "source_image": "{{ user `source_image` }}",
-            "security_groups": "{{ user `factory_security_group` }}",
+            "security_groups": ["{{ user `factory_security_group` }}"],
             "networks": "{{ user `factory_network` }}",
             "floating_ip_pool": "6ea98324-0f14-49f6-97c0-885d1b8dc517",
             "use_floating_ip": "true",
