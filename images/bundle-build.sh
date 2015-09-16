@@ -55,14 +55,6 @@ SELF_PATH=`dirname "$0"`
 
 BUNDLE_PATH="$SELF_PATH/$BUNDLE_PATH"
 
-FACTORY_ENV="$SELF_PATH/../factory-env.sh"
-. $FACTORY_ENV
-
-if [ "$?" -ne "0" ]; then
-    echo "Could not source factory environment: $FACTORY_ENV"
-    exit 1
-fi
-
 PACKER_FILE="$SELF_PATH/bundle-bootstrap.packer.json"
 BUILDMARK="$(date +%Y-%m-%d-%H%M)"
 IMG_NAME="$BASENAME-$BUILDMARK"
