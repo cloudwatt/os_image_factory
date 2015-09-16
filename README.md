@@ -1,2 +1,2 @@
-# OpenStack Image Factory
+# OpenStack Image Factory (aka "The Factory")
 

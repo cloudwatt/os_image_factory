@@ -1,0 +1,50 @@
+{
+    "variables": {
+        "source_image": "unknown",
+        "image_name": "unknown",
+        "factory_flavor": "unknown",
+        "factory_network": "{{ env `FACTORY_NETWORK_ID` }}",
+        "factory_security_group": "{{ env `FACTORY_SECURITY_GROUP` }}"
+    },
+    "builders": [
+        {
+            "type": "openstack",
+            "ssh_username": "cloud",
+            "flavor": "{{ user `factory_flavor` }}",
+            "image_name": "{{ user `image_name` }}",
+            "source_image": "{{ user `source_image` }}",
+            "security_groups": "{{ user `factory_security_group` }}",
+            "networks": "{{ user `factory_network` }}",
+            "floating_ip_pool": "6ea98324-0f14-49f6-97c0-885d1b8dc517",
+            "use_floating_ip": "true",
+            "communicator": "ssh",
+            "ssh_pty": true,
+            "ssh_timeout": "2m"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "sudo apt-get update",
+                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" upgrade -y",
+                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" install aptitude git python-dev -y",
+                "sudo apt-get remove python-pip --purge -y",
+                "for i in 1 2 3 4 5; do sudo easy_install -U pip && break || sleep 2; done",
+                "sudo ln -s /usr/local/bin/pip /usr/bin/pip",
+                "sudo pip install ansible"
+            ]
+        },
+        {
+            "type": "ansible-local",
+            "extra_arguments": ["-vvv"],
+            "playbook_dir": "ansible",
+            "playbook_file": "ansible/bootstrap.yml",
+            "inventory_file": "ansible/inventory"
+        },
+        {
+            "type": "shell",
+            "inline": [ "sudo sync" ]
+        }
+    ]
+}
