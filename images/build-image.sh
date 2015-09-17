@@ -1,3 +1,3 @@
 #!/bin/sh
 
-ansible-playbook bundle-build.playbook.yml -e @$1
+ansible-playbook $(dirname $0)/bundle-build.playbook.yml -e @$1
