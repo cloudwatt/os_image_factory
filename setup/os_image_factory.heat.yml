@@ -100,7 +100,7 @@ resources:
         mkdir /etc/ansible
         echo -e "[local]\n127.0.0.1 ansible_connection=local ansible_ssh_user=cloud" > /etc/ansible/hosts
 
-        git clone https://aurelien_maury@bitbucket.org/aurelien_maury/os_image_factory.git /root/os_image_factory
+        git clone https://github.com/cloudwatt/os_image_factory.git /root/os_image_factory
         /usr/local/bin/ansible-playbook /root/os_image_factory/setup/os_image_factory.playbook.yml -vvv > /var/log/os_image_factory.setup.log 2>&1
 
   jenkins_profile:
