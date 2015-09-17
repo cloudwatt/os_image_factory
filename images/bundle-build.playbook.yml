@@ -19,3 +19,8 @@
     - debug: msg="Packer failed, search packer.{{ bundle_img_name }}.log for debug hints."
       when: packer|failed
 
+    - shell: openstack image list --private | grep {{ bundle_img_name }} | tr "|" " " | tr -s " " | cut -d " " -f2
+      register: packed_image_id
+
+
+

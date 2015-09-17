@@ -2,19 +2,19 @@
     "variables": {
         "source_image": "unknown",
         "image_name": "unknown",
-        "factory_flavor": "unknown",
+        "build_flavor": "16",
         "factory_network": "{{ env `FACTORY_NETWORK_ID` }}",
-        "factory_security_group": "{{ env `FACTORY_SECURITY_GROUP_NAME` }}",
+        "factory_security_group_name": "{{ env `FACTORY_SECURITY_GROUP_NAME` }}",
         "bundle_path": "unknown"
     },
     "builders": [
         {
             "type": "openstack",
             "ssh_username": "cloud",
-            "flavor": "{{ user `factory_flavor` }}",
+            "flavor": "{{ user `build_flavor` }}",
             "image_name": "{{ user `image_name` }}",
             "source_image": "{{ user `source_image` }}",
-            "security_groups": ["{{ user `factory_security_group` }}"],
+            "security_groups": ["{{ user `factory_security_group_name` }}"],
             "networks": "{{ user `factory_network` }}",
             "floating_ip_pool": "6ea98324-0f14-49f6-97c0-885d1b8dc517",
             "use_floating_ip": "true",
@@ -27,13 +27,13 @@
         {
             "type": "shell",
             "inline": [
+                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" purge python-pip -y",
                 "sudo apt-get update",
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" upgrade -y",
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" install aptitude git python-dev -y",
-                "sudo apt-get remove python-pip --purge -y",
-                "for i in 1 2 3 4 5; do sudo easy_install -U pip && break || sleep 2; done",
+                "for i in 1 2 3 4 5; do sudo easy_install pip && break || sleep 2; done",
                 "sudo ln -s /usr/local/bin/pip /usr/bin/pip",
-                "sudo pip install ansible"
+                "sudo pip install -U pip ansible"
             ]
         },
         {
@@ -41,7 +41,7 @@
             "extra_arguments": ["-vvv"],
             "playbook_dir": "{{ user `bundle_path` }}/ansible",
             "playbook_file": "{{ user `bundle_path` }}/ansible/bootstrap.yml",
-            "inventory_file": "{{ user `bundle_path` }}/ansible/inventory"
+            "inventory_file": "ansible_local_inventory"
         },
         {
             "type": "shell",
