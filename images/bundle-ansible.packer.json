@@ -16,8 +16,6 @@
             "source_image": "{{ user `source_image` }}",
             "security_groups": ["{{ user `factory_security_group_name` }}"],
             "networks": "{{ user `factory_network` }}",
-            "floating_ip_pool": "6ea98324-0f14-49f6-97c0-885d1b8dc517",
-            "use_floating_ip": "true",
             "communicator": "ssh",
             "ssh_pty": true,
             "ssh_timeout": "5m"
@@ -45,7 +43,11 @@
         },
         {
             "type": "shell",
-            "inline": [ "sudo sync" ]
+            "inline": [
+                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" autoremove -y",
+                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" clean -y",
+                "sudo sync"
+            ]
         }
     ]
 }

@@ -38,6 +38,7 @@ parameters:
         - n1.cw.highmem-8
         - n1.cw.highmem-12
 
+
 resources:
   dmz:
     type: OS::Neutron::Net
@@ -50,6 +51,20 @@ resources:
       cidr: 10.42.42.0/24
       allocation_pools:
         - { start: 10.42.42.100, end: 10.42.42.199 }
+
+  router:
+    type: OS::Neutron::Router
+    properties:
+      admin_state_up: true
+      external_gateway_info:
+        enable_snat: true
+        network: "public"
+
+  router_interface:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router_id: { get_resource : router }
+      subnet_id: { get_resource : dmz_subnet }
 
   sg:
     type: OS::Neutron::SecurityGroup
