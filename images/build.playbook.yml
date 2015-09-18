@@ -34,10 +34,10 @@
     - name: remove useless properties from built image
       shell: "glance image-update {{ sh_purge_props.stdout }} {{ result_img_id }}"
 
-    - name: set expected properties (sleep 3 between each property set to avoid api flooding)
-      shell: "glance image-update --property {{ item.key }}='{{ item.value }}' {{ result_img_id }} && sleep 3"
+    - name: set expected properties
+      shell: "glance image-update --property {{ item.key }}='{{ item.value }}' {{ result_img_id }}"
       with_dict: "{{ bundle.properties }}"
-      when: bundle.properties is undefined
+      when: bundle.properties is defined
 
     - name: apply final glance options
       shell: "glance image-update {{ final_glance_options }} {{ result_img_id }}"
