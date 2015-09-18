@@ -34,7 +34,8 @@
       template:
         src={{ item }}
         dest=target/{{ item | replace('.j2', '') }}
-      with_fileglob: {{ bundle.name }}/heat/*.j2
+      with_fileglob:
+        - "{{ bundle.name }}/heat/*.j2"
 
     - debug: msg="Image build is a success. The image {{ packed_image_id.stdout }} is now in your glance images."
 
