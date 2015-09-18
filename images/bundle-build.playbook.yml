@@ -21,6 +21,7 @@
     - name: retrieve built image id
       shell: openstack image list --private | grep {{ bundle_target_name }} | tr "|" " " | tr -s " " | cut -d " " -f2
       register: sh_img_id
+      failed_when: sh_img_id.stdout | trim == ''
 
     - name: fact setting - image built
       set_fact:
@@ -36,6 +37,7 @@
     - name: setting desired properties on built image
       shell: "glance image-update --property {{ item.key }}='{{ item.value }}' {{ result_img_id }}"
       with_dict: "{{ bundle.properties }}"
+      when: bundle.properties is undefined
 
     - name: applying final glance options
       shell: "glance image-update {{ final_glance_options }} {{ result_img_id }}"
@@ -48,7 +50,8 @@
       template: src={{ item }} dest=target/{{ item | replace('.j2', '') }}
       with_lines: "find {{ bundle.name }}/heat -name '*.j2'"
 
-    - debug: msg="Image build is a success. The image {{ result_img_id }} is now in your glance images."
+    - name: Yelling the success of the build process
+      debug: msg="Image build is a success. The image {{ result_img_id }} is now in your glance images."
 
 
 
