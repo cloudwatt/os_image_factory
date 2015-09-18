@@ -13,23 +13,16 @@
   tasks:
     - name: building server image with Packer
       shell: "packer build -var 'bundle_path={{ bundle_path }}' -var 'source_image={{ bundle_src_img }}' -var 'image_name={{ bundle_img_name }}' -var 'factory_flavor={{ vm_flavor }}' {{ packer_file }} > packer.{{ bundle_img_name }}.log 2>&1"
-      register: packer
-      ignore_errors: yes
 
-    - debug: msg="Packer failed, search packer.{{ bundle_img_name }}.log for debug hints."
-      when: packer|failed
-
-    - name: get built image id
+    - name: retrieve built image id
       shell: openstack image list --private | grep {{ bundle_img_name }} | tr "|" " " | tr -s " " | cut -d " " -f2
       register: packed_image_id
-
-    - debug: var=packed_image_id
 
     - name: building remove-property string for image cleanup
       shell: openstack image show -f value -c properties {{ packed_image_id.stdout }} | tr ", " "\n" | grep -v "^$" | cut -d"=" -f1 | grep -v -E "(cw_os|cw_origin|hw_rng_model)" | sed 's/^/--remove-property /g' | tr "\n" " "
       register: purge_props
 
-    - name: removing useless propertis from built image
+    - name: removing useless properties from built image
       shell: glance image-update {{ purge_props.stdout }} {{ packed_image_id.stdout }}
 
 
