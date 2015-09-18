@@ -25,5 +25,14 @@
 
     - debug: var=packed_image_id
 
+    - name: building remove-property string for image cleanup
+      shell: openstack image show -f value -c properties {{ packed_image_id }} | tr ", " "\n" | grep -v "^$" | cut -d"=" -f1 | grep -v -E "(cw_os|cw_origin|hw_rng_model)" | sed 's/^/--remove-property /g' | tr "\n" " "
+      register: purge_props
+
+    - name: removing useless propertis from built image
+      shell: glance image-update {{ purge_props }} {{ packed_image_id }}
+
+
+
 
 
