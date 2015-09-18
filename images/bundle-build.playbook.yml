@@ -6,6 +6,7 @@
       name: NAME_ME
       img_base: IMG_BASE
 
+    final_glance_options: "--min-disk 10"
     vm_flavor: "16"
     bundle_target_name: "{{ bundle.name }}-{{ ansible_date_time.date }}{{ ansible_date_time.hour }}{{ ansible_date_time.minute }}"
     packer_file: "bundle-ansible.packer.json"
@@ -35,6 +36,10 @@
     - name: setting desired properties on built image
       shell: "glance image-update --property {{ item.key }}='{{ item.value }}' {{ result_img_id }}"
       with_dict: "{{ bundle.properties }}"
+
+    - name: applying final glance options
+      shell: "glance image-update {{ final_glance_options }} {{ result_img_id }}"
+      when: not((final_glance_options is undefined) or (final_glance_options is none) or (final_glance_options|trim == ''))
 
     - name: target repository is ready
       file: path=target/{{ bundle.name }}/heat state=directory
