@@ -25,6 +25,17 @@
     - name: removing useless properties from built image
       shell: glance image-update {{ purge_props.stdout }} {{ packed_image_id.stdout }}
 
+    - name: target repository is ready
+      file:
+        path={{ bundle_path }}/target
+        state=directory
+
+    - name: generating heat stack
+      template:
+        src={{ bundle_path }}/heat/stack-heat.yml.j2
+        dest={{ bundle_path }}/target/{{ bundle_label }}.heat.yml
+
+    - debug: msg="Image build is a success. The image {{ packed_image_id.stdout }} is now in your glance images."
 
 
 
