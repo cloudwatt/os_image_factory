@@ -2,20 +2,20 @@
 - hosts: local
 
   vars:
-    bundle_label: "default_bundle_label"
-    bundle_path: "default_bundle_path"
-    bundle_src_img: "default_bundle_src_img"
-    bundle_img_os: "default_bundle_img_os"
+    bundle:
+      name: NAME_ME
+      img_base: IMG_BASE
+
     vm_flavor: "16"
-    bundle_img_name: "{{ bundle_label }}-{{ ansible_date_time.date }}{{ ansible_date_time.hour }}{{ ansible_date_time.minute }}"
+    bundle_target_name: "{{ bundle.name }}-{{ ansible_date_time.date }}{{ ansible_date_time.hour }}{{ ansible_date_time.minute }}"
     packer_file: "bundle-ansible.packer.json"
 
   tasks:
     - name: building server image with Packer
-      shell: "packer build -var 'bundle_path={{ bundle_path }}' -var 'source_image={{ bundle_src_img }}' -var 'image_name={{ bundle_img_name }}' -var 'factory_flavor={{ vm_flavor }}' {{ packer_file }} > packer.{{ bundle_img_name }}.log 2>&1"
+      shell: "packer build -var 'bundle_path={{ bundle.name }}' -var 'source_image={{ bundle.img_base }}' -var 'image_name={{ bundle_target_name }}' -var 'factory_flavor={{ vm_flavor }}' {{ packer_file }} > packer.{{ bundle_target_name }}.log 2>&1"
 
     - name: retrieve built image id
-      shell: openstack image list --private | grep {{ bundle_img_name }} | tr "|" " " | tr -s " " | cut -d " " -f2
+      shell: openstack image list --private | grep {{ bundle_target_name }} | tr "|" " " | tr -s " " | cut -d " " -f2
       register: packed_image_id
 
     - name: building remove-property string for image cleanup
@@ -27,13 +27,14 @@
 
     - name: target repository is ready
       file:
-        path={{ bundle_path }}/target
+        path=target/{{ bundle.name }}
         state=directory
 
     - name: generating heat stack
       template:
-        src={{ bundle_path }}/heat/stack-heat.yml.j2
-        dest={{ bundle_path }}/target/{{ bundle_label }}.heat.yml
+        src={{ item }}
+        dest=target/{{ item | replace('.j2', '') }}
+      with_fileglob: {{ bundle.name }}/heat/*.j2
 
     - debug: msg="Image build is a success. The image {{ packed_image_id.stdout }} is now in your glance images."
 
