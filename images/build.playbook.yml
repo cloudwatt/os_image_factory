@@ -12,10 +12,10 @@
     packer_file: "build.packer.json"
 
   tasks:
-    - name: target repository is ready
+    - name: prepare target repository
       file: path=target/{{ bundle.name }} state=directory
 
-    - name: building server image with Packer
+    - name: use packer to build server image
       shell: "packer build -var 'bundle_path={{ bundle.name }}' -var 'source_image={{ bundle.img_base }}' -var 'image_name={{ bundle_target_name }}' -var 'factory_flavor={{ vm_flavor }}' {{ packer_file }} > target/{{ bundle.name }}/packer.{{ bundle_target_name }}.log 2>&1"
 
     - name: retrieve built image id
@@ -27,30 +27,30 @@
       set_fact:
        result_img_id: "{{ sh_img_id.stdout }}"
 
-    - name: building remove-property string for image cleanup
+    - name: build remove-property string for image cleanup
       shell: openstack image show -f value -c properties {{ result_img_id }} | tr ", " "\n" | grep -v "^$" | cut -d"=" -f1 | grep -v -E "(cw_os|cw_origin|hw_rng_model)" | sed 's/^/--remove-property /g' | tr "\n" " "
       register: sh_purge_props
 
-    - name: removing useless properties from built image
+    - name: remove useless properties from built image
       shell: "glance image-update {{ sh_purge_props.stdout }} {{ result_img_id }}"
 
-    - name: setting desired properties on built image
-      shell: "glance image-update --property {{ item.key }}='{{ item.value }}' {{ result_img_id }}"
+    - name: set expected properties (sleep 3 between each property set to avoid api flooding)
+      shell: "glance image-update --property {{ item.key }}='{{ item.value }}' {{ result_img_id }} && sleep 3"
       with_dict: "{{ bundle.properties }}"
       when: bundle.properties is undefined
 
-    - name: applying final glance options
+    - name: apply final glance options
       shell: "glance image-update {{ final_glance_options }} {{ result_img_id }}"
       when: not((final_glance_options is undefined) or (final_glance_options is none) or (final_glance_options|trim == ''))
 
-    - name: target repository is ready
+    - name: prepare template target repository
       file: path=target/{{ bundle.name }}/heat state=directory
 
-    - name: generating heat stack
+    - name: generate heat stacks
       template: src={{ item }} dest=target/{{ item | replace('.j2', '') }}
       with_lines: "find {{ bundle.name }}/heat -name '*.j2'"
 
-    - name: Yelling the success of the build process
+    - name: yell the success of the build process. May the Great Coder be praised.
       debug: msg="Image build is a success. The image {{ result_img_id }} is now in your glance images."
 
 
