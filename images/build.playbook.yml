@@ -9,7 +9,7 @@
     final_glance_options: "--min-disk 10"
     vm_flavor: "16"
     bundle_target_name: "{{ bundle.name }}-{{ ansible_date_time.date }}{{ ansible_date_time.hour }}{{ ansible_date_time.minute }}"
-    packer_file: "bundle-ansible.packer.json"
+    packer_file: "build.packer.json"
 
   tasks:
     - name: target repository is ready
