@@ -121,7 +121,7 @@
         - pip
 
     - name: openstack CLI is installed
-      pip: name="{{ item.name }}" version="{{ item.version }}" 
+      pip: name="{{ item.name }}" version="{{ item.version }}"
       with_items:
         - { name: python-glanceclient, version: 1.0.0 }
         - { name: python-novaclient, version: 2.28.1 }
