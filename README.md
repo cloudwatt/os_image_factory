@@ -10,3 +10,5 @@ tunnel
 export OS_*
 
 si un truc foire, insister
+
+bien parler du extra_vars

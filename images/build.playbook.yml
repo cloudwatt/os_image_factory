@@ -52,7 +52,3 @@
 
     - name: yell the success of the build process. May the Great Coder be praised.
       debug: msg="Image build is a success. The image {{ result_img_id }} is now in your glance images."
-
-
-
-
