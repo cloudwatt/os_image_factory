@@ -130,5 +130,8 @@ répertoire ```images/target/my_bundle/output```.
 
 ## Voici les clés
 
-Le squelette est posé et la boite à outils rôdée. Nous espérons que cela pourra vous servir pour bâtir vos
-propres architecture dans le futur.
+Le squelette est posé et la boite à outils rôdée. Si vous souhaitez faire vos propres réalisation, prenez exemples
+sur les builds présents dans le repository, approfondissez [Ansible](http://docs.ansible.com/ansible/index.html), ou hacker
+le ```build.packer.json``` pour utiliser plutôt Puppet ou Chef.
+
+Nous espérons que cela pourra vous servir pour bâtir vos propres architecture dans le futur.
