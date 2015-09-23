@@ -122,7 +122,7 @@ bundle.
 
 Lors d'un build, deux outputs sont attendus :
 
-* Les images serveurs elles-mêmes, qui atterrissent dans votre catalogue d'image privées Glance. L'ID de l'image
+* Les images serveurs elles-mêmes, qui atterrissent dans votre catalogue d'images privées Glance. L'ID de l'image
 assemblée est visible dans les traces d'exécution du script ```build.sh```.
 
 * Les sorties des templates placés dans votre répertoire output : Une fois interprétés, ils sont placés dans le
@@ -130,8 +130,8 @@ répertoire ```images/target/my_bundle/output```.
 
 ## Voici les clés
 
-Le squelette est posé et la boite à outils rôdée. Si vous souhaitez faire vos propres réalisation, prenez exemples
-sur les builds présents dans le repository, approfondissez [Ansible](http://docs.ansible.com/ansible/index.html), ou hacker
+Le squelette est posé et la boite à outils rôdée. Si vous souhaitez faire vos propres réalisations, prenez exemple
+sur les builds présents dans le repository, approfondissez [Ansible](http://docs.ansible.com/ansible/index.html), ou hackez
 le ```build.packer.json``` pour utiliser plutôt Puppet ou Chef.
 
-Nous espérons que cela pourra vous servir pour bâtir vos propres architecture dans le futur.
+Nous espérons que cela pourra vous servir pour bâtir vos propres architectures dans le futur.
