@@ -23,12 +23,15 @@ Pour faciliter la création de vos propres images, nous avons rassemblé notre c
 Ansible et une stack HEAT qui vont vous fournir un serveur de build d'image avec tous les outils nécessaires. Pour un peu
 plus de confort, nous avons ajouté un serveur Jenkins dans la boîte à outils. Donc, pour démarrer votre propre usine :
 
-* Faites un clone local du repository [os_image_factory](https://github.com/cloudwatt/os_image_factory).
+* Munissez vous de :
+    * votre [compte Cloudwatt](https://www.cloudwatt.com/authentification), avec une [paire de clés existante](https://console.cloudwatt.com/project/access_and_security/?tab=access_security_tabs__keypairs_tab)
+    * les outils [OpenStack CLI](http://docs.openstack.org/cli-reference/content/install_clients.html)
+* Faites un clone local du repository [os_image_factory](https://github.com/cloudwatt/os_image_factory)
 * Placez vous dedans
 * Lancez la stack HEAT qui va assembler l'usine :
 
 ```
-heat stack-create $FACTORY_NAME -f setup/os_image_factory.heat.yml -Pkeypair_name=$YOUR_KEYPAIR
+heat stack-create $FACTORY_NAME -f setup/os_image_factory.heat.yml -Pkeypair_name=$YOUR_KEYPAIR_NAME
 ```
 
 Le provisionning de ce serveur se fait en partant d'une image de base Ubuntu Trusty et en applicant le playbook
