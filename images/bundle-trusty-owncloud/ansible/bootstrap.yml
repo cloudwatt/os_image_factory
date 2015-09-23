@@ -1,0 +1,43 @@
+--- 
+- 
+  handlers: 
+    - 
+      name: "enable apache site"
+      notify: "restart apache"
+      shell: "/usr/sbin/a2dissite 000-default && /usr/sbin/a2ensite owncloud.apache2.conf"
+    - 
+      name: "restart apache"
+      service: "name=apache2 state=restarted"
+  hosts: local
+  sudo: true
+  tasks: 
+    - 
+      name: "update repo"
+      shell: "sudo sh -c \"echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/xUbuntu_14.04/ /' >> /etc/apt/sources.list.d/owncloud.list\""
+    - 
+      apt: "upgrade=full update_cache=yes"
+      name: "apt-get update & upgrade"
+    - 
+      file: "src=/bin/bash dest=/bin/sh state=link"
+      name: "default sh is bash"
+    - 
+      apt: "pkg=owncloud state=build-dep"
+      name: owncloud
+    - 
+      apt: "pkg=owncloud state=present force=yes"
+      name: "apt-get install owncloud"
+    - 
+      name: "apache service started"
+      service: "name=apache2 state=started"
+    - 
+      name: "apache service enabled"
+      service: "name=apache2 enabled=yes"
+    - 
+      copy: "src=files/owncloud.apache2.conf dest=/etc/apache2/sites-available/owncloud.apache2.conf owner=root group=root mode=0644"
+      name: "apache site configuration"
+      notify: "enable apache site"
+    - 
+      apache2_module: "name=rewrite state=present"
+      name: "Rewrite module activated"
+  user: cloud
+
