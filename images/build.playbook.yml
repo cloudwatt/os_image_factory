@@ -46,9 +46,14 @@
     - name: prepare template target repository
       file: path=target/{{ bundle.name }}/heat state=directory
 
-    - name: generate heat stacks
+    - name: check if output is expected
+      stat: path="{{ bundle.name }}/output"
+      register: expected_output
+
+    - name: generate outputs
+      when: expected_output.stat.exists
       template: src={{ item }} dest=target/{{ item | replace('.j2', '') }}
-      with_lines: "find {{ bundle.name }}/heat -name '*.j2'"
+      with_lines: "find {{ bundle.name }}/output -name '*.j2'"
 
     - name: yell the success of the build process. May the Great Coder be praised.
       debug: msg="Image build is a success. The image {{ result_img_id }} is now in your glance images."
