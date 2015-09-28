@@ -40,22 +40,33 @@
     - name: apache site configured
       copy:
         src=files/owncloud.apache2.conf
-        dest=/etc/apache2/sites-available/owncloud.apache2.conf
+        dest=/etc/apache2/sites-available/owncloud.conf
         owner=root
         group=root
         mode=0644
 
     - name: apache rewrite module activated
       apache2_module:
-        name=rewrite
+        name={{ item }}
         state=present
+      with_items:
+        - rewrite
+        - ssl
 
     - name: enable apache site
-      shell: "/usr/sbin/a2dissite 000-default && /usr/sbin/a2ensite owncloud.apache2.conf"
+      shell: "/usr/sbin/a2dissite 000-default && /usr/sbin/a2ensite owncloud"
 
-    - name: "restart apache"
+    - name: restart apache
       service:
         name=apache2
         state=restarted
+
+    - name: /etc/ssl/ exists
+      file:
+        path=/etc/ssl
+        state=directory
+        owner=root
+        group=root
+        mode=0755
 
   handlers:

@@ -63,6 +63,17 @@ resources:
     properties:
       floating_network_id: 6ea98324-0f14-49f6-97c0-885d1b8dc517
 
+  https_setup:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config: |
+        openssl req -new -nodes -x509 -subj "/C=FR/ST=IDF/L=Paris/O=Cloudwatt/CN=ownCloud" \
+          -days 3650 \
+          -keyout /etc/ssl/owncloud.key \
+          -out /etc/ssl/owncloud.crt \
+          -extensions v3_ca
+        chmod -R 600 /etc/ssl/*
+
   server:
     type: OS::Nova::Server
     properties:
@@ -73,6 +84,9 @@ resources:
         - network: { get_resource: network }
       security_groups:
         - { get_resource: security_group }
+      user_data_format: RAW
+      user_data:
+        get_resource: https_setup
 
   floating_ip_link:
     type: OS::Nova::FloatingIPAssociation
@@ -85,6 +99,6 @@ outputs:
     description: ownCloud URL
     value:
       str_replace:
-        template: http://$floating_ip/owncloud
+        template: https://$floating_ip/
         params:
           $floating_ip: { get_attr: [floating_ip, floating_ip_address] }
