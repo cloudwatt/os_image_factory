@@ -22,9 +22,12 @@
 
     - name: use packer to build server image
       shell: "packer build -var 'bundle_path={{ bundle.name }}' -var 'source_image={{ bundle.img_base }}' -var 'image_name={{ bundle_target_name }}' -var 'factory_flavor={{ vm_flavor }}' {{ packer_file }} > target/{{ bundle.name }}/packer.{{ bundle_target_name }}.log 2>&1"
+      register: packer_build
+      ignore_errors: true
 
     - name: drag latest log in the light
       shell: cp -f target/{{ bundle.name }}/packer.{{ bundle_target_name }}.log ../packer.latest.log
+      failed_when: packer_build|failed
 
     - name: retrieve built image id
       shell: openstack image list --private | grep {{ bundle_target_name }} | tr "|" " " | tr -s " " | cut -d " " -f2
