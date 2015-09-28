@@ -56,6 +56,9 @@
     - name: enable apache site
       shell: "/usr/sbin/a2dissite 000-default && /usr/sbin/a2ensite owncloud"
 
+    - name: create simple placeholder SSL keys
+      shell: "openssl req -new -nodes -subj "/C=FR/CN=ownCloud" -keyout /etc/ssl/owncloud.key -out /etc/ssl/owncloud.crt"
+
     - name: restart apache
       service:
         name=apache2
