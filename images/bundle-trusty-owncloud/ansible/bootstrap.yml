@@ -14,22 +14,19 @@
         upgrade=full
         update_cache=yes
 
-    - name: default sh is bash
-      file:
-        src=/bin/bash
-        dest=/bin/sh
-        state=link
+    - name: apt repository installed
+      apt_repository:
+        repo='deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/xUbuntu_14.04/ /'
+        state=present
 
-    - name: update repo
-      shell: echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/xUbuntu_14.04/ /' >> /etc/apt/sources.list.d/owncloud.list
-
-    - name: built owncloud dependencies
-      apt:
-        pkg=owncloud
-        state=build-dep
+    - name: apt repository key is trusted
+      apt_key:
+        url=http://download.opensuse.org/repositories/isv:/ownCloud:/community/xUbuntu_14.04/Release.key
+        state=present
 
     - name: owncloud installed
       apt:
+        update_cache=yes
         pkg=owncloud
         state=present
         force=yes
@@ -53,8 +50,7 @@
         name=rewrite
         state=present
 
-    - name: "enable apache site"
-      notify: "restart apache"
+    - name: enable apache site
       shell: "/usr/sbin/a2dissite 000-default && /usr/sbin/a2ensite owncloud.apache2.conf"
 
     - name: "restart apache"
