@@ -17,7 +17,7 @@ parameters:
     label: Instance Type (Flavor)
     constraints:
       - allowed_values:
-	  - t1.cw.tiny
+	        - t1.cw.tiny
           - s1.cw.small-1
           - n1.cw.highcpu-2
           - n1.cw.highcpu-4
@@ -82,7 +82,7 @@ resources:
 
 outputs:
   floating_ip_url:
-    description: Etherpad URL
+    description: ownCloud URL
     value:
       str_replace:
         template: http://$floating_ip/owncloud
