@@ -67,6 +67,7 @@ resources:
     type: OS::Heat::SoftwareConfig
     properties:
       config: |
+        sed -i "s/DocumentRoot \/var\/www\/html//g" /etc/apache2/sites-available/owncloud.conf
         sed -i "s/#Rewrite/Rewrite/g" /etc/apache2/sites-available/owncloud.conf
         sed -i "s/#SSL/SSL/g" /etc/apache2/sites-available/owncloud.conf
         openssl req -new -nodes -x509 -subj "/C=FR/ST=IDF/L=Paris/O=Cloudwatt/CN=ownCloud" \
