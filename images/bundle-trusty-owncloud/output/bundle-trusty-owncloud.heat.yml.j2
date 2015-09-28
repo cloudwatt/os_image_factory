@@ -17,21 +17,21 @@ parameters:
     label: Instance Type (Flavor)
     constraints:
       - allowed_values:
-	        - t1.cw.tiny
-          - s1.cw.small-1
-          - n1.cw.highcpu-2
-          - n1.cw.highcpu-4
-          - n1.cw.highcpu-8
-          - n1.cw.standard-1
-          - n1.cw.standard-2
-          - n1.cw.standard-4
-          - n1.cw.standard-8
-          - n1.cw.standard-12
-          - n1.cw.standard-16
-          - n1.cw.highmem-2
-          - n1.cw.highmem-4
-          - n1.cw.highmem-8
-          - n1.cw.highmem-12
+        - t1.cw.tiny
+        - s1.cw.small-1
+        - n1.cw.highcpu-2
+        - n1.cw.highcpu-4
+        - n1.cw.highcpu-8
+        - n1.cw.standard-1
+        - n1.cw.standard-2
+        - n1.cw.standard-4
+        - n1.cw.standard-8
+        - n1.cw.standard-12
+        - n1.cw.standard-16
+        - n1.cw.highmem-2
+        - n1.cw.highmem-4
+        - n1.cw.highmem-8
+        - n1.cw.highmem-12
 
 resources:
   network:
@@ -67,11 +67,9 @@ resources:
     type: OS::Heat::SoftwareConfig
     properties:
       config: |
-        openssl req -new -nodes -x509 -subj "/C=FR/ST=IDF/L=Paris/O=Cloudwatt/CN=ownCloud" \
-          -days 3650 \
-          -keyout /etc/ssl/owncloud.key \
-          -out /etc/ssl/owncloud.crt \
-          -extensions v3_ca
+        #!/bin/bash
+        /usr/sbin/a2dissite 000-default && /usr/sbin/a2ensite owncloud
+        openssl req -new -nodes -x509 -subj "/C=FR/ST=IDF/L=Paris/O=Cloudwatt/CN=ownCloud" -days 3650 -keyout /etc/ssl/owncloud.key -out /etc/ssl/owncloud.crt -extensions v3_ca
         chmod -R 600 /etc/ssl/*
         service apache2 restart
 

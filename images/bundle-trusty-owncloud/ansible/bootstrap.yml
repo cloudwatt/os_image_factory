@@ -37,7 +37,7 @@
         state=started
         enabled=yes
 
-    - name: apache site configured
+    - name: apache site configuration uploaded
       copy:
         src=files/owncloud.apache2.conf
         dest=/etc/apache2/sites-available/owncloud.conf
@@ -52,17 +52,6 @@
       with_items:
         - rewrite
         - ssl
-
-    - name: enable apache site
-      shell: "/usr/sbin/a2dissite 000-default && /usr/sbin/a2ensite owncloud"
-
-    - name: create simple placeholder SSL keys
-      shell: "openssl req -new -nodes -subj "/C=FR/CN=ownCloud" -keyout /etc/ssl/owncloud.key -out /etc/ssl/owncloud.crt"
-
-    - name: restart apache
-      service:
-        name=apache2
-        state=restarted
 
     - name: /etc/ssl/ exists
       file:
