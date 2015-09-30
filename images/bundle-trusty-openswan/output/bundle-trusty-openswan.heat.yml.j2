@@ -1,0 +1,221 @@
+heat_template_version: 2013-05-23
+
+
+description: All-in-one OpenSwan stack
+
+
+parameters:
+  keypair_name:
+    description: Keypair to inject in instance
+    label: SSH Keypair
+    type: string
+
+  username:
+    description: Basic auth username for all users
+    label: Apache2 Auth Username
+    type: string
+    constraints:
+      - length: { min: 4, max: 24 }
+        description: Username must be between 4 and 24 characters
+
+  password:
+    description: Basic auth password for all users
+    label: Apache2 Auth Password
+    type: string
+    hidden: true
+    constraints:
+      - length: { min: 6, max: 24 }
+        description: Password must be between 6 and 24 characters
+
+  flavor_name:
+    default: s1.cw.small-1
+    description: Flavor to use for the deployed instance
+    type: string
+    label: Instance Type (Flavor)
+    constraints:
+      - allowed_values:
+        - t1.cw.tiny
+        - s1.cw.small-1
+        - n1.cw.highcpu-2
+        - n1.cw.highcpu-4
+        - n1.cw.highcpu-8
+        - n1.cw.standard-1
+        - n1.cw.standard-2
+        - n1.cw.standard-4
+        - n1.cw.standard-8
+        - n1.cw.standard-12
+        - n1.cw.standard-16
+        - n1.cw.highmem-2
+        - n1.cw.highmem-4
+        - n1.cw.highmem-8
+        - n1.cw.highmem-12
+
+resources:
+  network1:
+    type: OS::Neutron::Net
+
+  subnet1:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: network1 }
+      ip_version: 4
+      cidr: 10.27.1.0/24
+      allocation_pools:
+        - { start: 10.27.1.100, end: 10.27.1.199 }
+
+
+  network2:
+    type: OS::Neutron::Net
+
+  subnet2:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: network2 }
+      ip_version: 4
+      cidr: 10.27.2.0/24
+      allocation_pools:
+        - { start: 10.27.2.100, end: 10.27.2.199 }
+
+  security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      rules:
+        - { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
+        - { direction: ingress, protocol: ICMP }
+        - { direction: egress, protocol: ICMP }
+        - { direction: egress, protocol: TCP }
+        - { direction: egress, protocol: UDP }
+
+  floating_ip1:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network_id: 6ea98324-0f14-49f6-97c0-885d1b8dc517
+
+  floating_ip_link1:
+    type: OS::Nova::FloatingIPAssociation
+    properties:
+      floating_ip: { get_resource: floating_ip1 }
+      server_id: { get_resource: server1 }
+
+
+  floating_ip2:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network_id: 6ea98324-0f14-49f6-97c0-885d1b8dc517
+
+  floating_ip_link2:
+    type: OS::Nova::FloatingIPAssociation
+    properties:
+      floating_ip: { get_resource: floating_ip2 }
+      server_id: { get_resource: server2 }
+
+  server1:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: keypair_name }
+      image: {{ result_img_id }}
+      flavor: { get_param: flavor_name }
+      networks:
+        - network: { get_resource: network1 }
+      security_groups:
+        - { get_resource: security_group }
+      user_data_format: RAW
+      user_data:
+        get_resource: server_init
+
+  server2:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: keypair_name }
+      image: {{ result_img_id }}
+      flavor: { get_param: flavor_name }
+      networks:
+        - network: { get_resource: network2 }
+      security_groups:
+        - { get_resource: security_group }
+      user_data_format: RAW
+      user_data:
+        get_resource: server_init
+
+  server_init:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+      - config: { get_resource: ipsec_config }
+      - config: { get_resource: iptables_allow_vpn_traffic }
+      - config: { get_resource: ipsec_verify }
+      - config: { get_resource: l2tp_user_creation }
+      - config: { get_resource: service_restart }
+
+  ipsec_config:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config:
+        str_replace:
+          template: |
+            #!/bin/bash
+            sed -i "s/%SERVERIP%/$floating_ip$/g" /etc/ipsec.conf
+            # shared ipsec secret
+            echo "$floating_ip$  %any:   PSK \"$(openssl rand -hex 30)\"" >> /etc/ipsec.secrets
+          params:
+            $floating_ip$: { get_attr: [floating_ip, floating_ip_address] }
+
+  iptables_allow_vpn_traffic:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config:
+        str_replace:
+          template: |
+            #!/bin/bash
+            iptables -t nat -A POSTROUTING -j SNAT --to-source $floating_ip$ -o eth+
+            # Reset settings after reboot
+            sed -i "s/#POSTROUTING/iptables -t nat -A POSTROUTING -j SNAT --to-source $floating_ip$ -o eth+/g" /etc/rc.local
+          params:
+            $floating_ip$: { get_attr: [floating_ip, floating_ip_address] }
+
+  ipsec_verify:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config: |
+        #!/bin/bash
+        echo "=== START ipsec verify START ==="
+        LC_ALL=C ipsec verify
+        echo "===  END  ipsec verify  END  ==="
+
+  l2tp_user_creation:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config:
+        str_replace:
+          template: |
+            #!/bin/bash
+            sed -i "s/%USER%/$username$/g" /etc/ppp/chap-secrets
+            sed -i "s/%PASSWORD%/$password$/g" /etc/ppp/chap-secrets
+          params:
+            $username$: { get_param: username }
+            $password$: { get_param: password }
+
+  service_restart:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config: |
+        #!/bin/bash
+        service ipsec restart
+        service xl2tpd restart
+
+outputs:
+  floating_ip_url1:
+    description: OpenSwan URL
+    value:
+      str_replace:
+        template: https://$floating_ip/
+        params:
+          $floating_ip: { get_attr: [floating_ip1, floating_ip_address] }
+
+  floating_ip_url2:
+    description: OpenSwan URL
+    value:
+      str_replace:
+        template: https://$floating_ip/
+        params:
+          $floating_ip: { get_attr: [floating_ip2, floating_ip_address] }
