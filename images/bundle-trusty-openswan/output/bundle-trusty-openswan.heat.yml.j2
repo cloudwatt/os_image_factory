@@ -81,6 +81,9 @@ resources:
     properties:
       rules:
         - { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
+        - { direction: ingress, protocol: TCP, port_range_min: 4500, port_range_max: 4500 }
+        - { direction: ingress, protocol: UDP, port_range_min: 500, port_range_max: 500 }
+        - { direction: ingress, protocol: UDP, port_range_min: 4500, port_range_max: 4500 }
         - { direction: ingress, protocol: ICMP }
         - { direction: egress, protocol: ICMP }
         - { direction: egress, protocol: TCP }
