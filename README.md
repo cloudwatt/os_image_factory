@@ -138,3 +138,5 @@ sur les builds présents dans le repository, approfondissez [Ansible](http://doc
 le ```build.packer.json``` pour utiliser plutôt Puppet ou Chef.
 
 Nous espérons que cela pourra vous servir pour bâtir vos propres architectures dans le futur.
+
+Have fun. Hack in peace.
