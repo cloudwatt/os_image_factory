@@ -163,11 +163,14 @@ resources:
             sed -i "s/%SERVERIP%/$floating_ip$/g" /etc/ipsec.conf
             # shared ipsec secret
             echo "$floating_ip$  %any:   PSK \"$(openssl rand -hex 30)\"" >> /etc/ipsec.secrets
+            # inject local server IP
+            sed -i "s/%LOCALIP%/$local_ip$/g" /etc/xl2tpd/xl2tpd.conf
             # iptables should allow vpn traffic
             iptables -t nat -A POSTROUTING -j SNAT --to-source $floating_ip$ -o eth+
             # Reset settings after reboot
             sed -i "s/#POSTROUTING/iptables -t nat -A POSTROUTING -j SNAT --to-source $floating_ip$ -o eth+/g" /etc/rc.local
           params:
+            $local_ip$: { get_attr: [server1, first_address] }
             $floating_ip$: { get_attr: [floating_ip1, floating_ip_address] }
 
   ipsec_config2:
@@ -180,11 +183,14 @@ resources:
             sed -i "s/%SERVERIP%/$floating_ip$/g" /etc/ipsec.conf
             # shared ipsec secret
             echo "$floating_ip$  %any:   PSK \"$(openssl rand -hex 30)\"" >> /etc/ipsec.secrets
+            # inject local server IP
+            sed -i "s/%LOCALIP%/$local_ip$/g" /etc/xl2tpd/xl2tpd.conf
             # iptables should allow vpn traffic
             iptables -t nat -A POSTROUTING -j SNAT --to-source $floating_ip$ -o eth+
             # Reset settings after reboot
             sed -i "s/#POSTROUTING/iptables -t nat -A POSTROUTING -j SNAT --to-source $floating_ip$ -o eth+/g" /etc/rc.local
           params:
+            $local_ip$: { get_attr: [server2, first_address] }
             $floating_ip$: { get_attr: [floating_ip2, floating_ip_address] }
 
   shared_server_init:
