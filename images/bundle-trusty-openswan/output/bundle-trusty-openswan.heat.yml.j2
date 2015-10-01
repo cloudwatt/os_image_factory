@@ -11,16 +11,16 @@ parameters:
     type: string
 
   username:
-    description: Basic auth username for all users
-    label: Apache2 Auth Username
+    description: IPSec Auth Username
+    label: IPSec Auth Username
     type: string
     constraints:
       - length: { min: 4, max: 24 }
         description: Username must be between 4 and 24 characters
 
   password:
-    description: Basic auth password for all users
-    label: Apache2 Auth Password
+    description: IPSec Auth Password
+    label: IPSec Auth Password
     type: string
     hidden: true
     constraints:
@@ -121,7 +121,7 @@ resources:
         - { get_resource: security_group }
       user_data_format: RAW
       user_data:
-        get_resource: server_init
+        get_resource: server_init1
 
   server2:
     type: OS::Nova::Server
@@ -135,19 +135,25 @@ resources:
         - { get_resource: security_group }
       user_data_format: RAW
       user_data:
-        get_resource: server_init
+        get_resource: server_init2
 
-  server_init:
+  server_init1:
     type: OS::Heat::MultipartMime
     properties:
       parts:
-      - config: { get_resource: ipsec_config }
-      - config: { get_resource: iptables_allow_vpn_traffic }
-      - config: { get_resource: ipsec_verify }
-      - config: { get_resource: l2tp_user_creation }
-      - config: { get_resource: service_restart }
+      - config: { get_resource: ipsec_config1 }
+      - config: { get_resource: shared_server_init }
+        type: multipart
 
-  ipsec_config:
+  server_init2:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+      - config: { get_resource: ipsec_config2 }
+      - config: { get_resource: shared_server_init }
+        type: multipart
+
+  ipsec_config1:
     type: OS::Heat::SoftwareConfig
     properties:
       config:
@@ -157,21 +163,37 @@ resources:
             sed -i "s/%SERVERIP%/$floating_ip$/g" /etc/ipsec.conf
             # shared ipsec secret
             echo "$floating_ip$  %any:   PSK \"$(openssl rand -hex 30)\"" >> /etc/ipsec.secrets
+            # iptables should allow vpn traffic
+            iptables -t nat -A POSTROUTING -j SNAT --to-source $floating_ip$ -o eth+
+            # Reset settings after reboot
+            sed -i "s/#POSTROUTING/iptables -t nat -A POSTROUTING -j SNAT --to-source $floating_ip$ -o eth+/g" /etc/rc.local
           params:
-            $floating_ip$: { get_attr: [floating_ip, floating_ip_address] }
+            $floating_ip$: { get_attr: [floating_ip1, floating_ip_address] }
 
-  iptables_allow_vpn_traffic:
+  ipsec_config2:
     type: OS::Heat::SoftwareConfig
     properties:
       config:
         str_replace:
           template: |
             #!/bin/bash
+            sed -i "s/%SERVERIP%/$floating_ip$/g" /etc/ipsec.conf
+            # shared ipsec secret
+            echo "$floating_ip$  %any:   PSK \"$(openssl rand -hex 30)\"" >> /etc/ipsec.secrets
+            # iptables should allow vpn traffic
             iptables -t nat -A POSTROUTING -j SNAT --to-source $floating_ip$ -o eth+
             # Reset settings after reboot
             sed -i "s/#POSTROUTING/iptables -t nat -A POSTROUTING -j SNAT --to-source $floating_ip$ -o eth+/g" /etc/rc.local
           params:
-            $floating_ip$: { get_attr: [floating_ip, floating_ip_address] }
+            $floating_ip$: { get_attr: [floating_ip2, floating_ip_address] }
+
+  shared_server_init:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+      - config: { get_resource: ipsec_verify }
+      - config: { get_resource: l2tp_user_creation }
+      - config: { get_resource: service_restart }
 
   ipsec_verify:
     type: OS::Heat::SoftwareConfig
