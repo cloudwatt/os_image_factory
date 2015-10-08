@@ -40,14 +40,17 @@ source /etc/duplicity/export_os_cred.sh
 # GnuPG Passphrase and Keys
 source /etc/duplicity/dup_vars.sh
 # Duplicity START
-duplicity --verbosity notice \
+duplicity --verbosity notice           \
           --encrypt-key "$ENCRYPT_KEY" \
-          --sign-key "$SIGN_KEY" \
-          --full-if-older-than 10D \
-          --num-retries 3 \
-          --asynchronous-upload \
-          --volsize "$SWIFT_SIZE" \
+          --sign-key "$SIGN_KEY"       \
+          --num-retries 3              \
+          --exclude /mnt/droplet/mnt   \
+          --exclude /mnt/droplet/proc  \
+          --exclude /mnt/droplet/tmp   \
+          --asynchronous-upload        \
+          --volsize "$SWIFT_SIZE"      \
            "/mnt/droplet/${SRC}" "/$REMOTE_HOSTNAME/${SRC}"
+          # --full-if-older-than 10D     \
 # Duplicity END
 
 # Unmount remote directory
