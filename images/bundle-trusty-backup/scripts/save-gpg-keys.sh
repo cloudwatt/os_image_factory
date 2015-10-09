@@ -14,6 +14,11 @@ to two files in your current directory.
     exit 1
 fi
 
+if [ ! -r "$SSH_KEY_PATH" ]; then
+  echo "ERROR: SSH Key does not exist or cannot be read.";
+  exit 1;
+fi
+
 STACK_FLOATING_IP=` heat resource-list $STACK_NAME          \
                  | grep "| OS::Nova::FloatingIPAssociation" \
                  | cut -d"|" -f3                            \

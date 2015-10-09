@@ -20,6 +20,11 @@ Existing keys with the same name will be replaced by the new keys.
     exit 1
 fi
 
+if [ ! -r "$SSH_KEY_PATH" ]; then
+  echo "ERROR: SSH Key does not exist or cannot be read.";
+  exit 1;
+fi
+
 STACK_FLOATING_IP=` heat resource-list $STACK_NAME          \
                  | grep "| OS::Nova::FloatingIPAssociation" \
                  | cut -d"|" -f3                            \
@@ -49,7 +54,9 @@ for SSH_KEY in "$@"; do
   else
     SSH_KEY_BASENAME=`basename "$SSH_KEY"`
     echo -e " - Copying \e[32m${SSH_KEY}\e[0m to remote \e[32m/root/.ssh/${SSH_KEY_BASENAME}\e[0m"
+    ssh "$STACK_FLOATING_IP" -l cloud -i "$SSH_KEY_PATH" "sudo mkdir -p /home/cloud/.ssh"
     scp -o "IdentityFile=$SSH_KEY_PATH" "$SSH_KEY" "cloud@$STACK_FLOATING_IP:/home/cloud/.ssh/$SSH_KEY_BASENAME"
+    ssh "$STACK_FLOATING_IP" -l cloud -i "$SSH_KEY_PATH" "sudo mkdir -p /root/.ssh"
     ssh "$STACK_FLOATING_IP" -l cloud -i "$SSH_KEY_PATH" "sudo mv \"/home/cloud/.ssh/${SSH_KEY_BASENAME}\" \"/root/.ssh/${SSH_KEY_BASENAME}\""
   fi
 done
