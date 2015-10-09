@@ -9,22 +9,31 @@
 
 REMOTE_IP=$1
 SSH_KEY=$2
-REMOTE_GROUPS=$3
-SRC=$4
-SWIFT_SIZE=$5
+SRC=$3
+REMOTE_GROUPS=$4
+PRE_SCRIPT=$5
+POST_SCRIPT=$6
+ADD_PARAMS=$7
 
-if [ ! "$REMOTE_IP" ] || [ ! "$SSH_KEY" ] || [ ! "$REMOTE_GROUPS" ] || [ ! "$SRC" ] || [ ! "$SWIFT_SIZE" ]; then
+if [ ! "$REMOTE_IP" ] || [ ! "$SSH_KEY" ] || [ ! "$SRC" ]; then
   echo -e """\
-\e[32mUSAGE:\e[0m sudo /etc/duplicity/to_swift.sh REMOTE_IP SSH_KEY REMOTE_GROUPS SRC SWIFT_SIZE
-\e[32mEXAMPLE:\e[0m sudo /etc/duplicity/to_swift.sh 8.8.8.8 \
-                                                    ssh_key.pem \
-                                                    "root www-data" \
-                                                    "/home/cloud" SWIFT_SIZE
+\e[32mUSAGE:\e[0m sudo /etc/duplicity/to_swift.sh REMOTE_IP SSH_KEY SRC [REMOTE_GROUPS [PRE_SCRIPT [POST_SCRIPT [ADD_PARAMS]]]]
 
-In the above example, \e[32m~/.ssh/my_keypair.pem\e[0m will be used to authenticate
-with the stack server, and the keys \e[32msome_key.pem\e[0m and \e[32mother_key.pub\e[0m will
-be added to that server's \e[32m/root/.ssh/\e[0m directory for duplicity to use.
-Existing keys with the same name will be replaced by the new keys.
+REMOTE_IP     - IP address for remote server to backup
+SSH_KEY       - SSH key for remote server
+REMOTE_GROUPS - Usergroups to add to user 'cloud' on remote server
+SRC           - Path to file or directory to back up
+PRE_SCRIPT    - Shell script to run on remote server before backup
+POST_SCRIPT   - Shell script to run on remote server after backup
+ADD_PARAMS    - Additional duplicity parameters
+
+\e[32mEXAMPLE:\e[0m sudo /etc/duplicity/to_swift.sh 8.8.8.8 \\
+                                         ssh_key.pem \\
+                                         /home/cloud \\
+                                         \"root www-data\" \\
+                                         \"sudo service apache stop;\" \\
+                                         \"sudo service apache start;\" \\
+                                         \"--volsize 10\"
 """
   exit 1
 fi
@@ -43,8 +52,19 @@ function ssh_cmd {
 
 ssh_cmd $REMOTE_IP $SSH_KEY_PATH "echo \"Successfully echoed remote server.\""
 if [ "$?" != "0" ]; then
-    echo "Could not echo from remote server."
-    exit 1
+  echo "Could not echo from remote server."
+  exit 1
+fi
+
+if [ -n $PRE_SCRIPT ]; then
+  echo "Running pre-backup shell script on remote:"
+  echo "$PRE_SCRIPT"
+  echo "@=============@"
+  ssh_cmd $REMOTE_IP $SSH_KEY_PATH "$PRE_SCRIPT"
+  echo "@=============@"
+  exit 1
+else
+  echo "No pre-backup shell script provided. Skipping."
 fi
 
 echo "Adding user 'cloud' to each requested usergroup."
@@ -100,7 +120,7 @@ duplicity --verbosity notice           \
           --exclude /mnt/droplet/proc  \
           --exclude /mnt/droplet/tmp   \
           --asynchronous-upload        \
-          --volsize "$SWIFT_SIZE"      \
+          $ADD_PARAMS                  \
           "/mnt/droplet/${SRC}" "swift://$(hostname)/$REMOTE_HOSTNAME/${SRC}"
           # --full-if-older-than 10D     \
 # Duplicity END
@@ -113,3 +133,14 @@ export LC_ALL=C
 for GROUP in $NEW_GROUPS ; do
   ssh_cmd $REMOTE_IP $SSH_KEY "deluser cloud $GROUP"
 done
+
+if [ -n $POST_SCRIPT ]; then
+  echo "Running post-backup shell script on remote:"
+  echo "$POST_SCRIPT"
+  echo "@=============@"
+  ssh_cmd $REMOTE_IP $SSH_KEY_PATH "$POST_SCRIPT"
+  echo "@=============@"
+  exit 1
+else
+  echo "No post-backup shell script provided. Skipping."
+fi
