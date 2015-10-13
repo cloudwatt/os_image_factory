@@ -1,3 +1,9 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
 - hosts: local
   user: cloud
   sudo: true
@@ -7,7 +13,6 @@
       apt:
         upgrade=full
         update_cache=yes
-        cache_valid_time=3600
 
     - name: default sh is bash
       file:
@@ -15,14 +20,19 @@
         dest=/bin/sh
         state=link
 
-    - name: curl installed
+    - name: apt packages installed
       apt: pkg="{{ item }}" state=present
       with_items:
         - jq
         - sshfs
+        - unzip
         - gnupg2
         - duplicity
+        - libssl-dev
         - python-dev
+        - libffi-dev
+        - python-cffi
+        - libguestfs-tools
         - python-setuptools
 
     - name: apt package pip is absent
@@ -34,7 +44,7 @@
     - name: pip is installed
       easy_install: name=pip
 
-    - name: openstack CLI is installed
+    - name: pip packages are installed
       pip: name="{{ item }}" state=latest
       with_items:
         - pyopenssl
