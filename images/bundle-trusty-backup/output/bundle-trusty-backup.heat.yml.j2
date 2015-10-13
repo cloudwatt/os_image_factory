@@ -108,14 +108,14 @@ resources:
             echo "Injecting passcodes and keys into duplicity scripts"
             sudo echo """\
             # GnuPG PASSPHRASE
-            export PASSPHRASE="@PASSCODE@"
-            export SIGN_PASSPHRASE="@PASSCODE@"
+            export PASSPHRASE="$PASSCODE$"
+            export SIGN_PASSPHRASE="$PASSCODE$"
             # GnuPG Keys
             export SIGN_KEY=`   gpg --list-keys | egrep "^sub" | cut -d"/" -f2 | cut -d" " -f1 | head -n 1`
             export ENCRYPT_KEY=`gpg --list-keys | egrep "^sub" | cut -d"/" -f2 | cut -d" " -f1 | tail -n 1`
             """ > /etc/duplicity/dup_vars.sh
           params:
-            @PASSCODE@: { get_param: passcode }
+            $PASSCODE$: { get_param: passcode }
 
   server:
     type: OS::Nova::Server
@@ -136,9 +136,9 @@ outputs:
     description: Backup Server Floating-IP
     value:
       str_replace:
-        template: @FLOATING_IP@
+        template: $FLOATING_IP$
         params:
-          @FLOATING_IP@: { get_attr: [floating_ip, floating_ip_address] }
+          $FLOATING_IP$: { get_attr: [floating_ip, floating_ip_address] }
 
   router-interface-ip:
     description: |
@@ -146,10 +146,10 @@ outputs:
     value:
       str_replace:
         template: |
-          neutron router-port-list @ROUTER@ | grep @SUBNET@ | cut -d"\"" -f8
+          neutron router-port-list $ROUTER$ | grep $SUBNET$ | cut -d"\"" -f8
         params:
-          @ROUTER@: { get_attr: [router, name] }
-          @SUBNET@: { get_resource: subnet }
+          $ROUTER$: { get_attr: [router, name] }
+          $SUBNET$: { get_resource: subnet }
 
   subnet-cidr:
     description: |
@@ -157,9 +157,9 @@ outputs:
     value:
       str_replace:
         template: |
-          neutron subnet-show @SUBNET@ | grep "| cidr" | cut -d"|" -f3
+          neutron subnet-show $SUBNET$ | grep "| cidr" | cut -d"|" -f3
         params:
-          @SUBNET@: { get_param: subnet_id }
+          $SUBNET$: { get_param: subnet_id }
 
   ip_route_set:
     description: |
