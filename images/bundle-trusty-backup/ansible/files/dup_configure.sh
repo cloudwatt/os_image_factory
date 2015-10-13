@@ -33,22 +33,27 @@ echo """\
 
 TIMESLOTS=`jq ". | keys | .[]" <<< "$SETTINGS_JSON" | tr -d '"'`
 
-for TIMESLOT in "$TIMESLOTS" ; do
-  echo " - Preparing cron for timeslot \"${TIMESLOT}\""
+IFS=$'\n'
+for TIMESLOT in $TIMESLOTS ; do
+  echo -e "\e[32m - Preparing cron for timeslot \"${TIMESLOT}\"\e[0m"
 
   CRON_SCRIPT=`echo "$TIMESLOT" | tr " " "_"`
   CRON_SCRIPT="${CRON_SCRIPT_DIR}/${CRON_SCRIPT}.sh"
-  echo "   + Writing command to crontab file:"
+  echo -e "\e[32m   + Writing command to crontab file:\e[0m"
   echo "     $TIMESLOT root $CRON_SCRIPT"
   echo "$TIMESLOT root $CRON_SCRIPT" >> "$CRON_FILE"
 
-  echo "   + Writing cron executable"
+  echo -e "\e[32m   + Writing cron executable\e[0m"
   echo "     # Cron executable for timeslot \"${TIMESLOT}\""
   echo "# Cron executable for timeslot \"${TIMESLOT}\"" > "$CRON_SCRIPT"
   TIMESLOT_JSON=`jq ".[\"${TIMESLOT}\"]" <<< "$SETTINGS_JSON"`
   JSON_COUNT=`jq ". | length" <<< "$TIMESLOT_JSON"`
   for DUP_INDEX in `seq -f "%02g" 0 "$JSON_COUNT" | head -n "$JSON_COUNT"`; do
-    echo "     sudo bash $BACKUP_SCRIPT $(jq -c ".[$DUP_INDEX]" <<< "$TIMESLOT_JSON")"
-    echo "sudo bash $BACKUP_SCRIPT $(jq -c ".[$DUP_INDEX]" <<< "$TIMESLOT_JSON")" >> "$CRON_SCRIPT"
+    INPUT_JSON=$(jq -c ".[$DUP_INDEX]" <<< "$TIMESLOT_JSON" \
+                | sed -e 's/\"/\\\"/g'                      \
+                | sed -e 's/\\\\\"/\\\\\\"/g'               \
+                | sed -e 's/\$/\\\$/g')
+    echo "     sudo bash $BACKUP_SCRIPT \"$INPUT_JSON\""
+    echo "sudo bash $BACKUP_SCRIPT \"$INPUT_JSON\"" >> "$CRON_SCRIPT"
   done
 done

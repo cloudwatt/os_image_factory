@@ -9,7 +9,7 @@
 
 function json_value {
   # json_value $JSON_PATH $JSON_INPUT
-  jq -r "$2 // empty" <<< "$1" | tr -d '"'
+  jq -r "$2 // empty" <<< "$1"
 }
 
 if [ -n "$1" ] && [ ! "$2" ]; then
@@ -57,8 +57,8 @@ fi
 SSH_KEY_PATH="/root/.ssh/$SSH_KEY"
 
 if [ ! -r "$SSH_KEY_PATH" ]; then
-  echo "ERROR: SSH Key does not exist or cannot be read.";
-  exit 1;
+  echo "ERROR: SSH Key does not exist or cannot be read."
+  exit 1
 fi
 
 function ssh_cmd {
@@ -66,6 +66,7 @@ function ssh_cmd {
   ssh "$1" -l cloud -i "$2" "$3"
 }
 
+echo "Echoing remote server..."
 ssh_cmd $REMOTE_IP $SSH_KEY_PATH "echo \"Successfully echoed remote server.\""
 if [ "$?" != "0" ]; then
   echo "Could not echo from remote server."
@@ -128,6 +129,7 @@ source /etc/duplicity/dup_vars.sh
 echo "Remote Hostname: $REMOTE_HOSTNAME"
 echo "Local Hostname:  $(hostname)"
 echo "Backing up /mnt/droplet/${SRC} to swift://$(hostname)/$REMOTE_HOSTNAME/${SRC}"
+HOME=/root \
 duplicity --verbosity notice           \
           --encrypt-key "$ENCRYPT_KEY" \
           --sign-key "$SIGN_KEY"       \

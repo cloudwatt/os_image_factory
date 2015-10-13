@@ -8,17 +8,19 @@ if [ ! "$EMAIL" ] || [ ! "$PASSWORD" ]; then
     exit 1
 fi
 
-TENANT_ID =   `\
+TENANT_TOKEN=`\
 curl -s 'https://identity.fr1.cloudwatt.com/v2.0/tokens' \
      -X POST -H "Content-Type: application/json" \
      -H "Accept: application/json" \
      -d "{\"auth\": {\"tenantName\": \"\", \"passwordCredentials\": {\"username\": \"$EMAIL\", \"password\": \"$PASSWORD\"}}}" \
      | jq '.access.token.id' | xargs echo`
-TENANT_NAME = `\
+TENANT_NAME=`\
 curl -s 'https://identity.fr1.cloudwatt.com/v2.0/tenants' \
      -X GET -H "User-Agent: python-keystoneclient" \
-     -H "X-Auth-Token: $TENANT_ID" \
+     -H "X-Auth-Token: $TENANT_TOKEN" \
      | jq ".tenants[0].name" | xargs echo`
+
+echo "Tenant name found: $TENANT_NAME"
 
 echo """\
 #!/bin/bash

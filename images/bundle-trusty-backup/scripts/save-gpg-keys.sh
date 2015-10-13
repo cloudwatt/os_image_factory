@@ -39,5 +39,7 @@ if [ "$?" != "0" ]; then
 fi
 
 source <(ssh "$STACK_FLOATING_IP" -l cloud -i "$SSH_KEY_PATH" "sudo cat /etc/duplicity/dup_vars.sh")
-ssh "$STACK_FLOATING_IP" -l cloud -i "$SSH_KEY_PATH" "sudo gpg --export-secret-keys -a $SIGN_KEY"    > signing.asc
-ssh "$STACK_FLOATING_IP" -l cloud -i "$SSH_KEY_PATH" "sudo gpg --export-secret-keys -a $ENCRYPT_KEY" > encryption.asc
+echo -e "Saving backup signing key to file \e[32m./signing.asc\e[0m"
+ssh "$STACK_FLOATING_IP" -l cloud -i "$SSH_KEY_PATH" "sudo HOME=/root gpg --export-secret-keys -a $SIGN_KEY"    > signing.asc
+echo -e "Saving backup encryption key to file \e[32m./encryption.asc\e[0m"
+ssh "$STACK_FLOATING_IP" -l cloud -i "$SSH_KEY_PATH" "sudo HOME=/root gpg --export-secret-keys -a $ENCRYPT_KEY" > encryption.asc
