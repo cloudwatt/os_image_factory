@@ -84,6 +84,7 @@
       with_items:
         - { local: dup_from_swift.sh, remote: from_swift.sh     }
         - { local: dup_to_swift.sh,   remote: to_swift.sh       }
+        - { local: dup_configure.sh,  remote: configure.sh       }
         - { local: key_encrypt.batch, remote: key_encrypt.batch }
         - { local: key_sign.batch,    remote: key_sign.batch    }
         - { local: set_os_cred.sh,    remote: set_os_cred.sh    }

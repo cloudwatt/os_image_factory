@@ -7,13 +7,29 @@
 #$SRC
 #$SWIFT_SIZE
 
-REMOTE_IP=$1
-SSH_KEY=$2
-SRC=$3
-REMOTE_GROUPS=$4
-PRE_SCRIPT=$5
-POST_SCRIPT=$6
-ADD_PARAMS=$7
+function json_value {
+  # json_value $JSON_PATH $JSON_INPUT
+  jq -r "$2 // empty" <<< "$1" | tr -d '"'
+}
+
+if [ -n "$1" ] && [ ! "$2" ]; then
+  echo "Json data passed as parameter."
+  REMOTE_IP=`    json_value "$1" ".remote_ip"`
+  SSH_KEY=`      json_value "$1" ".ssh_key"`
+  SRC=`          json_value "$1" ".remote_path"`
+  REMOTE_GROUPS=`json_value "$1" ".user_groups"`
+  PRE_SCRIPT=`   json_value "$1" ".shell_script.before"`
+  POST_SCRIPT=`  json_value "$1" ".shell_script.after"`
+  ADD_PARAMS=`   json_value "$1" ".additional_duplicity_options"`
+else
+  REMOTE_IP=$1
+  SSH_KEY=$2
+  SRC=$3
+  REMOTE_GROUPS=$4
+  PRE_SCRIPT=$5
+  POST_SCRIPT=$6
+  ADD_PARAMS=$7
+fi
 
 if [ ! "$REMOTE_IP" ] || [ ! "$SSH_KEY" ] || [ ! "$SRC" ]; then
   echo -e """\

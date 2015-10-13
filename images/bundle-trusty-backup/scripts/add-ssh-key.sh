@@ -44,8 +44,6 @@ if [ "$?" != "0" ]; then
     exit 1
 fi
 
-scp -o "IdentityFile=$SSH_KEY_PATH" "$NEW_SSH_KEY" "cloud@$STACK_FLOATING_IP:/root/.ssh/$(basename "$NEW_SSH_KEY")"
-
 # Add each new ssh key one by one
 echo "Copying keys to stack server"
 for SSH_KEY in "$@"; do
