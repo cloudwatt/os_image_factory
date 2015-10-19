@@ -42,6 +42,10 @@ parameters:
     label: GnuPG Encryption Key Passcode
     description: Passcode for GnuPG Keys used to encrypt and sign all data backups
     type: string
+    hidden: true
+    constraints:
+      - length: { min: 4, max: 24 }
+        description: Password must be between 6 and 24 characters
 
 resources:
   network:
@@ -103,6 +107,8 @@ resources:
           template: |
             #!/bin/bash
             echo "Generating keys"
+            sed -i "s/%PASSCODE%/$PASSCODE$/g" /etc/duplicity/key_sign.batch
+            sed -i "s/%PASSCODE%/$PASSCODE$/g" /etc/duplicity/key_encrypt.batch
             sudo gpg --batch --gen-key /etc/duplicity/key_sign.batch
             sudo gpg --batch --gen-key /etc/duplicity/key_encrypt.batch
             echo "Injecting passcodes and keys into duplicity scripts"

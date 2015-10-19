@@ -22,6 +22,7 @@ fi
 
 SETTINGS_JSON=`cat $SETTINGS_JSON_PATH`
 
+rm -Rf   "$CRON_SCRIPT_DIR"
 mkdir -p "$CRON_SCRIPT_DIR"
 
 echo "Rewriting crontab file $CRON_FILE"
@@ -37,7 +38,7 @@ IFS=$'\n'
 for TIMESLOT in $TIMESLOTS ; do
   echo -e "\e[32m - Preparing cron for timeslot \"${TIMESLOT}\"\e[0m"
 
-  CRON_SCRIPT=`echo "$TIMESLOT" | tr " " "_"`
+  CRON_SCRIPT=`echo "$TIMESLOT" | tr " /*" "_%s"`
   CRON_SCRIPT="${CRON_SCRIPT_DIR}/${CRON_SCRIPT}.sh"
   echo -e "\e[32m   + Writing command to crontab file:\e[0m"
   echo "     $TIMESLOT root $CRON_SCRIPT"
@@ -57,3 +58,4 @@ for TIMESLOT in $TIMESLOTS ; do
     echo "sudo bash $BACKUP_SCRIPT \"$INPUT_JSON\"" >> "$CRON_SCRIPT"
   done
 done
+unset IFS

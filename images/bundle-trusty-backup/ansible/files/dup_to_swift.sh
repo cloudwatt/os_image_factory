@@ -7,6 +7,8 @@
 #$SRC
 #$SWIFT_SIZE
 
+echo -e "\e[32m=== Starting a Duplicity Swift Backup ===\e[0m"
+
 function json_value {
   # json_value $JSON_PATH $JSON_INPUT
   jq -r "$2 // empty" <<< "$1"
@@ -17,6 +19,7 @@ if [ -n "$1" ] && [ ! "$2" ]; then
   REMOTE_IP=`    json_value "$1" ".remote_ip"`
   SSH_KEY=`      json_value "$1" ".ssh_key"`
   SRC=`          json_value "$1" ".remote_path"`
+  if [ -z "$SRC" ]; then SRC="/"; fi
   REMOTE_GROUPS=`json_value "$1" ".user_groups"`
   PRE_SCRIPT=`   json_value "$1" ".shell_script.before"`
   POST_SCRIPT=`  json_value "$1" ".shell_script.after"`
@@ -73,19 +76,36 @@ if [ "$?" != "0" ]; then
   exit 1
 fi
 
-if [ -n $PRE_SCRIPT ]; then
+echo "Expanding remote path..."
+NEW_SRC=`ssh_cmd $REMOTE_IP $SSH_KEY_PATH "readlink -f $SRC"`
+if [ "$?" != "0" ]; then
+  echo "Remote path expansion failed."
+  exit 1
+fi
+echo "Remote path expanded from '$SRC' to '$NEW_SRC'."
+SRC="$NEW_SRC"
+if [ "$SRC" == "/" ]; then
+  echo "Remote path includes server root:"
+  echo "Excluding '/dev', '/mnt', '/proc', and '/tmp' to avoid summoning Cthulu."
+  ADD_PARAMS="$ADD_PARAMS --exclude /mnt/droplet/dev  \
+                          --exclude /mnt/droplet/mnt  \
+                          --exclude /mnt/droplet/proc \
+                          --exclude /mnt/droplet/tmp"
+fi
+
+if [ -n "$PRE_SCRIPT" ]; then
   echo "Running pre-backup shell script on remote:"
   echo "$PRE_SCRIPT"
-  echo "@=============@"
+  echo "@== OUTPUT START ==@"
   ssh_cmd $REMOTE_IP $SSH_KEY_PATH "$PRE_SCRIPT"
-  echo "@=============@"
-  exit 1
+  echo "@==  OUTPUT END  ==@"
 else
   echo "No pre-backup shell script provided. Skipping."
 fi
 
 echo "Adding user 'cloud' to each requested usergroup."
 NEW_GROUPS=""
+unset IFS
 for GROUP in $REMOTE_GROUPS ; do
   if ssh_cmd $REMOTE_IP $SSH_KEY_PATH "groups cloud | grep &>/dev/null \"\b${GROUP}\b\""; then
     echo " - User 'cloud' already in group '$GROUP'."
@@ -98,13 +118,13 @@ done
 
 mkdir -p /mnt/droplet
 umount /mnt/droplet
-echo "Mounting {REMOTE_IP}:/ to /mnt/droplet..."
+echo "Mounting ${REMOTE_IP}:/ to /mnt/droplet..."
 sshfs -o "IdentityFile=$SSH_KEY_PATH" "cloud@${REMOTE_IP}:/" /mnt/droplet
 
 if [ "$?" != "0" ]; then
   echo "ERROR: Mount failed."
   exit 1
-elif [ ! -a "/mnt/droplet/${SRC}" ]; then
+elif [ ! -e "/mnt/droplet/${SRC}" ]; then
   echo """\
 ERROR: Target file or directory not found: /mnt/droplet/${SRC}
 Unmounting /mnt/droplet...
@@ -125,40 +145,42 @@ REMOTE_HOSTNAME=`ssh_cmd $REMOTE_IP $SSH_KEY_PATH "hostname"`
 source /etc/duplicity/export_os_cred.sh
 # GnuPG Passphrase and Keys
 source /etc/duplicity/dup_vars.sh
-# Duplicity START
 echo "Remote Hostname: $REMOTE_HOSTNAME"
 echo "Local Hostname:  $(hostname)"
 echo "Backing up /mnt/droplet/${SRC} to swift://$(hostname)/$REMOTE_HOSTNAME/${SRC}"
+echo -e "\e[32m@== Duplicity START ==@\e[0m"
 HOME=/root \
 duplicity --verbosity notice           \
           --encrypt-key "$ENCRYPT_KEY" \
           --sign-key "$SIGN_KEY"       \
           --num-retries 3              \
-          --exclude /mnt/droplet/mnt   \
-          --exclude /mnt/droplet/proc  \
-          --exclude /mnt/droplet/tmp   \
           --asynchronous-upload        \
           $ADD_PARAMS                  \
           "/mnt/droplet/${SRC}" "swift://$(hostname)/$REMOTE_HOSTNAME/${SRC}"
           # --full-if-older-than 10D     \
-# Duplicity END
+echo -e "\e[32m@==  Duplicity END  ==@\e[0m"
 
 echo "Unmounting /mnt/droplet..."
 umount /mnt/droplet
 
-echo "Removing user 'cloud' from each group it was not already in..."
-export LC_ALL=C
-for GROUP in $NEW_GROUPS ; do
-  ssh_cmd $REMOTE_IP $SSH_KEY "deluser cloud $GROUP"
-done
+if [ -n "$NEW_GROUPS" ]; then
+  echo "Removing user 'cloud' from each group it was not already in..."
+  export LC_ALL=C
+  for GROUP in $NEW_GROUPS ; do
+    ssh_cmd $REMOTE_IP $SSH_KEY "deluser cloud $GROUP"
+  done
+else
+  echo "No groups to remove user 'cloud' from."
+fi
 
-if [ -n $POST_SCRIPT ]; then
+if [ -n "$POST_SCRIPT" ]; then
   echo "Running post-backup shell script on remote:"
   echo "$POST_SCRIPT"
-  echo "@=============@"
+  echo "@== OUTPUT START ==@"
   ssh_cmd $REMOTE_IP $SSH_KEY_PATH "$POST_SCRIPT"
-  echo "@=============@"
-  exit 1
+  echo "@==  OUTPUT END  ==@"
 else
   echo "No post-backup shell script provided. Skipping."
 fi
+
+echo -e "\e[32m===   End of Duplicity Swift Backup   ===\e[0m"
