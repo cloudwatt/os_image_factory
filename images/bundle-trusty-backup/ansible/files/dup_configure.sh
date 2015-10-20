@@ -21,6 +21,13 @@ if [ ! -r "$SETTINGS_JSON_PATH" ]; then
 fi
 
 SETTINGS_JSON=`cat $SETTINGS_JSON_PATH`
+echo "@== JSON Start ==@"
+jq "." <<< "$SETTINGS_JSON"
+if [ "$?" != "0" ]; then
+  echo "Error reading JSON input."
+  exit 1
+fi
+echo "@==  JSON End  ==@"
 
 rm -Rf   "$CRON_SCRIPT_DIR"
 mkdir -p "$CRON_SCRIPT_DIR"
@@ -32,7 +39,7 @@ echo """\
 # Written by the CAT (Cloudwatt Automation Team)
 """ > "$CRON_FILE"
 
-TIMESLOTS=`jq ". | keys | .[]" <<< "$SETTINGS_JSON" | tr -d '"'`
+TIMESLOTS=`jq -r ". | keys | .[]" <<< "$SETTINGS_JSON"`
 
 IFS=$'\n'
 for TIMESLOT in $TIMESLOTS ; do
@@ -41,21 +48,23 @@ for TIMESLOT in $TIMESLOTS ; do
   CRON_SCRIPT=`echo "$TIMESLOT" | tr " /*" "_%s"`
   CRON_SCRIPT="${CRON_SCRIPT_DIR}/${CRON_SCRIPT}.sh"
   echo -e "\e[32m   + Writing command to crontab file:\e[0m"
-  echo "     $TIMESLOT root $CRON_SCRIPT"
+  echo "$TIMESLOT root $CRON_SCRIPT"
   echo "$TIMESLOT root $CRON_SCRIPT" >> "$CRON_FILE"
 
-  echo -e "\e[32m   + Writing cron executable\e[0m"
-  echo "     # Cron executable for timeslot \"${TIMESLOT}\""
-  echo "# Cron executable for timeslot \"${TIMESLOT}\"" > "$CRON_SCRIPT"
+  echo -e "\e[32m   + Writing cron executable:\e[0m"
+  echo "#!/bin/bash"                                     > "$CRON_SCRIPT"
+  echo "# Cron executable for timeslot \"${TIMESLOT}\"" >> "$CRON_SCRIPT"
   TIMESLOT_JSON=`jq ".[\"${TIMESLOT}\"]" <<< "$SETTINGS_JSON"`
-  JSON_COUNT=`jq ". | length" <<< "$TIMESLOT_JSON"`
+  JSON_COUNT=`   jq ". | length"         <<< "$TIMESLOT_JSON"`
   for DUP_INDEX in `seq -f "%02g" 0 "$JSON_COUNT" | head -n "$JSON_COUNT"`; do
     INPUT_JSON=$(jq -c ".[$DUP_INDEX]" <<< "$TIMESLOT_JSON" \
                 | sed -e 's/\"/\\\"/g'                      \
                 | sed -e 's/\\\\\"/\\\\\\"/g'               \
                 | sed -e 's/\$/\\\$/g')
-    echo "     sudo bash $BACKUP_SCRIPT \"$INPUT_JSON\""
-    echo "sudo bash $BACKUP_SCRIPT \"$INPUT_JSON\"" >> "$CRON_SCRIPT"
+    echo "sudo bash $BACKUP_SCRIPT \"$INPUT_JSON\""     >> "$CRON_SCRIPT"
   done
+  cat "$CRON_SCRIPT"
+  echo -e "\e[32m   + Adding execute permissions to cron executable.\e[0m"
+  chmod 755 "$CRON_SCRIPT"
 done
 unset IFS

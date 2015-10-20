@@ -10,7 +10,7 @@
 echo -e "\e[32m=== Starting a Duplicity Swift Backup ===\e[0m"
 
 function json_value {
-  # json_value $JSON_PATH $JSON_INPUT
+  # json_value $JSON_INPUT $JSON_PATH
   jq -r "$2 // empty" <<< "$1"
 }
 
@@ -77,7 +77,7 @@ if [ "$?" != "0" ]; then
 fi
 
 echo "Expanding remote path..."
-NEW_SRC=`ssh_cmd $REMOTE_IP $SSH_KEY_PATH "readlink -f $SRC"`
+NEW_SRC=`ssh_cmd $REMOTE_IP $SSH_KEY_PATH "sudo readlink -f $SRC"`
 if [ "$?" != "0" ]; then
   echo "Remote path '$SRC' failed to expand."
   echo "Path may be incorrect or directories may not exist."
@@ -112,7 +112,7 @@ for GROUP in $REMOTE_GROUPS ; do
     echo " - User 'cloud' already in group '$GROUP'."
   else
     echo " - Adding user 'cloud' to group '$GROUP'..."
-    ssh_cmd $REMOTE_IP $SSH_KEY_PATH "usermod -a -G $GROUP cloud"
+    ssh_cmd $REMOTE_IP $SSH_KEY_PATH "sudo usermod -a -G $GROUP cloud"
     NEW_GROUPS="$GROUP $NEW_GROUPS"
   fi
 done
@@ -124,43 +124,33 @@ sshfs -o "IdentityFile=$SSH_KEY_PATH" "cloud@${REMOTE_IP}:/" /mnt/droplet
 
 if [ "$?" != "0" ]; then
   echo "ERROR: Mount failed."
-  exit 1
 elif [ ! -e "/mnt/droplet/${SRC}" ]; then
-  echo """\
-ERROR: Target file or directory not found: /mnt/droplet/${SRC}
-Unmounting /mnt/droplet...
-"""
-  umount /mnt/droplet
-  echo "Removing user 'cloud' from each group it was not already in..."
-  export LC_ALL=C
-  for GROUP in $NEW_GROUPS ; do
-    ssh_cmd $REMOTE_IP $SSH_KEY "deluser cloud $GROUP"
-  done
-  echo "Exiting."
-  exit 1
+  echo "ERROR: Target file or directory not found: /mnt/droplet/${SRC}"
+else
+  echo "Mount successful."
+  echo "Fetching OpenStack Credentials..."
+  source /etc/duplicity/export_os_cred.sh
+  echo "Fetching GnuPG Keys..."
+  source /etc/duplicity/dup_vars.sh
+  echo "Fetching remote hostname..."
+  REMOTE_HOSTNAME=`ssh_cmd $REMOTE_IP $SSH_KEY_PATH "hostname"`
+  echo "Remote Hostname: $REMOTE_HOSTNAME"
+  echo "Local Hostname:  $(hostname)"
+  SWIFT_URL="swift://$(hostname)__${REMOTE_HOSTNAME}_$(echo $SRC | tr "/" "_")"
+
+  echo "Backing up /mnt/droplet/${SRC} to $SWIFT_URL"
+  echo -e "\e[32m@== Duplicity START ==@\e[0m"
+  HOME=/root \
+  duplicity --verbosity notice           \
+            --encrypt-key "$ENCRYPT_KEY" \
+            --sign-key "$SIGN_KEY"       \
+            --num-retries 3              \
+            --asynchronous-upload        \
+            $ADD_PARAMS                  \
+            "/mnt/droplet/${SRC}" "$SWIFT_URL"
+            # --full-if-older-than 10D     \
+  echo -e "\e[32m@==  Duplicity END  ==@\e[0m"
 fi
-
-REMOTE_HOSTNAME=`ssh_cmd $REMOTE_IP $SSH_KEY_PATH "hostname"`
-
-# OpenStack Credentials
-source /etc/duplicity/export_os_cred.sh
-# GnuPG Passphrase and Keys
-source /etc/duplicity/dup_vars.sh
-echo "Remote Hostname: $REMOTE_HOSTNAME"
-echo "Local Hostname:  $(hostname)"
-SWIFT_URL="swift://$(hostname)__${REMOTE_HOSTNAME}_$(echo $SRC | tr "/" "_")"
-echo "Backing up /mnt/droplet/${SRC} to $SWIFT_URL"
-echo -e "\e[32m@== Duplicity START ==@\e[0m"
-HOME=/root \
-duplicity --verbosity notice           \
-          --encrypt-key "$ENCRYPT_KEY" \
-          --sign-key "$SIGN_KEY"       \
-          --num-retries 3              \
-          --asynchronous-upload        \
-          $ADD_PARAMS                  \
-          "/mnt/droplet/${SRC}" "$SWIFT_URL"
-          # --full-if-older-than 10D     \
-echo -e "\e[32m@==  Duplicity END  ==@\e[0m"
 
 echo "Unmounting /mnt/droplet..."
 umount /mnt/droplet
@@ -169,7 +159,7 @@ if [ -n "$NEW_GROUPS" ]; then
   echo "Removing user 'cloud' from each group it was not already in..."
   export LC_ALL=C
   for GROUP in $NEW_GROUPS ; do
-    ssh_cmd $REMOTE_IP $SSH_KEY "deluser cloud $GROUP"
+    ssh_cmd $REMOTE_IP $SSH_KEY_PATH "sudo deluser cloud $GROUP"
   done
 else
   echo "No groups to remove user 'cloud' from."
