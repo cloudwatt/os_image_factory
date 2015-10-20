@@ -79,7 +79,8 @@ fi
 echo "Expanding remote path..."
 NEW_SRC=`ssh_cmd $REMOTE_IP $SSH_KEY_PATH "readlink -f $SRC"`
 if [ "$?" != "0" ]; then
-  echo "Remote path expansion failed."
+  echo "Remote path '$SRC' failed to expand."
+  echo "Path may be incorrect or directories may not exist."
   exit 1
 fi
 echo "Remote path expanded from '$SRC' to '$NEW_SRC'."
@@ -147,7 +148,8 @@ source /etc/duplicity/export_os_cred.sh
 source /etc/duplicity/dup_vars.sh
 echo "Remote Hostname: $REMOTE_HOSTNAME"
 echo "Local Hostname:  $(hostname)"
-echo "Backing up /mnt/droplet/${SRC} to swift://$(hostname)/$REMOTE_HOSTNAME/${SRC}"
+SWIFT_URL="swift://$(hostname)__${REMOTE_HOSTNAME}_$(echo $SRC | tr "/" "_")"
+echo "Backing up /mnt/droplet/${SRC} to $SWIFT_URL"
 echo -e "\e[32m@== Duplicity START ==@\e[0m"
 HOME=/root \
 duplicity --verbosity notice           \
@@ -156,7 +158,7 @@ duplicity --verbosity notice           \
           --num-retries 3              \
           --asynchronous-upload        \
           $ADD_PARAMS                  \
-          "/mnt/droplet/${SRC}" "swift://$(hostname)/$REMOTE_HOSTNAME/${SRC}"
+          "/mnt/droplet/${SRC}" "$SWIFT_URL"
           # --full-if-older-than 10D     \
 echo -e "\e[32m@==  Duplicity END  ==@\e[0m"
 
