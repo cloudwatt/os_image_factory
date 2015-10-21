@@ -6,25 +6,19 @@
 #
 - hosts: local
   user: cloud
-  sudo: true
-
-  vars:
-    # var_name: var_value
+  become: yes
 
   tasks:
-    - name: default sh is bash
-      file: src=/bin/bash dest=/bin/sh state=link
-
     - name: apt-get update & upgrade
       apt: update_cache=yes upgrade=full
+
+    - name: default sh is bash
+      file: src=/bin/bash dest=/bin/sh state=link
 
     - name: packages installed
       apt: pkg={{ item }} state=present
       with_items:
         - openswan
-        - xl2tpd
-        - ppp
-        - lsof
 
     - name: configuration files uploaded
       copy:
@@ -34,9 +28,6 @@
         group=root
         mode=0644
       with_items:
-        - { file: "etc_sysctl.conf",        path: "/etc/sysctl.conf" }
         - { file: "etc_ipsec.conf",         path: "/etc/ipsec.conf" }
-        - { file: "etc_ppp_options.xl2tpd", path: "/etc/ppp/options.xl2tpd" }
-        - { file: "etc_ppp_chap-secrets",   path: "/etc/ppp/chap-secrets" }
-        - { file: "etc_rc.local",           path: "/etc/rc.local" }
-        - { file: "etc_xl2tpd_xl2tpd.conf", path: "/etc/xl2tpd/xl2tpd.conf" }
+        - { file: "ipsec.secrets.manual",           path: "/etc/ipsec.secrets" }
+
