@@ -96,3 +96,20 @@
         owner=root
         group=root
         mode=0700
+
+    - name: set postfix mailname
+      debconf:
+        name=postfix
+        question='postfix/mailname'
+        value="postfix.log"
+        vtype='string'
+
+    - name: set postfix mailer type
+      debconf:
+        name=postfix
+        question='postfix/main_mailer_type'
+        value="Local only"
+        vtype='string'
+
+    - name: packages installed
+      apt: pkg=postfix state=present

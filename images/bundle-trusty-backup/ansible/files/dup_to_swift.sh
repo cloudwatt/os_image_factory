@@ -139,7 +139,7 @@ else
   SWIFT_URL="swift://$(hostname)__${REMOTE_HOSTNAME}_$(echo $SRC | tr "/" "_")"
 
   echo "Backing up /mnt/droplet/${SRC} to $SWIFT_URL"
-  echo -e "\e[32m@== Duplicity START ==@\e[0m"
+  echo -e "\e[92m@== Duplicity START ==@\e[0m"
   HOME=/root \
   duplicity --verbosity notice           \
             --encrypt-key "$ENCRYPT_KEY" \
@@ -149,7 +149,7 @@ else
             $ADD_PARAMS                  \
             "/mnt/droplet/${SRC}" "$SWIFT_URL"
             # --full-if-older-than 10D     \
-  echo -e "\e[32m@==  Duplicity END  ==@\e[0m"
+  echo -e "\e[92m@==  Duplicity END  ==@\e[0m"
 fi
 
 echo "Unmounting /mnt/droplet..."
