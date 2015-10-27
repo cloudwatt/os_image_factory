@@ -48,8 +48,8 @@ for TIMESLOT in $TIMESLOTS ; do
   CRON_SCRIPT=`echo "$TIMESLOT" | tr " /*" "_%s"`
   CRON_SCRIPT="${CRON_SCRIPT_DIR}/${CRON_SCRIPT}.sh"
   echo -e "\e[32m   + Writing command to crontab file:\e[0m"
-  echo "$TIMESLOT root $CRON_SCRIPT"
-  echo "$TIMESLOT root $CRON_SCRIPT" >> "$CRON_FILE"
+  echo "$TIMESLOT root '$CRON_SCRIPT'"
+  echo "$TIMESLOT root '$CRON_SCRIPT'" >> "$CRON_FILE"
 
   echo -e "\e[32m   + Writing cron executable:\e[0m"
   echo "#!/bin/bash"                                     > "$CRON_SCRIPT"
