@@ -45,7 +45,7 @@ IFS=$'\n'
 for TIMESLOT in $TIMESLOTS ; do
   echo -e "\e[32m - Preparing cron for timeslot \"${TIMESLOT}\"\e[0m"
 
-  CRON_SCRIPT=`echo "$TIMESLOT" | tr " /*" "_%s"`
+  CRON_SCRIPT=`echo "$TIMESLOT" | tr " /*" "_ls"`
   CRON_SCRIPT="${CRON_SCRIPT_DIR}/${CRON_SCRIPT}.sh"
   echo -e "\e[32m   + Writing command to crontab file:\e[0m"
   echo "$TIMESLOT root '$CRON_SCRIPT'"

@@ -97,6 +97,15 @@
         group=root
         mode=0700
 
+    - name: /root/.ssh/config is set
+      lineinfile:
+        create=yes
+        dest=/root/.ssh/config
+        line="{{ item }}"
+      with_items:
+        - "StrictHostKeyChecking no"
+        #- "UserKnownHostsFile /dev/null"
+
     - name: set postfix mailname
       debconf:
         name=postfix

@@ -127,7 +127,7 @@ fi
 echo "Copying restore.tar to remote..."
 scp -o "IdentityFile=$SSH_KEY_PATH" /tmp/restore.tar "cloud@$REMOTE_IP:/tmp/restore.tar"
 echo "Extracting restore.tar on remote..."
-ssh_cmd $REMOTE_IP $SSH_KEY_PATH "sudo tar -vxpf /tmp/restore.tar -C / --overwrite"
+ssh_cmd $REMOTE_IP $SSH_KEY_PATH "sudo tar -vxpf /tmp/restore.tar -C /"
 echo "Removing restore.tar on remote."
 ssh_cmd $REMOTE_IP $SSH_KEY_PATH "sudo rm /tmp/restore.tar"
 
