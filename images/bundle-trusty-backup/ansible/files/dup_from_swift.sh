@@ -108,7 +108,7 @@ echo -e "\e[92m@==  Duplicity END  ==@\e[0m"
 echo "Removing old /tmp/restore.tar if present..."
 rm -Rf    /tmp/restore.tar
 echo "Compressing /tmp/dup_tmp into restore.tar..."
-tar -vcpf /tmp/restore.tar -C /tmp/dup_tmp . --remove-files
+tar -vcpf /tmp/restore.tar -C /tmp/dup_tmp $(ls -1 /tmp/dup_tmp)
 echo "Removing vestigal /tmp/dup_tmp directory..."
 rm -Rf    /tmp/dup_tmp
 echo "Removing old /tmp/restore.tar on remote if present."
@@ -127,7 +127,7 @@ fi
 echo "Copying restore.tar to remote..."
 scp -o "IdentityFile=$SSH_KEY_PATH" /tmp/restore.tar "cloud@$REMOTE_IP:/tmp/restore.tar"
 echo "Extracting restore.tar on remote..."
-ssh_cmd $REMOTE_IP $SSH_KEY_PATH "sudo tar -vxpf /tmp/restore.tar -C /"
+ssh_cmd $REMOTE_IP $SSH_KEY_PATH "sudo tar --no-overwrite-dir -vxpf /tmp/restore.tar -C /"
 echo "Removing restore.tar on remote."
 ssh_cmd $REMOTE_IP $SSH_KEY_PATH "sudo rm /tmp/restore.tar"
 
