@@ -1,0 +1,44 @@
+{
+  "01 04 * * *": [
+    {
+      "remote_ip": "8.8.8.8",
+      "ssh_key": "key_for_remote.pem",
+      "remote_path": "/backup/this/dir",
+      "user_groups": "root www-data",
+      "shell_script": {
+        "before": "sudo service apache stop; echo 'For example.';",
+        "after":  "sudo service apache start;"
+      },
+      "additional_duplicity_options": "--volsize 10"
+    },
+    {
+      "remote_ip": "8.8.4.4",
+      "ssh_key": "other_key.pub",
+      "remote_path": "/backup/this/dir",
+      "user_groups": "root",
+      "shell_script": {
+        "before": "echo \"Remote path: $PATH\"",
+        "after": null
+      },
+      "additional_duplicity_options": null
+    }
+  ],
+  "30 02 * * 0,3": [
+    {
+      "remote_ip": "4.1.1.1",
+      "ssh_key": "some_key.rsa",
+      "remote_path": "/some/dir",
+      "user_groups": null,
+      "additional_duplicity_options": "--exclude /some/dir/bad"
+    },
+    {
+      "remote_ip": "4.2.2.2",
+      "ssh_key": "another.pub",
+      "remote_path": "/"
+    },
+    {
+      "remote_ip": "4.2.4.2",
+      "ssh_key": "latest_key.pem"
+    }
+  ]
+}
