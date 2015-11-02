@@ -4,8 +4,7 @@
 ### Written by the CAT (Cloudwatt Automation Team)
 ##
 #
-- hosts: local
-  user: cloud
+- hosts: all
   become: yes
 
   tasks:
@@ -19,6 +18,10 @@
       apt: pkg={{ item }} state=present
       with_items:
         - openswan
+        - tmux
+        - tcpdump
+        - lsof
+        - vim
 
     - name: configuration files uploaded
       copy:
@@ -28,6 +31,34 @@
         group=root
         mode=0644
       with_items:
-        - { file: "etc_ipsec.conf",         path: "/etc/ipsec.conf" }
         - { file: "ipsec.secrets.manual",           path: "/etc/ipsec.secrets" }
 
+    - name: configuration files uploaded
+      template:
+        src=templates/{{ item.file }}
+        dest={{ item.path }}
+        owner=root
+        group=root
+        mode=0644
+      with_items:
+        - { file: "RC3-etc_ipsec.conf.j2", path: "/etc/ipsec.conf"         }
+        - { file: "network_interface.j2",  path: "/etc/network/interfaces" }
+
+    - sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
+
+    - sysctl: name="net.ipv4.conf.{{ item }}" value=0 sysctl_set=yes state=present reload=yes
+      with_items:
+        - all.accept_redirects
+        - lo.accept_redirects
+        - eth0.accept_redirects
+        - default.accept_redirects
+        - all.send_redirects
+        - lo.send_redirects
+        - eth0.send_redirects
+        - default.send_redirects
+
+    - name: reboot ipsec
+      service:
+        name=ipsec
+        state=restarted
+        enabled=true
