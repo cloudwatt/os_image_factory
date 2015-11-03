@@ -34,7 +34,7 @@ plus de confort, nous avons ajouté un serveur Jenkins dans la boîte à outils.
 heat stack-create $FACTORY_NAME -f setup/os_image_factory.heat.yml -Pkeypair_name=$YOUR_KEYPAIR_NAME
 ```
 
-Le provisionning de ce serveur se fait en partant d'une image de base Ubuntu Trusty et en applicant le playbook
+Le provisionning de ce serveur se fait en partant d'une image de base Debian Jessie et en applicant le playbook
 Ansible ```setup/os_image_factory.playbook.yml```, cela prend donc quelques minutes. Pour minimiser les risques, nous
 avons pris le parti de n'autoriser que des connexions via SSH. Pour accéder au Jenkins de l'usine, il faut donc établir
 un tunnel SSH avec forward de port, entre votre machine et le serveur de la stack :
