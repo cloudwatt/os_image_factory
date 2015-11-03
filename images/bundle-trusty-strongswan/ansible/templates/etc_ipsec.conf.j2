@@ -16,7 +16,8 @@ conn net-net
 	leftsubnet={{ his_private_subnet }}
 	leftid=@{{ his_id }}
 	leftfirewall=yes
-	right={{ my_private_ip }}
+	right={{ ansible_default_ipv4.address }}
 	rightsubnet={{ my_private_subnet }}
 	rightid=@{{ my_id }}
-	auto=add
+	rightfirewall=yes
+	auto=start

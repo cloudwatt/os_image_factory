@@ -38,8 +38,14 @@
         - { file: "etc_ipsec.secrets.j2", path: "/etc/ipsec.secrets" }
         - { file: "strongswan.conf.j2", path: "/etc/strongswan.conf" }
 
+    - sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
+
     - name: reboot ipsec
       service:
         name=ipsec
         state=restarted
         enabled=true
+      register: result
+      until: result|success
+      retries: 2
+      delay: 5
