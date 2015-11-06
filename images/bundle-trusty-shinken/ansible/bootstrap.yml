@@ -11,9 +11,12 @@
     - NSCA_PASSWORD: topsecret
 
   tasks:
-  #  - name: packages debian installed
-    - apt_repository: repo='deb http://http.debian.net/debian wheezy-backports main contrib' state=present update_cache=yes
-    - apt: name=python-pip
+    - name: packages debian installed
+      apt_repository: repo='deb http://http.debian.net/debian wheezy-backports main contrib' state=present update_cache=yes
+    
+    - name: installation pip
+      apt: name=python-pip
+    
     - apt: name=python-pycurl
     - apt: name=python-cherrypy3
 
@@ -67,5 +70,5 @@
     - lineinfile: name=/etc/send_nsca.cfg regexp="^#?encryption_method=" line="encryption_method=1"
 
   handlers:
-  #  - name: Restart shinken
+    - name: Restart shinken
       service: name=shinken state=restarted
