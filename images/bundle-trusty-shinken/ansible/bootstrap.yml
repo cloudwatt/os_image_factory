@@ -12,15 +12,18 @@
 
   tasks:
     - name: packages debian installed
-    - apt_repository: repo='deb http://http.debian.net/debian wheezy-backports main contrib' state=present update_cache=yes
-    - apt: name=python-pip
+      apt_repository: repo='deb http://http.debian.net/debian wheezy-backports main contrib' state=present update_cache=yes
+    
+    - name: installation pip
+      apt: name=python-pip
+    
     - apt: name=python-pycurl
     - apt: name=python-cherrypy3
 
     - user: name=shinken home=/var/lib/shinken createhome=yes system=yes
 
   # GIT-Version (HEAD)
-    - name: installed git
+  #  - name: installed git
     - apt: name=git
     - git: repo=https://github.com/naparuba/shinken.git dest=/usr/src/shinken
     - shell: cd /usr/src/shinken; python setup.py install
@@ -29,7 +32,7 @@
   # Release-Version
   #  - command: /usr/bin/pip install shinken
   #             creates=/usr/bin/shinken
-    - name:  webui installed
+  #  - name:  webui installed
     - command: /usr/bin/shinken --init
                creates=/root/.shinken.ini
     - command: /usr/bin/shinken install {{ item }}
