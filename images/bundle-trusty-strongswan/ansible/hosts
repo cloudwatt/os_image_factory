@@ -2,9 +2,7 @@
 84.39.33.172 ansible_ssh_user=cloud ansible_ssh_private_key_file=/Users/amaury/.ssh/amaury-ext-compute.pem
 
 [moon:vars]
-my_id=84.39.33.172
 my_floating_ip=84.39.33.172
-his_id=84.39.36.4
 his_floating_ip=84.39.36.4
 my_private_ip=10.2.2.254
 my_private_subnet=10.2.2.0/24
@@ -16,10 +14,7 @@ his_private_subnet=10.1.1.0/24
 84.39.36.4 ansible_ssh_user=cloud ansible_ssh_private_key_file=/Users/amaury/.ssh/amaury-ext-compute.pem
 
 [sun:vars]
-#my_id=ip-84-39-33-189.rev.cloudwatt.com
-my_id=84.39.36.4
 my_floating_ip=84.39.36.4
-his_id=84.39.33.172
 his_floating_ip=84.39.33.172
 my_private_ip=10.1.1.254
 my_private_subnet=10.1.1.0/24
