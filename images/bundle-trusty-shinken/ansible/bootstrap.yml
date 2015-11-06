@@ -8,42 +8,41 @@
   become: yes
 
   vars:
-    - NSCA_PASSWORD: topsecret
+    NSCA_PASSWORD: topsecret
 
   tasks:
-    - name: packages debian installed
+    - name: wheezy backports repository active
       apt_repository: repo='deb http://http.debian.net/debian wheezy-backports main contrib' state=present update_cache=yes
-    
-    - name: installation pip
-      apt: name=python-pip
-    
-    - apt: name=python-pycurl
-    - apt: name=python-cherrypy3
 
-    - user: name=shinken home=/var/lib/shinken createhome=yes system=yes
-
-  # GIT-Version (HEAD)
-  #  - name: installed git
-    - apt: name=git
-    - git: repo=https://github.com/naparuba/shinken.git dest=/usr/src/shinken
-    - shell: cd /usr/src/shinken; python setup.py install
-             creates=/usr/bin/shinken
-
-  # Release-Version
-  #  - command: /usr/bin/pip install shinken
-  #             creates=/usr/bin/shinken
-  #  - name:  webui installed
-    - command: /usr/bin/shinken --init
-               creates=/root/.shinken.ini
-    - command: /usr/bin/shinken install {{ item }}
-               creates=/var/lib/shinken/modules/{{ item }}
+    - name: install pip packages
+      pip: name={{ item }}
       with_items:
-      - webui
-      - auth-htpasswd
-      - auth-cfg-password
-      - nsca
-    - apt: name=python-passlib
-    - htpasswd: path=/etc/shinken/htpasswd.users name=admin password=test
+        - pycurl
+        - cherrypy
+        - passlib
+
+    - name: creating shinken system user
+      user: name=shinken home=/var/lib/shinken createhome=yes system=yes
+
+    - name: getting shinken sources
+      git: repo=https://github.com/naparuba/shinken.git dest=/usr/src/shinken
+
+    - name: installing shinken from sources
+      shell: cd /usr/src/shinken; python setup.py install
+        creates=/usr/bin/shinken
+
+    - name: initializing shinken
+      command: /usr/bin/shinken --init
+        creates=/root/.shinken.ini
+
+    - name: installing shinken webui
+      command: /usr/bin/shinken install {{ item }}
+        creates=/var/lib/shinken/modules/{{ item }}
+      with_items:
+        - webui
+        - auth-htpasswd
+        - auth-cfg-password
+        - nsca
 
   #  - apt: name=monitoring-plugins force=yes
   #  - apt: name=sendxmpp
@@ -51,24 +50,34 @@
   #  - copy: src=sendxmpprc dest=/root/.sendxmpprc owner=root group=root mode=0600
   #  - copy: src=notify_xmpp.sh dest=/usr/lib/nagios/plugins/notify_xmpp owner=root group=root mode=0755
 
+    - name: webui settings
+      lineinfile: name=/etc/shinken/brokers/broker-master.cfg regexp="^\s*modules" line="    modules webui"
+      notify: restart shinken
 
-  # webui settings
-    - lineinfile: name=/etc/shinken/brokers/broker-master.cfg regexp="^\s*modules" line="    modules webui"
-      notify: Restart shinken
-    - lineinfile: name=/etc/shinken/modules/webui.cfg regexp="^\s*modules" line="    modules auth-cfg-password"
-      notify: Restart shinken
+    - name: webui settings
+      lineinfile: name=/etc/shinken/modules/webui.cfg regexp="^\s*modules" line="    modules auth-cfg-password"
+      notify: restart shinken
 
-  # receiver settings
-    - lineinfile: name=/etc/shinken/receivers/receiver-master.cfg regexp="^\s*modules" line="    modules nsca"
-      notify: Restart shinken
-    - lineinfile: name=/etc/shinken/modules/nsca.cfg regexp="^\s*password" line="        password                 {{ NSCA_PASSWORD|default('changeme') }}"
-      notify: Restart shinken
+    - name: receiver settings
+      lineinfile: name=/etc/shinken/receivers/receiver-master.cfg regexp="^\s*modules" line="    modules nsca"
+      notify: restart shinken
 
-  # nsca-sender
-    - apt: name=nsca-client
-    - lineinfile: name=/etc/send_nsca.cfg regexp="^#?password=" line="password={{ NSCA_PASSWORD|default('changeme') }}"
-    - lineinfile: name=/etc/send_nsca.cfg regexp="^#?encryption_method=" line="encryption_method=1"
+    - name: receiver settings
+      lineinfile: name=/etc/shinken/modules/nsca.cfg regexp="^\s*password" line="        password                 {{ NSCA_PASSWORD|default('changeme') }}"
+      notify: restart shinken
+
+    - name: installing nsca-sender
+      apt: name=nsca-client
+
+    - name: nsca-sender configuration
+      lineinfile: name=/etc/send_nsca.cfg regexp="^#?password=" line="password={{ NSCA_PASSWORD|default('changeme') }}"
+
+    - name: nsca-sender configuration
+      lineinfile: name=/etc/send_nsca.cfg regexp="^#?encryption_method=" line="encryption_method=1"
 
   handlers:
-    - name: Restart shinken
-      service: name=shinken state=restarted
+    - name: restart shinken
+      service:
+        name=shinken
+        state=restarted
+        enabled=true
