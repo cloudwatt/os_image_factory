@@ -35,7 +35,7 @@
       command: /usr/bin/shinken --init
         creates=/root/.shinken.ini
 
-    - name: installing shinken webui
+    - name: installing shinken webui & sqlitedb
       command: /usr/bin/shinken install {{ item }}
         creates=/var/lib/shinken/modules/{{ item }}
       with_items:
@@ -43,12 +43,14 @@
         - auth-htpasswd
         - auth-cfg-password
         - nsca
+        -sqlitedb
 
-  #  - apt: name=monitoring-plugins force=yes
-  #  - apt: name=sendxmpp
-  #  - copy: src=sendxmpprc dest=/var/lib/shinken/.sendxmpprc owner=shinken group=shinken mode=0600
-  #  - copy: src=sendxmpprc dest=/root/.sendxmpprc owner=root group=root mode=0600
-  #  - copy: src=notify_xmpp.sh dest=/usr/lib/nagios/plugins/notify_xmpp owner=root group=root mode=0755
+  - name: packages installed
+    apt:
+      pkg={{ item }}
+      state=present
+    with_items:
+      - sendxmpp
 
     - name: webui settings
       lineinfile: name=/etc/shinken/brokers/broker-master.cfg regexp="^\s*modules" line="    modules webui"
