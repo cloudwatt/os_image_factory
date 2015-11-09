@@ -44,11 +44,11 @@
         - auth-cfg-password
         - nsca
 
-     -name: installing SQLitedb
-      command: /usr/bin/shinken install {{ item }}
-        creates=/var/lib/shinken/modules/{{ item }}
-      with_items:
-      - sqlitedb
+     - name: installing SQLitedb
+       command: /usr/bin/shinken install {{ item }}
+         creates=/var/lib/shinken/modules/{{ item }}
+       with_items:
+         - sqlitedb
   #      -SQLitedb
 
   #- name: packages installed
