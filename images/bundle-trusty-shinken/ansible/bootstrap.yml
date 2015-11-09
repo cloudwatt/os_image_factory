@@ -35,7 +35,7 @@
       command: /usr/bin/shinken --init
         creates=/root/.shinken.ini
 
-    - name: installing shinken webui & sqlitedb
+    - name: installing shinken webui
       command: /usr/bin/shinken install {{ item }}
         creates=/var/lib/shinken/modules/{{ item }}
       with_items:
@@ -43,6 +43,13 @@
         - auth-htpasswd
         - auth-cfg-password
         - nsca
+
+     - name: initializing shinken
+       command: /usr/bin/shinken --init
+         creates=/root/.shinken.ini
+
+     -name: instalizing SQLitedb
+       apt: pkg=sqlitedb state=shinken installed 
   #      -SQLitedb
 
   #- name: packages installed
