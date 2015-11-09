@@ -49,14 +49,12 @@
         creates=/var/lib/shinken/modules/{{ item }}
       with_items:
         - sqlitedb
-  #      -SQLitedb
+  
 
-  #- name: packages installed
-  #  apt:
-  #    pkg={{ item }}
-  #    state=present
-  #  with_items:
-  #    - sendxmpp
+    - name: packages installed
+      apt: pkg="{{ item }}" state=present
+      with_items:
+        - sendxmpp
 
     - name: webui settings
       lineinfile: name=/etc/shinken/brokers/broker-master.cfg regexp="^\s*modules" line="    modules webui"
@@ -68,7 +66,8 @@
 
     - name: receiver settings
       lineinfile: name=/etc/shinken/receivers/receiver-master.cfg regexp="^\s*modules" line="    modules nsca"
-      notify: restart shinken
+      notify:
+        - restart shinken
 
     - name: receiver settings
       lineinfile: name=/etc/shinken/modules/nsca.cfg regexp="^\s*password" line="        password                 {{ NSCA_PASSWORD|default('changeme') }}"
