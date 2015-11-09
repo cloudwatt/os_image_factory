@@ -44,12 +44,8 @@
         - auth-cfg-password
         - nsca
 
-     - name: initializing shinken
-       command: /usr/bin/shinken --init
-         creates=/root/.shinken.ini
-
      -name: instalizing SQLitedb
-       apt: pkg=sqlitedb state=shinken installed 
+       apt: pkg=sqlitedb state=shinken installed
   #      -SQLitedb
 
   #- name: packages installed
