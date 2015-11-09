@@ -43,7 +43,7 @@
         - auth-htpasswd
         - auth-cfg-password
         - nsca
-        -sqlitedb
+        -SQlitedb
 
   #- name: packages installed
   #  apt:
