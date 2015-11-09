@@ -44,8 +44,11 @@
         - auth-cfg-password
         - nsca
 
-     -name: instalizing SQLitedb
-       apt: pkg=sqlitedb state=shinken installed
+     -name: installing SQLitedb
+      command: /usr/bin/shinken install {{ item }}
+        creates=/var/lib/shinken/modules/{{ item }}
+      with_items:
+      - sqlitedb
   #      -SQLitedb
 
   #- name: packages installed
