@@ -45,12 +45,12 @@
         - nsca
         -sqlitedb
 
-  - name: packages installed
-    apt:
-      pkg={{ item }}
-      state=present
-    with_items:
-      - sendxmpp
+  #- name: packages installed
+  #  apt:
+  #    pkg={{ item }}
+  #    state=present
+  #  with_items:
+  #    - sendxmpp
 
     - name: webui settings
       lineinfile: name=/etc/shinken/brokers/broker-master.cfg regexp="^\s*modules" line="    modules webui"
