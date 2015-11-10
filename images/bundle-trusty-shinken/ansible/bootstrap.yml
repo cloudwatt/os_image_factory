@@ -83,7 +83,7 @@
       lineinfile: name=/etc/send_nsca.cfg regexp="^#?encryption_method=" line="encryption_method=1"
 
     - name: download plugin monitoring-plugins-2
-      unarchive: src=https://www.monitoring-plugins.org/download/monitoring-plugins-2.1.1.tar.gz  dest=/usr/src/monitoring-plugins-2.1.1  copy=no   force_basic_auth=yes
+      unarchive: src=https://www.monitoring-plugins.org/download/monitoring-plugins-2.1.1.tar.gz    copy=no   force_basic_auth=yes
 
     - name: manual install of monitoring plugins
       shell: cd /usr/src/monitoring-plugins-2.1.1 && ./configure --with-nagios-user=shinken --with-nagios-group=shinken --enable-libtap --enable-extra-opts --enable-perl-modules --libexecdir=/usr/lib/nagios/plugins && make install
