@@ -61,7 +61,7 @@
       notify: restart shinken
 
     - name: webui settings
-      lineinfile: name=/etc/shinken/modules/webui.cfg regexp="^\s*modules" line="    modules auth-cfg-password"
+      lineinfile: name=/etc/shinken/modules/webui.cfg regexp="^\s*modules" line="    modules auth-cfg-password,SQLitedb"
       notify: restart shinken
 
     - name: receiver settings
