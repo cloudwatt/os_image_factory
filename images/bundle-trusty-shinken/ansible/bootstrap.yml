@@ -49,7 +49,7 @@
         creates=/var/lib/shinken/modules/{{ item }}
       with_items:
         - sqlitedb
-  
+
 
     - name: packages installed
       apt: pkg="{{ item }}" state=present
@@ -61,7 +61,7 @@
       notify: restart shinken
 
     - name: webui settings
-      lineinfile: name=/etc/shinken/modules/webui.cfg regexp="^\s*modules" line="    modules auth-cfg-password"
+      lineinfile: name=/etc/shinken/modules/webui.cfg regexp="^\s*modules" line="    modules auth-cfg-password,SQLitedb"
       notify: restart shinken
 
     - name: receiver settings
@@ -81,6 +81,12 @@
 
     - name: nsca-sender configuration
       lineinfile: name=/etc/send_nsca.cfg regexp="^#?encryption_method=" line="encryption_method=1"
+
+    - name: download plugin monitoring-plugins-2
+      unarchive: src=https://www.monitoring-plugins.org/download/monitoring-plugins-2.1.1.tar.gz  dest=/usr/src/monitoring-plugins-2.1.1  copy=no   force_basic_auth=yes
+
+    - name: manual install of monitoring plugins
+      shell: cd /usr/src/monitoring-plugins-2.1.1 && ./configure --with-nagios-user=shinken --with-nagios-group=shinken --enable-libtap --enable-extra-opts --enable-perl-modules --libexecdir=/usr/lib/nagios/plugins && make install
 
   handlers:
     - name: restart shinken
