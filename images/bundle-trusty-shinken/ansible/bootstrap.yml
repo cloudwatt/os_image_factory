@@ -56,6 +56,11 @@
       with_items:
         - sendxmpp
 
+    - name: Installing Net::SNMP
+      pkg="{{ item }}" state=present
+      with_items:
+        - libnet-snmp-perl
+
     - name: webui settings
       lineinfile: name=/etc/shinken/brokers/broker-master.cfg regexp="^\s*modules" line="    modules webui"
       notify: restart shinken
