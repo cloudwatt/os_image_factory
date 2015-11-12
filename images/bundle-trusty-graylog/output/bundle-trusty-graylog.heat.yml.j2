@@ -6,15 +6,15 @@ description: All-in-one Graylog stack
 
 parameters:
   keypair_name:
-    description: Keypair to inject in instance
     label: SSH Keypair
+    description: Keypair to inject in instance
     type: string
 
   flavor_name:
-    default: s1.cw.small-1
+    label: Instance Type (Flavor)
     description: Flavor to use for the deployed instance
     type: string
-    label: Instance Type (Flavor)
+    default: s1.cw.small-1
     constraints:
       - allowed_values:
         - t1.cw.tiny
@@ -32,6 +32,15 @@ parameters:
         - n1.cw.highmem-4
         - n1.cw.highmem-8
         - n1.cw.highmem-12
+
+  password:
+    label: Password
+    description: Graylog root user password
+    type: string
+    hidden: true
+    constraints:
+      - length: { min: 6, max: 96 }
+        description: Password must be between 6 and 96 characters
 
 resources:
   network:
@@ -69,6 +78,35 @@ resources:
       floating_ip: { get_resource: floating_ip }
       server_id: { get_resource: server }
 
+  application_secret:
+    type: OS::Heat::RandomString
+    properties:
+      length: 96
+      salt: String
+
+  application_secret_injection:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config:
+        str_replace:
+          template: |
+            #!/bin/bash
+            sudo sed -i 's/application.secret=""/application.secret="APPLICATION_SECRET"/g' /etc/graylog/web/web.conf
+            sudo sed -i "s/password_secret =/password_secret = APPLICATION_SECRET/g" /etc/graylog/server/server.conf
+            PASS_SHA2="$(echo -n PASSWORD | shasum -a 256)"
+            sudo sed -i "s/root_password_sha2 =/root_password_sha2 = $PASS_SHA2/g" /etc/graylog/server/server.conf
+            sudo service graylog-web restart
+            sudo service graylog-server restart
+          params:
+            PASSWORD: { get_param: password }
+            APPLICATION_SECRET: { get_resource: application_secret }
+
+  server_init:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+      - config: { get_resource: application_secret_injection }
+
   server:
     type: OS::Nova::Server
     properties:
@@ -79,6 +117,9 @@ resources:
         - network: { get_resource: network }
       security_groups:
         - { get_resource: security_group }
+      user_data_format: RAW
+      user_data:
+        get_resource: server_init
 
 outputs:
   floating_ip_url:
@@ -88,3 +129,11 @@ outputs:
         template: http://$floating_ip/
         params:
           $floating_ip: { get_attr: [floating_ip, floating_ip_address] }
+
+  floating_ip_url:
+    description: Graylog application.secret
+    value:
+      str_replace:
+        template: APPLICATION_SECRET
+        params:
+          APPLICATION_SECRET: { get_resource: application_secret }
