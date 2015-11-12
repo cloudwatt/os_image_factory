@@ -1,0 +1,70 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+- hosts: local
+  user: cloud
+  sudo: true
+
+  tasks:
+    - name: apt-get update & upgrade
+      apt:
+        upgrade=full
+        update_cache=yes
+
+    - name: default sh is bash
+      file:
+        src=/bin/bash
+        dest=/bin/sh
+        state=link
+
+    - name: graylog deb downloaded
+      get_url:
+        url="https://packages.graylog2.org/repo/packages/graylog-1.2-repository-ubuntu14.04_latest.deb"
+        dest=/tmp/graylog_latest.deb
+        force=yes
+      register: deb_download
+      until: deb_download|success
+      retries: 6
+      delay: 5
+
+    - name: graylog deb installed
+      apt: deb=/tmp/graylog_latest.deb
+
+    - name: mongodb repository key trusted
+      shell: sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+
+    - name: mongodb repository added
+      apt_repository: repo='deb http://repo.mongodb.org/apt/ubuntu {{ ansible_lsb.codename }}/mongodb-org/3.0 multiverse' state=present
+
+    - name: elasticsearch repository key is trusted
+      apt_key:
+        url=https://packages.elastic.co/GPG-KEY-elasticsearch
+        state=present
+
+    - name: elasticsearch repository installed
+      apt_repository:
+        repo='deb http://packages.elastic.co/elasticsearch/1.7/debian stable main'
+        state=present
+
+    - name: apt updated
+      apt: update_cache=yes
+
+    - name: apt packages installed
+      apt: pkg="{{ item }}" state=present
+      with_items:
+        - apt-transport-https
+        - graylog-server
+        - graylog-web
+        - mongodb-org
+        - elasticsearch
+        - openjdk-7-jre
+
+    - name: graylog started and enabled
+      service: name="{{ item }}" state=started enabled=yes
+      with_items:
+        - mongod
+        - graylog-server
+        - graylog-web
