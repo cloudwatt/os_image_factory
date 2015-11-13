@@ -63,7 +63,6 @@ resources:
         - { direction: ingress, protocol: TCP, port_range_min: 80, port_range_max: 80 }
         - { direction: ingress, protocol: TCP, port_range_min: 443, port_range_max: 443 }
         - { direction: ingress, protocol: TCP, port_range_min: 9000, port_range_max: 9000 }
-        - { direction: ingress, protocol: TCP, port_range_min: 12900, port_range_max: 12900 }
         - { direction: ingress, protocol: ICMP }
         - { direction: egress, protocol: ICMP }
         - { direction: egress, protocol: TCP }
@@ -95,7 +94,6 @@ resources:
             #!/bin/bash
             PASSWORD_SHA2="$(echo -n PASSWORD | shasum -a 256 | cut -d" " -f1)"
             sudo sed -i "s/root_password_sha2 =/root_password_sha2 = $PASSWORD_SHA2/g"               /etc/graylog/server/server.conf
-            sudo sed -i 's/graylog2-server.uris=""/graylog2-server.uris="http://127.0.0.1:12900/"/g' /etc/graylog/web/web.conf
             sudo sed -i "s/password_secret =/password_secret = APPLICATION_SECRET/g"                 /etc/graylog/server/server.conf
             sudo sed -i 's/application.secret=""/application.secret="APPLICATION_SECRET"/g'          /etc/graylog/web/web.conf
             sudo service graylog-web restart

@@ -62,9 +62,14 @@
         - elasticsearch
         - openjdk-7-jre
 
+    - name: elasticsearch cluster name is graylog2
+      lineinfile:
+        line='graylog2-server.uris="http://127.0.0.1:12900/"'
+        regexp=^graylog2-server.uris=
+        dest=/etc/graylog/web/web.conf
 
     - name: elasticsearch cluster name is graylog2
-      lineinfile: line="cluster.name':' graylog2" dest="/etc/elasticsearch/elasticsearch.yml" insertafter="EOF"
+      lineinfile: 'line="cluster.name: graylog2" dest="/etc/elasticsearch/elasticsearch.yml" insertafter="EOF"'
 
     - name: graylog started and enabled
       service: name="{{ item }}" state=started enabled=yes
