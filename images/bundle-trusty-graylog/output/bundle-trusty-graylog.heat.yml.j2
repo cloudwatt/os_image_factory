@@ -127,7 +127,7 @@ outputs:
     description: Graylog URL
     value:
       str_replace:
-        template: http://$floating_ip/
+        template: http://$floating_ip:9000/
         params:
           $floating_ip: { get_attr: [floating_ip, floating_ip_address] }
 
