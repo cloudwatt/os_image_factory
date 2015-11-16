@@ -91,9 +91,9 @@ resources:
           template: |
             #!/bin/bash
             PASSWORD_SHA2="$(echo -n PASSWORD | shasum -a 256 | cut -d" " -f1)"
-            sudo sed -i "s/root_password_sha2 =/root_password_sha2 = $PASSWORD_SHA2/g"               /etc/graylog/server/server.conf
-            sudo sed -i "s/password_secret =/password_secret = APPLICATION_SECRET/g"                 /etc/graylog/server/server.conf
-            sudo sed -i 's/application.secret=""/application.secret="APPLICATION_SECRET"/g'          /etc/graylog/web/web.conf
+            sudo sed -i "s/root_password_sha2 =/root_password_sha2 = $PASSWORD_SHA2/g"      /etc/graylog/server/server.conf
+            sudo sed -i "s/password_secret =/password_secret = APPLICATION_SECRET/g"        /etc/graylog/server/server.conf
+            sudo sed -i 's/application.secret=""/application.secret="APPLICATION_SECRET"/g' /etc/graylog/web/web.conf
             sudo service graylog-web restart
             sudo service graylog-server restart
           params:
@@ -129,7 +129,7 @@ outputs:
         params:
           $floating_ip: { get_attr: [floating_ip, floating_ip_address] }
 
-  floating_ip_url:
+  graylog_secret:
     description: Graylog application.secret
     value:
       str_replace:
