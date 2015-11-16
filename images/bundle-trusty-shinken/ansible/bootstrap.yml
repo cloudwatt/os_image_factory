@@ -56,11 +56,17 @@
         - nagios-plugins
 
     - name: webui settings
-      lineinfile: name=/etc/shinken/brokers/broker-master.cfg regexp="^\s*modules" line="    modules webui"
+      lineinfile:
+        name=/etc/shinken/brokers/broker-master.cfg
+        regexp="^\s*modules"
+        line="    modules webui"
       notify: restart shinken
 
     - name: webui settings
-      lineinfile: name=/etc/shinken/modules/webui.cfg regexp="^\s*modules" line="    modules auth-cfg-password,SQLitedb"
+      lineinfile:
+        name=/etc/shinken/modules/webui.cfg
+        regexp="^\s*modules"
+        line="    modules auth-cfg-password,SQLitedb"
       notify: restart shinken
 
     - name: localhost node settings
@@ -80,7 +86,12 @@
         creates='/usr/src/monitoring-plugins-2.1.1'
 
     - name: monitoring-plugins-2 - install
-      shell: cd /usr/src/monitoring-plugins-2.1.1 && ./configure --with-nagios-user=shinken --with-nagios-group=shinken --enable-libtap --enable-extra-opts --enable-perl-modules --libexecdir=/usr/lib/nagios/plugins && make install
+      shell: >
+        cd /usr/src/monitoring-plugins-2.1.1 &&
+        ./configure --with-nagios-user=shinken --with-nagios-group=shinken
+        --enable-libtap --enable-extra-opts --enable-perl-modules
+        --libexecdir=/usr/lib/nagios/plugins &&
+        make install
         creates='/usr/bin/shinken'
 
     - name: shinken init
@@ -102,11 +113,14 @@
 
     - name: fix ownership of shinken checks
       file:
-        path='/var/lib/shinken/libexec/'
+        path="{{ item }}"
         owner=root
         group=shinken
         mode=4755
         recurse=yes
+      with_items:
+        - '/var/lib/shinken/libexec/'
+        - '/usr/lib/nagios/plugins/'
 
     - name: creating rhost log dir
       file:
@@ -150,6 +164,7 @@
         name=/etc/ntp.conf
         regexp="^server (.*)$"
         line="server \1 iburst"
+
         backrefs=yes
       notify: restart ntp
 
