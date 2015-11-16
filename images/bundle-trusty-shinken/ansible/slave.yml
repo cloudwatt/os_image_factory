@@ -1,0 +1,54 @@
+---
+- hosts: shinken_slaves
+  become: yes
+
+  tasks:
+    - name: mandatory packages
+      apt: pkg="{{ item }}" state=present
+      with_items:
+        - ntp
+        - snmpd
+
+    - name: mandatory packages
+      apt: pkg="ntpdate" state=absent purge=yes
+
+    - name: snmpd config
+      lineinfile:
+        name=/etc/snmp/snmpd.conf
+        regexp="agentAddress *udp:127.0.0.1:161"
+        line="#agentAddress  udp:127.0.0.1:161"
+      notify: restart snmpd
+
+    - name: snmpd config
+      lineinfile:
+        name=/etc/snmp/snmpd.conf
+        regexp="agentAddress udp:161,udp6:\[::1\]:161"
+        line="agentAddress udp:161,udp6:[::1]:161"
+      notify: restart snmpd
+
+    - name: snmpd config
+      lineinfile:
+        name=/etc/snmp/snmpd.conf
+        regexp=".*rocommunity public *default.*"
+        line=" rocommunity public default"
+      notify: restart snmpd
+
+    - name: snmpd config
+      lineinfile:
+        name=/etc/snmp/snmpd.conf
+        regexp="^ trapsink     localhost public"
+        line=" trapsink     {{ shinken_server_address }} public"
+      notify: restart snmpd
+
+    - name: snmp enabled
+      service: name="{{ item }}" state=started enabled=yes
+      with_items:
+        - ntp
+        - snmpd
+
+  handlers:
+    - name: restart snmpd
+      service:
+        name=snmpd
+        state=restarted
+        enabled=true

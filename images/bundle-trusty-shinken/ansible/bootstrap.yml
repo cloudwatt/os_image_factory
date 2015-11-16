@@ -7,12 +7,8 @@
 - hosts: all
   become: yes
 
-  vars:
-    NSCA_PASSWORD: topsecret
-
   tasks:
-    - name: wheezy backports repository active
-      apt_repository: repo='deb http://http.debian.net/debian wheezy-backports main contrib' state=present update_cache=yes
+    - apt: update_cache=true upgrade=full
 
     - name: install pip packages
       pip: name={{ item }}
@@ -35,31 +31,22 @@
       command: /usr/bin/shinken --init
         creates=/root/.shinken.ini
 
-    - name: installing shinken webui
-      command: /usr/bin/shinken install {{ item }}
-        creates=/var/lib/shinken/modules/{{ item }}
+    - name: installing shinken add-ons
+      command: /usr/bin/shinken install {{ item.name }}
+        creates="{{ item.prefix }}/{{ item.name }}"
       with_items:
-        - webui
-        - auth-htpasswd
-        - auth-cfg-password
-        - nsca
+        - { name: webui, prefix: '/var/lib/shinken/modules' }
+        - { name: auth-htpasswd, prefix: '/var/lib/shinken/modules' }
+        - { name: auth-cfg-password, prefix: '/var/lib/shinken/modules' }
+        - { name: sqlitedb, prefix: '/var/lib/shinken/modules' }
+        - { name: linux-snmp, prefix: '/var/lib/shinken/inventory' }
 
-    - name: installing SQLitedb
-      command: /usr/bin/shinken install {{ item }}
-        creates=/var/lib/shinken/modules/{{ item }}
-      with_items:
-        - sqlitedb
-
-
-    - name: packages installed
+    - name: installing Perl Net::SNMP
       apt: pkg="{{ item }}" state=present
       with_items:
-        - sendxmpp
-
-    - name: Installing Net::SNMP
-      pkg="{{ item }}" state=present
-      with_items:
         - libnet-snmp-perl
+        - snmpd
+        - nagios-plugins
 
     - name: webui settings
       lineinfile: name=/etc/shinken/brokers/broker-master.cfg regexp="^\s*modules" line="    modules webui"
@@ -69,33 +56,80 @@
       lineinfile: name=/etc/shinken/modules/webui.cfg regexp="^\s*modules" line="    modules auth-cfg-password,SQLitedb"
       notify: restart shinken
 
-    - name: receiver settings
-      lineinfile: name=/etc/shinken/receivers/receiver-master.cfg regexp="^\s*modules" line="    modules nsca"
-      notify:
-        - restart shinken
+    - name: monitoring-plugins-2 - download
+      get_url:
+        url='https://www.monitoring-plugins.org/download/monitoring-plugins-2.1.1.tar.gz'
+        dest='/tmp/'
 
-    - name: receiver settings
-      lineinfile: name=/etc/shinken/modules/nsca.cfg regexp="^\s*password" line="        password                 {{ NSCA_PASSWORD|default('changeme') }}"
-      notify: restart shinken
+    - name: monitoring-plugins-2 - expand
+      unarchive:
+        src='/tmp/monitoring-plugins-2.1.1.tar.gz'
+        dest='/usr/src/'
+        copy=no
+        creates='/usr/src/monitoring-plugins-2.1.1'
 
-    - name: installing nsca-sender
-      apt: name=nsca-client
-
-    - name: nsca-sender configuration
-      lineinfile: name=/etc/send_nsca.cfg regexp="^#?password=" line="password={{ NSCA_PASSWORD|default('changeme') }}"
-
-    - name: nsca-sender configuration
-      lineinfile: name=/etc/send_nsca.cfg regexp="^#?encryption_method=" line="encryption_method=1"
-
-    - name: download plugin monitoring-plugins-2
-      unarchive: src=https://www.monitoring-plugins.org/download/monitoring-plugins-2.1.1.tar.gz  dest=/usr/src/monitoring-plugins-2.1.1  copy=no   force_basic_auth=yes
-
-    - name: manual install of monitoring plugins
+    - name: monitoring-plugins-2 - install
       shell: cd /usr/src/monitoring-plugins-2.1.1 && ./configure --with-nagios-user=shinken --with-nagios-group=shinken --enable-libtap --enable-extra-opts --enable-perl-modules --libexecdir=/usr/lib/nagios/plugins && make install
+        creates='/usr/bin/shinken'
+
+    - name: shinken init
+      shell: shinken --init
+        creates='/root/.shinken.ini'
+
+    - name: linking nagios utils.pm in perl shares
+      file:
+        src=/usr/lib/nagios/plugins/utils.pm
+        dest=/usr/share/perl5/utils.pm
+        state=link
+
+    - name: adding check_netint to shinken checks
+      get_url:
+        url='https://raw.githubusercontent.com/willixix/WL-NagiosPlugins/master/check_netint.pl'
+        dest='/var/lib/shinken/libexec/check_netint.pl'
+        sha256sum='713400591bd090dde4ceecda36e4178fe791801aaead15f4e104d89ca7baed68'
+        validate_certs=false
+
+    - name: fix ownership of shinken checks
+      file:
+        path='/var/lib/shinken/libexec/'
+        owner=shinken
+        group=shinken
+        mode=0755
+        recurse=yes
+
+    - name: snmpd config
+      lineinfile:
+        name=/etc/snmp/snmpd.conf
+        regexp="agentAddress *udp:127.0.0.1:161"
+        line="#agentAddress  udp:127.0.0.1:161"
+      notify: restart snmpd
+
+    - name: snmpd config
+      lineinfile:
+        name=/etc/snmp/snmpd.conf
+        regexp="agentAddress udp:161,udp6:\[::1\]:161"
+        line="agentAddress udp:161,udp6:[::1]:161"
+      notify: restart snmpd
+
+    - name: snmpd config
+      lineinfile:
+        name=/etc/snmp/snmpd.conf
+        regexp=".*rocommunity public *default.*"
+        line=" rocommunity public default"
+      notify: restart snmpd
+
+    - name: snmpd enabled
+      service: name=snmpd state=started enabled=yes
 
   handlers:
     - name: restart shinken
       service:
         name=shinken
+        state=restarted
+        enabled=true
+
+    - name: restart snmpd
+      service:
+        name=snmpd
         state=restarted
         enabled=true
