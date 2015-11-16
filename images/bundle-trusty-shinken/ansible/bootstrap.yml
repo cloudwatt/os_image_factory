@@ -136,7 +136,7 @@
         owner=root
         group=root
         mode=0644
-        state=touch
+        state=file
 
     - name: snmpd config
       lineinfile:
@@ -160,12 +160,10 @@
       notify: restart snmpd
 
     - name: ntp config
-      lineinfile:
+      replace:
         name=/etc/ntp.conf
-        regexp="^server (.*)$"
-        line="server \1 iburst"
-
-        backrefs=yes
+        regexp="^server ([0-9\.a-z]*)$"
+        replace="server \1 iburst"
       notify: restart ntp
 
     - name: services enabled
