@@ -16,6 +16,7 @@
         - pycurl
         - cherrypy
         - passlib
+        - html
 
     - name: creating shinken system user
       user: name=shinken home=/var/lib/shinken createhome=yes system=yes
@@ -41,11 +42,17 @@
         - { name: sqlitedb, prefix: '/var/lib/shinken/modules' }
         - { name: linux-snmp, prefix: '/var/lib/shinken/inventory' }
 
-    - name: installing Perl Net::SNMP
+    - name: removing conflicting system packages
+      apt: pkg="{{ item }}" state=absent
+      with_items:
+        - ntpdate
+
+    - name: installing system packages
       apt: pkg="{{ item }}" state=present
       with_items:
         - libnet-snmp-perl
         - snmpd
+        - ntp
         - nagios-plugins
 
     - name: webui settings
@@ -54,6 +61,10 @@
 
     - name: webui settings
       lineinfile: name=/etc/shinken/modules/webui.cfg regexp="^\s*modules" line="    modules auth-cfg-password,SQLitedb"
+      notify: restart shinken
+
+    - name: localhost node settings
+      lineinfile: name="/etc/shinken/hosts/localhost.cfg" regexp="^ *use.*" line="        use                     linux-snmp"
       notify: restart shinken
 
     - name: monitoring-plugins-2 - download
@@ -92,10 +103,26 @@
     - name: fix ownership of shinken checks
       file:
         path='/var/lib/shinken/libexec/'
-        owner=shinken
+        owner=root
         group=shinken
-        mode=0755
+        mode=4755
         recurse=yes
+
+    - name: creating rhost log dir
+      file:
+        path=/var/log/rhosts
+        owner=root
+        group=root
+        mode=0755
+        state=directory
+
+    - name: creating rhost log file
+      file:
+        path=/var/log/rhosts/remote-hosts.log
+        owner=root
+        group=root
+        mode=0644
+        state=touch
 
     - name: snmpd config
       lineinfile:
@@ -118,8 +145,19 @@
         line=" rocommunity public default"
       notify: restart snmpd
 
-    - name: snmpd enabled
-      service: name=snmpd state=started enabled=yes
+    - name: ntp config
+      lineinfile:
+        name=/etc/ntp.conf
+        regexp="^server (.*)$"
+        line="server \1 iburst"
+        backrefs=yes
+      notify: restart ntp
+
+    - name: services enabled
+      service: name={{ item }} state=started enabled=yes
+      with_items:
+        - snmpd
+        - ntp
 
   handlers:
     - name: restart shinken
@@ -131,5 +169,11 @@
     - name: restart snmpd
       service:
         name=snmpd
+        state=restarted
+        enabled=true
+
+    - name: restart ntp
+      service:
+        name=ntp
         state=restarted
         enabled=true
