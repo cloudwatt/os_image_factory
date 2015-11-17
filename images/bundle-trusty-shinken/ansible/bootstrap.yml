@@ -136,7 +136,7 @@
         owner=root
         group=root
         mode=0644
-        state=file
+        state=touch
 
     - name: snmpd config
       lineinfile:
@@ -171,6 +171,7 @@
       with_items:
         - snmpd
         - ntp
+        - shinken
 
   handlers:
     - name: restart shinken
