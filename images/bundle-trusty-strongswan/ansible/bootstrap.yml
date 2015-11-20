@@ -37,15 +37,15 @@
         - { file: "etc_ipsec.conf.j2",    path: "/etc/ipsec.conf"    }
         - { file: "etc_ipsec.secrets.j2", path: "/etc/ipsec.secrets" }
         - { file: "strongswan.conf.j2", path: "/etc/strongswan.conf" }
+      notify:
+        - restart ipsec
 
     - sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
 
-    - name: reboot ipsec
+    - name: old-school enabling ipsec service
+      shell: systemctl daemon-reload && /usr/sbin/update-rc.d ipsec defaults && /usr/sbin/update-rc.d ipsec enable
+
+    - name: ipsec is up and ready
       service:
         name=ipsec
         state=restarted
-        enabled=true
-      register: result
-      until: result|success
-      retries: 2
-      delay: 5
