@@ -8,6 +8,14 @@
         src=slave-shinken-conf.j2
         dest=/etc/shinken/hosts/slaves.cfg
       when: inventory_hostname in groups['local']
+      notify: restart shinken
+
+  handlers:
+    - name: restart shinken
+      service:
+        name=shinken
+        state=restarted
+        enabled=yes
 
 - hosts: slaves
   become: yes
