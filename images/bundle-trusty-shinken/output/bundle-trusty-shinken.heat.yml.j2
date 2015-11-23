@@ -42,9 +42,9 @@ resources:
     properties:
       network_id: { get_resource: network }
       ip_version: 4
-      cidr: 10.0.1.0/24
+      cidr: 10.0.7.0/24
       allocation_pools:
-        - { start: 10.0.1.100, end: 10.0.1.199 }
+        - { start: 10.0.7.100, end: 10.0.7.199 }
 
   security_group:
     type: OS::Neutron::SecurityGroup
@@ -52,6 +52,8 @@ resources:
       rules:
         - { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
         - { direction: ingress, protocol: TCP, port_range_min: 7767, port_range_max: 7767 }
+        - { direction: ingress, protocol: UDP, port_range_min: 161, port_range_max: 161 }
+        - { direction: ingress, protocol: UDP, port_range_min: 123, port_range_max: 123 }
         - { direction: ingress, protocol: ICMP }
         - { direction: egress, protocol: ICMP }
         - { direction: egress, protocol: TCP }

@@ -14,35 +14,42 @@
     - name: mandatory packages
       apt: pkg="ntpdate" state=absent purge=yes
 
-    - name: snmpd config
+    - name: snmpd config - disable localhost-only listening
       lineinfile:
         name=/etc/snmp/snmpd.conf
         regexp="agentAddress *udp:127.0.0.1:161"
         line="#agentAddress  udp:127.0.0.1:161"
       notify: restart snmpd
 
-    - name: snmpd config
+    - name: snmpd config - enable any interface listening
       lineinfile:
         name=/etc/snmp/snmpd.conf
         regexp="agentAddress udp:161,udp6:\[::1\]:161"
         line="agentAddress udp:161,udp6:[::1]:161"
       notify: restart snmpd
 
-    - name: snmpd config
+    - name: snmpd config - setting rocommunity
       lineinfile:
         name=/etc/snmp/snmpd.conf
         regexp=".*rocommunity public *default.*"
         line=" rocommunity public default"
       notify: restart snmpd
 
-    - name: snmpd config
+    - name: snmpd config - trapsink to shinken server
       lineinfile:
         name=/etc/snmp/snmpd.conf
         regexp="^ trapsink     localhost public"
         line=" trapsink     {{ shinken_server_address }} public"
       notify: restart snmpd
 
-    - name: snmp && ntp enabled
+    - name: adding iburst to ntp config
+      replace:
+        name=/etc/ntp.conf
+        regexp="^server ([0-9\.a-z]*)$"
+        replace="server \1 iburst"
+      notify: restart ntp
+
+    - name: snmpd && ntp enabled
       service: name="{{ item }}" state=started enabled=yes
       with_items:
         - ntp
@@ -52,5 +59,11 @@
     - name: restart snmpd
       service:
         name=snmpd
+        state=restarted
+        enabled=true
+
+    - name: restart ntp
+      service:
+        name=ntp
         state=restarted
         enabled=true

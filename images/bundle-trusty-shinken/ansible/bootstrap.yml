@@ -10,12 +10,21 @@
   tasks:
     - apt: update_cache=true upgrade=full
 
-    - apt: name=python-pycurl  state=present
+    - name: removing conflicting system packages
+      apt: pkg='ntpdate' state=absent purge=yes
+
+    - name: installing system packages
+      apt: pkg="{{ item }}" state=present
+      with_items:
+        - libnet-snmp-perl
+        - snmpd
+        - ntp
+        - nagios-plugins
+        - python-pycurl
 
     - name: install pip packages
       pip: name={{ item }}
       with_items:
-        - Pycurl
         - cherrypy
         - passlib
         - html
@@ -27,7 +36,7 @@
       git: repo=https://github.com/naparuba/shinken.git dest=/usr/src/shinken
 
     - name: installing shinken from sources
-      shell: cd /usr/src/shinken; python setup.py install
+      shell: cd /usr/src/shinken && python setup.py install
         creates=/usr/bin/shinken
 
     - name: initializing shinken
@@ -43,19 +52,6 @@
         - { name: auth-cfg-password, prefix: '/var/lib/shinken/modules' }
         - { name: sqlitedb, prefix: '/var/lib/shinken/modules' }
         - { name: linux-snmp, prefix: '/var/lib/shinken/inventory' }
-
-    - name: removing conflicting system packages
-      apt: pkg="{{ item }}" state=absent
-      with_items:
-        - ntpdate
-
-    - name: installing system packages
-      apt: pkg="{{ item }}" state=present
-      with_items:
-        - libnet-snmp-perl
-        - snmpd
-        - ntp
-        - nagios-plugins
 
     - name: webui settings
       lineinfile:
@@ -75,14 +71,10 @@
       lineinfile: name="/etc/shinken/hosts/localhost.cfg" regexp="^ *use.*" line="        use                     linux-snmp"
       notify: restart shinken
 
-    #- name: download monitoring-plugins
-    #  unarchive: src=https://www.monitoring-plugins.org/download/monitoring-plugins-2.1.1.tar.gz  dest=/usr/local/ copy=no
-
     - name: monitoring-plugins-2 - download
       get_url:
         url='https://www.monitoring-plugins.org/download/monitoring-plugins-2.1.1.tar.gz'
         dest='/tmp/'
-
 
     - name: monitoring-plugins-2 - expand
       unarchive:
@@ -99,6 +91,7 @@
         --libexecdir=/usr/lib/nagios/plugins &&
         make install
         creates='/usr/bin/shinken'
+
     - name: shinken init
       shell: shinken --init
         creates='/root/.shinken.ini'
@@ -143,26 +136,28 @@
         mode=0644
         state=touch
 
-    - name: snmpd config
+    - name: snmpd config - disable localhost-only listening
       lineinfile:
         name=/etc/snmp/snmpd.conf
         regexp="agentAddress *udp:127.0.0.1:161"
         line="#agentAddress  udp:127.0.0.1:161"
       notify: restart snmpd
-    - name: snmpd config
+
+    - name: snmpd config - enable any interface listening
       lineinfile:
         name=/etc/snmp/snmpd.conf
         regexp="agentAddress udp:161,udp6:\[::1\]:161"
         line="agentAddress udp:161,udp6:[::1]:161"
       notify: restart snmpd
-    - name: snmpd config
+
+    - name: snmpd config - setting rocommunity
       lineinfile:
         name=/etc/snmp/snmpd.conf
         regexp=".*rocommunity public *default.*"
         line=" rocommunity public default"
       notify: restart snmpd
 
-    - name: ntp config
+    - name: adding iburst to ntp config
       replace:
         name=/etc/ntp.conf
         regexp="^server ([0-9\.a-z]*)$"
@@ -170,7 +165,7 @@
       notify: restart ntp
 
     - name: services enabled
-      service: name={{ item }} state=started enabled=yes
+      service: name="{{ item }}" state=started enabled=yes
       with_items:
         - snmpd
         - ntp
