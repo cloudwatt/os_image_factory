@@ -68,7 +68,7 @@
       notify: restart ntp
 
     - name: snmpd && ntp enabled
-      service: name="{{ item }}" state=started enabled=yes
+      service: name="{{ item }}" state=restarted enabled=yes
       with_items:
         - ntp
         - snmpd

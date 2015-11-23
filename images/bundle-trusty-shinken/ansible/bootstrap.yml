@@ -118,6 +118,12 @@
         sha256sum='713400591bd090dde4ceecda36e4178fe791801aaead15f4e104d89ca7baed68'
         validate_certs=false
 
+    - name: snmpd config - disable localhost-only listening
+      lineinfile:
+        name=/etc/shinken/packs/linux-snmp/commands.cfg
+        regexp=".*\$PLUGINSDIR\$/check_netint.pl.*"
+        line='    command_line  $PLUGINSDIR$/check_netint.pl -H $HOSTADDRESS$ -C $_HOSTSNMPCOMMUNITY$ -g -2c -f -e -w $_HOSTNET_WARN$ -c $_HOSTNET_CRIT$ -q -k -y -M -B -m -P "$SERVICEPERFDATA$" -T "$LASTSERVICECHECK$"  -o $_HOSTSNMP_MSG_MAX_SIZE$'
+
     - name: fix ownership of shinken checks
       file:
         path="{{ item }}"
