@@ -1,8 +1,10 @@
 ---
-- hosts: shinken_slaves
+- hosts: all
   become: yes
 
   tasks:
+    - apt: update_cache=true upgrade=full
+
     - name: mandatory packages
       apt: pkg="{{ item }}" state=present
       with_items:
@@ -40,7 +42,7 @@
         line=" trapsink     {{ shinken_server_address }} public"
       notify: restart snmpd
 
-    - name: snmp enabled
+    - name: snmp && ntp enabled
       service: name="{{ item }}" state=started enabled=yes
       with_items:
         - ntp

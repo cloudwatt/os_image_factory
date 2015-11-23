@@ -10,10 +10,12 @@
   tasks:
     - apt: update_cache=true upgrade=full
 
+    - apt: name=python-pycurl  state=present
+
     - name: install pip packages
       pip: name={{ item }}
       with_items:
-        - pycurl
+        - Pycurl
         - cherrypy
         - passlib
         - html
@@ -73,10 +75,14 @@
       lineinfile: name="/etc/shinken/hosts/localhost.cfg" regexp="^ *use.*" line="        use                     linux-snmp"
       notify: restart shinken
 
+    #- name: download monitoring-plugins
+    #  unarchive: src=https://www.monitoring-plugins.org/download/monitoring-plugins-2.1.1.tar.gz  dest=/usr/local/ copy=no
+
     - name: monitoring-plugins-2 - download
       get_url:
         url='https://www.monitoring-plugins.org/download/monitoring-plugins-2.1.1.tar.gz'
         dest='/tmp/'
+
 
     - name: monitoring-plugins-2 - expand
       unarchive:
@@ -93,7 +99,6 @@
         --libexecdir=/usr/lib/nagios/plugins &&
         make install
         creates='/usr/bin/shinken'
-
     - name: shinken init
       shell: shinken --init
         creates='/root/.shinken.ini'
@@ -144,14 +149,12 @@
         regexp="agentAddress *udp:127.0.0.1:161"
         line="#agentAddress  udp:127.0.0.1:161"
       notify: restart snmpd
-
     - name: snmpd config
       lineinfile:
         name=/etc/snmp/snmpd.conf
         regexp="agentAddress udp:161,udp6:\[::1\]:161"
         line="agentAddress udp:161,udp6:[::1]:161"
       notify: restart snmpd
-
     - name: snmpd config
       lineinfile:
         name=/etc/snmp/snmpd.conf
