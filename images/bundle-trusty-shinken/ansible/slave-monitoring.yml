@@ -1,6 +1,12 @@
 ---
+- hosts: local
+  become: yes
 
-# rajouter la conf local pour shinken
+  tasks:
+    - name: shinken slave configuration file
+      template:
+        src=slave-shinken-conf.j2
+        dest=/etc/shinken/hosts/slaves.cfg
 
 - hosts: slaves
   become: yes

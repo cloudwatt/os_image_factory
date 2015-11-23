@@ -1,0 +1,9 @@
+{% for slave in groups['slaves'] %}
+define host{
+    use                 linux-snmp
+	contact_groups		admins
+    host_name           {{ slave.inventory_hostname }}
+    address             {{ slave.ansible_default_ipv4.address }}
+}
+{% endfor %}
+
