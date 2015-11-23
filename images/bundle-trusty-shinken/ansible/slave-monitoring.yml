@@ -1,5 +1,5 @@
 ---
-- hosts: local
+- hosts: all
   become: yes
 
   tasks:
@@ -7,6 +7,7 @@
       template:
         src=slave-shinken-conf.j2
         dest=/etc/shinken/hosts/slaves.cfg
+      when: inventory_hostname in groups['local']
 
 - hosts: slaves
   become: yes
