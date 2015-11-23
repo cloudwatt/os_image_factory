@@ -1,0 +1,257 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+- hosts: local
+  user: cloud
+  sudo: true
+
+  vars:
+    goblin_home: /opt/mediagoblin
+  tasks:
+    - name: ansible_ssh_user can become postgres
+      lineinfile: "dest=/etc/sudoers state=present regexp='^{{ ansible_ssh_user }}.*postgres.*$' line='{{ ansible_ssh_user }} ALL=(postgres) NOPASSWD: ALL' validate='visudo -cf %s'"
+
+    - name: ansible_ssh_user can become mediagoblin
+      lineinfile: "dest=/etc/sudoers state=present regexp='^{{ ansible_ssh_user }}.*mediagoblin.*$' line='{{ ansible_ssh_user }} ALL=(mediagoblin) NOPASSWD: ALL' validate='visudo -cf %s'"
+
+    - name: apt-get update & upgrade
+      apt:
+        upgrade=full
+        update_cache=yes
+
+    - name: default sh is bash
+      file:
+        src=/bin/bash
+        dest=/bin/sh
+        state=link
+
+    - name: conflicting packages absent
+      apt:
+        pkg={{ item }}
+        state=absent
+        purge=yes
+      with_items:
+        - apache2
+        - python-scipy
+        - python-six
+        - python-six-whl
+        - python-paste
+        - python-pastescript
+        - python-pastedeploy
+        - python-pip
+        - python-pip-whl
+        - python-pastedeploy-tpl
+        - python-virtualenv
+
+    - name: needed packages present
+      apt: pkg={{ item }} state=present
+      with_items:
+        - git
+        - python-gi
+        - python3-gi
+        - python
+        - python-dev
+        - python-lxml
+        - python-imaging
+        - python-psycopg2
+        - python-gst-1.0
+        - python-numpy
+        - npm
+        - nodejs-legacy
+        - automake
+        - nginx
+        - postgresql
+        - postgresql-client
+        - gstreamer1.0-tools
+        - gir1.2-gstreamer-1.0
+        - gir1.2-gst-plugins-base-1.0
+        - gstreamer1.0-plugins-good
+        - gstreamer1.0-plugins-ugly
+        - gstreamer1.0-plugins-bad
+        - gstreamer1.0-libav
+        - libsndfile1-dev
+        - libasound2-dev
+        - blender
+        - poppler-utils
+        - unoconv
+        - libreoffice
+
+    - name: pip installed
+      easy_install: name=pip
+
+    - name: version-specific pip packages
+      pip: name={{ item.name }} version={{ item.version }} state=present
+      with_items:
+        - { name: "mock", version: "1.0.1" }
+        - { name: "Paste", version: "1.7.5.1" }
+        - { name: "PasteScript", version: "1.7.5" }
+
+    - name: pip packages installed
+      pip:
+        name={{ item }}
+        state=latest
+      with_items:
+        - pip
+        - virtualenv
+        - scikits.audiolab
+        - exifread
+        - Babel
+        - flup
+        - pytest-xdist
+        - PyLD
+        - WebOb
+        - jsonschema
+        - itsdangerous
+        - sphinx
+        - six
+        - Markdown
+        - kombu
+        - py-bcrypt
+        - pytz
+        - requests
+        - Unidecode
+        - Tempita
+        - functools32
+        - PasteDeploy
+        - celery
+        - python-dateutil
+        - Mako
+        - oauthlib
+
+    - name: mediagoblin system group
+      group: name=mediagoblin state=present
+
+    - name: mediagoblin system user
+      user:
+        name=mediagoblin
+        home=/var/lib/mediagoblin
+        system=yes
+        groups=www-data,mediagoblin
+        comment="GNU MediaGoblin system account"
+        append=true
+
+    - name: postgres mediagoblin db present
+      become_user: postgres
+      postgresql_db:
+        name=mediagoblin
+        encoding='UTF-8'
+
+    - name: postgres mediagoblin user present
+      become_user: postgres
+      postgresql_user:
+        db=mediagoblin
+        name=mediagoblin
+        priv=ALL
+        state=present
+
+    - name: mediagoblin home created
+      file:
+        path={{ goblin_home }}
+        state=directory
+        owner=mediagoblin
+        group=www-data
+        mode=0755
+
+    - name: mediagoblin git cloned
+      become_user: mediagoblin
+      git:
+        repo="git://git.savannah.gnu.org/mediagoblin.git"
+        accept_hostkey="true"
+        dest="{{ goblin_home }}"
+        version="stable"
+        force=yes
+
+    - name: mediagoblin submodules
+      become_user: mediagoblin
+      shell: git submodule init && git submodule update
+      args:
+        chdir: "{{ goblin_home }}"
+
+    - name: the touchy part
+      shell: ./bootstrap.sh && ./configure --without-virtualenv && make && python setup.py develop
+      args:
+        chdir: "{{ goblin_home }}"
+
+    - name: ini conf files
+      copy:
+        src=files/{{ item }}
+        dest={{ goblin_home }}/{{ item }}
+        owner=mediagoblin
+        group=www-data
+        mode=0640
+      with_items:
+        - paste_local.ini
+        - mediagoblin_local.ini
+
+    - name: ini conf file
+      template:
+        src=templates/{{ item }}.j2
+        dest=/etc/systemd/system/{{ item }}
+        owner=mediagoblin
+        group=www-data
+        mode=0640
+      with_items:
+        - mediagoblin-celeryd.service
+        - mediagoblin-paster.service
+
+    - name: mediagoblin user_dev exists
+      file:
+        path={{ goblin_home }}/user_dev
+        state=directory
+        owner=mediagoblin
+        group=www-data
+        mode=0750
+
+    - name: mediagoblin nginx config set
+      template:
+        src=templates/mediagoblin.nginx.j2
+        dest={{ goblin_home }}/nginx.conf
+        owner=root
+        group=root
+        mode=0640
+
+    - name: nginx started
+      service: name=nginx state=started enabled=yes
+
+    - name: /etc/mediagoblin/ssl exists
+      file:
+        path=/etc/mediagoblin/ssl
+        state=directory
+        owner=root
+        group=root
+        mode=0700
+
+    - name: nginx site enabled
+      file:
+        src={{ goblin_home }}/nginx.conf
+        dest=/etc/nginx/sites-enabled/mediagoblin
+        state=link
+        force=yes
+
+    - name: /var/log/mediagoblin exists
+      file:
+        path=/var/log/mediagoblin
+        state=directory
+        owner=mediagoblin
+        group=mediagoblin
+        mode=0744
+
+    - shell: systemctl daemon-reload
+
+    - name: mediagoblin apply
+      become_user: mediagoblin
+      shell: gmg assetlink && gmg dbupdate
+      args:
+        chdir: "{{ goblin_home }}"
+
+    - name: start mediagoblin
+      service:
+        name={{ item }}
+        state=started
+        enabled=yes
+      with_items:
+        - mediagoblin-celeryd
+        - mediagoblin-paster
