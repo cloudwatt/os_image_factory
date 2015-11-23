@@ -1,5 +1,8 @@
 ---
-- hosts: all
+
+# rajouter la conf local pour shinken
+
+- hosts: slaves
   become: yes
 
   tasks:
@@ -39,7 +42,7 @@
       lineinfile:
         name=/etc/snmp/snmpd.conf
         regexp="^ trapsink     localhost public"
-        line=" trapsink     {{ shinken_server_address }} public"
+        line=" trapsink     {{ hostvars['127.0.0.1']['ansible_default_ipv4']['address'] }} public"
       notify: restart snmpd
 
     - name: adding iburst to ntp config

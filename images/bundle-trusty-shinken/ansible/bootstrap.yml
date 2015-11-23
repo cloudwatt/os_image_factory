@@ -7,6 +7,9 @@
 - hosts: all
   become: yes
 
+  vars:
+    slaves_playbook_url:
+     
   tasks:
     - apt: update_cache=true upgrade=full
 
