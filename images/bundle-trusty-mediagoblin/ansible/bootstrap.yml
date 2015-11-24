@@ -175,6 +175,10 @@
       shell: ./bootstrap.sh && ./configure --without-virtualenv && make && python setup.py develop
       args:
         chdir: "{{ goblin_home }}"
+      register: result
+      until: result|success
+      retries: 3
+      delay: 2
 
     - name: ini conf files
       copy:
