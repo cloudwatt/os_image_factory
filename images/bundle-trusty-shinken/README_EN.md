@@ -205,18 +205,18 @@ $ ./stack-get-url.sh TICKERTAPE
 TICKERTAPE  http://70.60.637.17:9000/
 ~~~
 
-As shown above, it will parse the assigned floating-IP of your stack into a URL link, with the right port included. You can then click or paste this into your browser of choice and bask in the glory of a fresh Graylog instance.
+As shown above, it will parse the assigned floating-IP of your stack into a URL link, with the right port included. You can then click or paste this into your browser of choice and bask in the glory of a fresh shinken instance.
 
 <a name="console" />
 
 ### Please console me
 
-There there, it's okay... Graylog stacks can be spawned from our console as well!
+There there, it's okay... shinken stacks can be spawned from our console as well!
 
-To create our Graylog stack from the console:
+To create our shinken stack from the console:
 
-1.	Go the Cloudwatt Github in the [applications/bundle-trusty-graylog](https://github.com/cloudwatt/applications/tree/master/bundle-trusty-graylog) repository
-2.	Click on the file named `bundle-trusty-graylog.heat.yml`
+1.	Go the Cloudwatt Github in the [applications/bundle-trusty-shinken](https://github.com/cloudwatt/applications/tree/master/bundle-trusty-shinken) repository
+2.	Click on the file named `bundle-trusty-shinken.heat.yml`
 3.	Click on RAW, a web page will appear containing purely the template
 4.	Save the page to your PC. You can use the default name proposed by your browser (just remove the .txt if needed)
 5.  Go to the [Stacks](https://console.cloudwatt.com/project/stacks/) section of the console
@@ -228,26 +228,26 @@ To create our Graylog stack from the console:
 
 The stack will be automatically generated (you can see its progress by clicking on its name). When all modules become green, the creation will be complete. You can then go to the "Instances" menu to find the floating-IP, or simply refresh the current page and check the Overview tab for a handy link.
 
-Remember that the Graylog UI is on port 9000, not the default port 80!
+Remember that the shinken UI is on port 9000, not the default port 80!
 
 ## So watt?
 
-The goal of this tutorial is to accelerate your start. At this point **you** are the master of the stack. An easy way to [get started](http://docs.graylog.org/en/1.2/pages/getting_started.html#get-messages-in) is to have your Graylog server log itself!
+The goal of this tutorial is to accelerate your start. At this point **you** are the master of the stack. An easy way to [get started](http://docs.shinken.org/en/1.2/pages/getting_started.html#get-messages-in) is to have your shinken server log itself!
 
-Graylog takes inputs from a plethora of ports and protocols, I recommend you take the time to document yourselves on the possibilities. Just remember that all input and output ports must be explicitly set for the [security group](https://console.cloudwatt.com/project/access_and_security/?tab=access_security_tabs__security_groups_tab). To add an input, click on **MANAGE RULES** for your stack's security group and then, once on the page *MANAGE SECURITY GROUP RULES*, click **+ ADD RULE**. If logs don't make it to your graylog instance, check the [security group](https://console.cloudwatt.com/project/access_and_security/?tab=access_security_tabs__security_groups_tab) first!
+shinken takes inputs from a plethora of ports and protocols, I recommend you take the time to document yourselves on the possibilities. Just remember that all input and output ports must be explicitly set for the [security group](https://console.cloudwatt.com/project/access_and_security/?tab=access_security_tabs__security_groups_tab). To add an input, click on **MANAGE RULES** for your stack's security group and then, once on the page *MANAGE SECURITY GROUP RULES*, click **+ ADD RULE**. If logs don't make it to your shinken instance, check the [security group](https://console.cloudwatt.com/project/access_and_security/?tab=access_security_tabs__security_groups_tab) first!
 
-You also now have an SSH access point on your virtual machine through the floating-IP and your private key pair (default user name `cloud`). Be warned, the default browser connection to Graylog is not encrypted (HTTP): if you are using your Graylog instance to store sensitive data, you may want to connect with an SSH tunnel instead.
+You also now have an SSH access point on your virtual machine through the floating-IP and your private key pair (default user name `cloud`). Be warned, the default browser connection to shinken is not encrypted (HTTP): if you are using your shinken instance to store sensitive data, you may want to connect with an SSH tunnel instead.
 
 ~~~ bash
-user@home$ cd applications/bundle-trusty-graylog/
+user@home$ cd applications/bundle-trusty-shinken/
 user@home$ ./stack-get-url.sh TICKERTAPE
 TICKERTAPE  http://70.60.637.17:9000/
 user@home$ ssh 70.60.637.17 -l cloud -i /path/to/your/.ssh/keypair.pem -L 5000:localhost:9000
 [...]
-cloud@graylog-server$ █
+cloud@shinken-server$ █
 ~~~
 
-By doing the above, I could then access my Graylog server from http://localhost:5000/ on my browser. ^^
+By doing the above, I could then access my shinken server from http://localhost:7767/ on my browser. ^^
 
 ## Accessing the WebUI
 
