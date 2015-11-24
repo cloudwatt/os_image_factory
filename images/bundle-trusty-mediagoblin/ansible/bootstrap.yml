@@ -157,12 +157,13 @@
 
     - name: mediagoblin git cloned
       become_user: mediagoblin
-      git:
+      git: '
         repo="git://git.savannah.gnu.org/mediagoblin.git"
         accept_hostkey="true"
         dest="{{ goblin_home }}"
         version="stable"
         force=yes
+      '
 
     - name: mediagoblin submodules
       become_user: mediagoblin
@@ -186,16 +187,16 @@
         - paste_local.ini
         - mediagoblin_local.ini
 
-    - name: ini conf file
+    - name: initd service files
       template:
-        src=templates/{{ item }}.j2
-        dest=/etc/systemd/system/{{ item }}
+        src=templates/{{ item }}.init.j2
+        dest=/etc/init.d/{{ item }}
         owner=mediagoblin
         group=www-data
         mode=0640
       with_items:
-        - mediagoblin-celeryd.service
-        - mediagoblin-paster.service
+        - mediagoblin-celery-worker
+        - mediagoblin-paster
 
     - name: mediagoblin user_dev exists
       file:
@@ -239,7 +240,7 @@
         group=mediagoblin
         mode=0744
 
-    - shell: systemctl daemon-reload
+    # - shell: systemctl daemon-reload
 
     - name: mediagoblin apply
       become_user: mediagoblin
@@ -253,5 +254,5 @@
         state=started
         enabled=yes
       with_items:
-        - mediagoblin-celeryd
+        - mediagoblin-celery-worker
         - mediagoblin-paster
