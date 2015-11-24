@@ -248,9 +248,11 @@
 
     - name: mediagoblin apply
       become_user: mediagoblin
-      shell: gmg assetlink && gmg dbupdate
+      shell: gmg dbupdate
       args:
         chdir: "{{ goblin_home }}"
+
+    # gmg assetlink
 
     - name: start mediagoblin
       service:
