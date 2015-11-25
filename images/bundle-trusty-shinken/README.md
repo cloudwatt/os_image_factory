@@ -245,7 +245,8 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
 => Pour lancer la configuration sur les machines clientes,
   Pour vous créer une machine cliente sur la plateforme de cloudwatt,connectez-vous sur cloudwatt.com, cliquez sur l'onglet  'produit' puis sur l'option 'application' et Choisissez 'ghost'.
 
-=> connectez-vous à la console de cloudwatt (https://console.cloudwatt.com), dans l'onglet 'stack' vous pourrez recuperer l'addresse ip de votre stack et dans l'onglet 'access_and_security' autoriser les ports :
+* connectez-vous à la console de cloudwatt (https://console.cloudwatt.com), dans l'onglet 'stack' vous pourrez recuperer l'addresse ip de votre stack et dans l'onglet 'access_and_security' autoriser les ports :
+
 - { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
 - { direction: ingress, protocol: TCP, port_range_min: 7767, port_range_max: 7767 }
 - { direction: ingress, protocol: UDP, port_range_min: 161, port_range_max: 161 }
@@ -257,7 +258,7 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
 - { direction: egress, protocol: TCP }
 - { direction: egress, protocol: UDP }
 
-
+`
 pierre@cloud:~$ heat resource-list stack-ghost       //création de votre  machine cliente
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
 | resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
@@ -269,7 +270,7 @@ pierre@cloud:~$ heat resource-list stack-ghost       //création de votre  machi
 | server           | 81ce0266-3361-471a-9b0c-6c37e32c9e9e              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-24T15:18:38Z |
 | floating_ip_link | a7357436-68b0-4108-a77c-7f25489380d1-84.39.36.143 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T15:19:31Z |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------
-
+`
 Si vous êtes dans un sous réseau différent, vous aurez besoins de créer un routeur pour interconnecter les deux sous-reseaux
 Exemple:
 pierre@cloud:~$ neutron router-create nomrouter         // création du routeur
