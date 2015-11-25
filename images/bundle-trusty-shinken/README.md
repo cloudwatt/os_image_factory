@@ -1,6 +1,6 @@
 # 5 Minutes Stacks, épisode 15 : Shinken #
 
-## Episode 15 : Shinken
+## Episode 15 : Shinken-server
 
 ![Minimum setup](http://www.samuelpoggioli.fr/wp-content/uploads/2014/12/Shinken-624x192.jpg)
 
@@ -181,12 +181,12 @@ Enfin, attendez 5 minutes que le déploiement soit complet.
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
 | resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
-| floating_ip      | 44dd841f-8570-4f02-a8cc-f21a125cc8aa              | OS::Neutron::FloatingIP         | CREATE_COMPLETE | 2015-11-25T11:03:51Z |
-| security_group   | efead2a2-c91b-470e-a234-58746da6ac22              | OS::Neutron::SecurityGroup      | CREATE_COMPLETE | 2015-11-25T11:03:52Z |
-| network          | 7e142d1b-f660-498d-961a-b03d0aee5cff              | OS::Neutron::Net                | CREATE_COMPLETE | 2015-11-25T11:03:56Z |
-| subnet           | 442b31bf-0d3e-406b-8d5f-7b1b6181a381              | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-25T11:03:57Z |
-| server           | f5b22d22-1cfe-41bb-9e30-4d089285e5e5              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-25T11:04:00Z |
-| floating_ip_link | 44dd841f-8570-4f02-a8cc-f21a125cc8aa-84.39.38.215 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-25T11:04:30Z |
+| floating_ip      | 44dd841f-8570-4f02-a8cc-f21a125cc8aa                | OS::Neutron::FloatingIP         | CREATE_COMPLETE | 2015-11-25T11:03:51Z |
+| security_group   | efead2a2-c91b-470e-a234-58746da6ac22                | OS::Neutron::SecurityGroup      | CREATE_COMPLETE | 2015-11-25T11:03:52Z |
+| network          | 7e142d1b-f660-498d-961a-b03d0aee5cff                | OS::Neutron::Net                | CREATE_COMPLETE | 2015-11-25T11:03:56Z |
+| subnet           | 442b31bf-0d3e-406b-8d5f-7b1b6181a381                | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-25T11:03:57Z |
+| server           | f5b22d22-1cfe-41bb-9e30-4d089285e5e5                | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-25T11:04:00Z |
+| floating_ip_link | 44dd841f-8570-4f02-a8cc-f21a125cc8aa-`floatting IP` | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-25T11:04:30Z |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------
 ```
 
@@ -203,10 +203,10 @@ Exemple:
 
 ```
 ~/os_image_factory/images/bundle-trusty-shinken$ ./stack-get-url.sh EXP_STACK
-EXP_STACK 84.39.38.215
+EXP_STACK `floatting IP `
 ```
 
-* A ce niveau, vous pouvez vous connecter sur votre navigateur web avec le floatting IP de la machine sur le port 7767 (http://xx.xx.xx.xx:7767)
+* A ce niveau, vous pouvez vous connecter sur votre navigateur web avec votre floatting IP, sur le port 7767 (http://xx.xx.xx.xx:7767)
    Pour s'authentifier sur l'interface web: (login: admin  et le mot de passe: admin)
 
 ![Interface connection shinken](http://shinkenlab.io/images/course2/course2-fail.png)
@@ -215,7 +215,7 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
 
 ![Bigger production setup](https://assets.digitalocean.com/articles/Shrinken_Ubuntu/2.png)
 
-Vous pouvez enrichir votre Dashboard avec des widgets comme suit:
+* Vous pouvez enrichir votre `Dashboard` avec des widgets comme suit:
 
 ![Bigger production ](https://assets.digitalocean.com/articles/Shrinken_Ubuntu/4.png)
 
@@ -264,7 +264,7 @@ Vous pouvez enrichir votre Dashboard avec des widgets comme suit:
     | tenant_id             | 8acb072da1b14c61b9dced19a6be3355     |
     +-----------------------+--------------------------------------+
     ```
-    Il s'agira par la suite d'ajouter  le `subnet_host` de votre host à l'interface du routeur `id du routeur` :
+  * Il s'agira par la suite d'ajouter  le `subnet_host` de votre host à l'interface du routeur `id du routeur` :
     ```
     ~$ neutron router-interface-add `id_router` `subnet_host`                                // Add id du router + subnet host
     Added interface `subnet_host` to router `id_router`
@@ -285,10 +285,10 @@ Vous pouvez enrichir votre Dashboard avec des widgets comme suit:
     | network          | ad58e87f-c52b-4a43-a9a4-eae6445534b3              | OS::Neutron::Net                | CREATE_COMPLETE | 2015-11-24T15:18:29Z |
     | subnet           | bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c              | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-24T15:18:30Z |
     | server           | 81ce0266-3361-471a-9b0c-6c37e32c9e9e              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-24T15:18:38Z |
-    | floating_ip_link | a7357436-68b0-4108-a77c-7f25489380d1-84.39.36.143 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T15:19:31Z |
+    | floating_ip_link | a7357436-68b0-4108-a77c-7f25489380d1-`floating @IP`| OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T15:19:31Z |
     +------------------+---------------------------------------------------+---------------------------------+-----------------+---------------
     ```
-   * Connectez-vous à la console de cloudwatt (https://console.cloudwatt.com), dans l'onglet 'stack' vous pourrez recuperer l'addresse ip de  votre stack et dans l'onglet `access_and_security` autoriser les ports `22 (connexion en ssh)` ,`7767 en tcp ( port d'écoute du server shinken)` ,`161 en udp (port d'échanges d'informations basées sur le protocle  snmp)` ,`123 en protocle udp (port de synchronisation du server NTP)`
+   * Connectez-vous à la console de cloudwatt (https://console.cloudwatt.com), dans l'onglet 'stack' vous pourrez recuperer l'addresse ip de  votre stack et dans l'onglet `access_and_security` autoriser les ports `22 (connexion en ssh)` ,`7767 en tcp ( port d'écoute du server shinken)` ,`161 en udp (port d'échanges d'informations avec le protocole  snmp)` ,`123 en protocole udp (port de synchronisation du server NTP)`
 
     4.Sur la machine qui héberge le shinken-server, déployer la configuration slave-monitoring.yml sur la machine cliente
     ```
@@ -339,6 +339,7 @@ Vous pouvez commencer à construire votre site en prenant la main sur votre serv
 
 * [shinken-monitoring Homepage](http://www.shinken-monitoring.org/)
 * [Shinken Solutions - Index](http://www.shinken-solutions.com/)
+* [Shinken blog](http://shinkenlab.io/online-course-2-webui/)
 * [shinken-monitoring architecture](https://shinken.readthedocs.org/en/latest/)
 * [shinken, webui installation](http://blogduyax.madyanne.fr/installation-de-shinken.html)
 * [Installing MongoDB ](https://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/)
