@@ -95,7 +95,7 @@ description: All-in-one Shinken stack
 
 parameters:
   keypair_name:
-    default: pierreray                             <-- Mettez ici le nom de votre paire de clés
+    default: buildshinken                             <-- Mettez ici le nom de votre paire de clés
     description: Keypair to inject in instance
     label: SSH Keypair
     type: string
@@ -242,9 +242,8 @@ arbiters  certs     contactgroups  daemons       dev.cfg    escalations  hosts  
 brokers   commands  contacts       dependencies  discovery  hostgroups   modules  packs             reactionners  receivers  sample      schedulers  services       templates
 ```
 
-* A ce niveau, vous pouvez vous connecter sur votre navigateur web avec le floatting IP de la machine sur le port http://84.39.38.215:7767
+* A ce niveau, vous pouvez vous connecter sur votre navigateur web avec le floatting IP de la machine sur le port http://xx.xx.xx.xx:7767
    Pour s'authentifier sur l'interface web: (login: admin  et le mot de passe: admin)
-![Minimum setup](http://84.39.38.215:7767/user/login)
 
 ![Minimum setup](https://assets.digitalocean.com/articles/Shrinken_Ubuntu/1.png)
 
@@ -284,11 +283,10 @@ $ heat resource-list stack-ghost       //création de votre  machine cliente
 
 ```
 
-Si vous êtes dans un sous réseau différent, vous aurez besoins de créer un routeur pour interconnecter les deux sous-reseaux
+Si vous êtes dans un sous réseau différent, vous aurez besoins de créer un routeur pour interconnecter les deux sous-reseaux.
+
 Exemple:
 
-Si vous êtes dans un sous réseau différent, vous aurez besoins de créer un routeur pour interconnecter les deux sous-reseaux
-Exemple:
 
 ```
 $ neutron router-create nomrouter         // création du routeur
@@ -395,11 +393,18 @@ Vous avez un point d'entrée sur votre machine virtuelle en SSH via l'IP flottan
 
 Vous pouvez commencer à construire votre site en prenant la main sur votre serveur. Les points d'entrée utiles :
 
-* `/ etc / shinken`: the whole program configuration of shinken-server
-* `/ usr / bin / shinken-`: launch scripts of daemons
-* `/ var / lib / shinken`: shinken the modules and supervision plugins (we will return)
-* `/ var / log / shinken`: top secret
+* `/ etc / shinken`: le repertoire contenant les fichiers de configuration de shinken
+* `/ usr / bin / shinken-`: le repertoire contenant les scripts de shinken
+* `/ var / lib / shinken`: le repertoire contenant les modules de monitoring de shinken
+* `/ var / log / shinken`: le repertoire contenant les log
 
+#### Autres sources pouvant vous interesser:
 
+* [shinken-monitoring Homepage](http://www.shinken-monitoring.org/)
+* [Shinken Solutions - Index](http://www.shinken-solutions.com/)
+* [shinken-monitoring architecture](https://shinken.readthedocs.org/en/latest/)
+* [shinken, webui installation](http://blogduyax.madyanne.fr/installation-de-shinken.html)
+* [Installing MongoDB on Ubuntu](https://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/)
+* [Installing sqlitedb on Ubuntu](http://www.tutorialspoint.com/sqlite/sqlite_installation.htm)
 -----
 Have fun. Hack in peace.
