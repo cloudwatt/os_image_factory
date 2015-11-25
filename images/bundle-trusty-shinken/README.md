@@ -258,7 +258,7 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
 - { direction: egress, protocol: TCP }
 - { direction: egress, protocol: UDP }
 
-`
+```
 pierre@cloud:~$ heat resource-list stack-ghost       //création de votre  machine cliente
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
 | resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
@@ -270,7 +270,7 @@ pierre@cloud:~$ heat resource-list stack-ghost       //création de votre  machi
 | server           | 81ce0266-3361-471a-9b0c-6c37e32c9e9e              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-24T15:18:38Z |
 | floating_ip_link | a7357436-68b0-4108-a77c-7f25489380d1-84.39.36.143 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T15:19:31Z |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------
-`
+```
 
 Si vous êtes dans un sous réseau différent, vous aurez besoins de créer un routeur pour interconnecter les deux sous-reseaux
 Exemple:
