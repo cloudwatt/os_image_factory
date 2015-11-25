@@ -329,7 +329,7 @@ $ heat resource-list BUILD_SHINE
 ~$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 57b4ea12-75c9-4f0c-87e9-2c1ebe58e860        // Add id du router + subnet host server
 Added interface 4455951e-17ce-4dfb-bee9-6c7025494103 to router babdd078-c0c6-4280-88f5-0f77951a5933.
 ```
-// copier le contenu de votre clé d'authentication à la plateforme de cloudwatt et coller ce contenu dans un fichier sur la machine hebergeant shinken server.
+* copier le contenu de votre clé d'authentication à la plateforme de cloudwatt et coller ce contenu dans un fichier sur la machine hebergeant shinken server.
 ```
 $ cat .ssh/buildshinken.pem       
 ```                                         
@@ -338,13 +338,13 @@ $ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 57b4ea12-75c
 Added interface 4455951e-17ce-4dfb-bee9-6c7025494103 to router babdd078-c0c6-4280-88f5-0f77951a5933.
 ```
 
-// copier le contenu de votre clé d'authentication à la plateforme de cloudwatt et coller ce contenu dans un fichier sur la machine hebergeant shinken server
+* copier le contenu de votre clé d'authentication à la plateforme de cloudwatt et coller ce contenu dans un fichier sur la machine hebergeant shinken server
 ```
-pierre@cloud:~$ cat .ssh/buildshinken.pem                                                
+$ cat .ssh/buildshinken.pem                                                
 ```
 Et par la suite, connecter vous à la machine qui heberge shinken serveur
 
-1. edit un fichier file.pem puis coller le contenu de la clé précedente
+1.edit un fichier file.pem puis coller le contenu de la clé précedente
 ```
 exp-stack-server-gr7irra3c2tv# vim .ssh/build_shinken.pem
 ```
@@ -395,10 +395,10 @@ Vous avez un point d'entrée sur votre machine virtuelle en SSH via l'IP flottan
 
 Vous pouvez commencer à construire votre site en prenant la main sur votre serveur. Les points d'entrée utiles :
 
-*'/ etc / shinken': the whole program configuration of shinken-server
-*'/ usr / bin / shinken-': launch scripts of daemons
-*'/ var / lib / shinken': shinken the modules and supervision plugins (we will return)
-*'/ var / log / shinken': top secret
+* `/ etc / shinken`: the whole program configuration of shinken-server
+* `/ usr / bin / shinken-`: launch scripts of daemons
+* `/ var / lib / shinken`: shinken the modules and supervision plugins (we will return)
+* `/ var / log / shinken`: top secret
 
 
 -----
