@@ -157,6 +157,10 @@ outputs:
 
 ### Démarrer la stack
 
+ Schema de base
+
+ [Bigger production setup](http://blog.gamb.fr/public/Gamb/Geek/poc_shinken_distrib.png)
+
 Dans un shell, lancer le script `stack-start.sh` en passant en paramètre le nom que vous souhaitez lui attribuer :
 
 ~~~
@@ -366,7 +370,17 @@ Et bien si ! En utilisant la console, vous pouvez déployer un serveur shinken :
 
 La stack va se créer automatiquement (vous pouvez en voir la progression cliquant sur son nom). Quand tous les modules deviendront « verts », la création sera terminée. Vous pourrez alors aller dans le menu « Instances » pour découvrir l’IP flottante qui a été générée automatiquement. Ne vous reste plus qu’à lancer votre IP dans votre navigateur.
 
-C’est (déjà) FINI !
+## Ouvert au réseau
+Pour rappel, voici les ports par défaut où répondent les rôles Shinken :
+
+    Arbiter : 7770
+    Broker : 7772
+    WebUI : 7767
+    Reactionner : 7769
+    Scheduler : 7768
+    Poller : 7771
+
+[Bigger production setup](http://blog.gamb.fr/public/Gamb/Geek/shinken_flux-reseaux.png)
 
 
 ## So watt ?
@@ -388,8 +402,8 @@ Vous pouvez commencer à construire votre site en prenant la main sur votre serv
 * [Shinken Solutions - Index](http://www.shinken-solutions.com/)
 * [shinken-monitoring architecture](https://shinken.readthedocs.org/en/latest/)
 * [shinken, webui installation](http://blogduyax.madyanne.fr/installation-de-shinken.html)
-* [Installing MongoDB on Ubuntu](https://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/)
-* [Installing sqlitedb on Ubuntu](http://www.tutorialspoint.com/sqlite/sqlite_installation.htm)
+* [Installing MongoDB ](https://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/)
+* [Installing sqlitedb ](http://www.tutorialspoint.com/sqlite/sqlite_installation.htm)
 
 -----
 Have fun. Hack in peace.

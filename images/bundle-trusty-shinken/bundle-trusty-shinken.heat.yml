@@ -43,9 +43,9 @@ resources:
     properties:
       network_id: { get_resource: network }
       ip_version: 4
-      cidr: 10.0.7.0/24
+      cidr: 10.0.1.0/24
       allocation_pools:
-        - { start: 10.0.7.100, end: 10.0.7.199 }
+        - { start: 10.0.1.100, end: 10.0.1.199 }
 
   security_group:
     type: OS::Neutron::SecurityGroup
