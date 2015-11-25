@@ -11,6 +11,12 @@
   vars:
     goblin_home: /opt/mediagoblin
   tasks:
+    - name: fr_FR locale present
+      locale_gen: name="{{ item }}" state=present
+      with_items:
+        - fr_FR.UTF-8
+        - en_US.UTF-8
+
     - name: ansible_ssh_user can become postgres
       lineinfile: "dest=/etc/sudoers state=present regexp='^{{ ansible_ssh_user }}.*postgres.*$' line='{{ ansible_ssh_user }} ALL=(postgres) NOPASSWD: ALL' validate='visudo -cf %s'"
 
@@ -65,6 +71,7 @@
         - nginx
         - postgresql
         - postgresql-client
+        - postgresql-contrib
         - gstreamer1.0-tools
         - gir1.2-gstreamer-1.0
         - gir1.2-gst-plugins-base-1.0
@@ -197,7 +204,7 @@
         dest=/etc/init.d/{{ item }}
         owner=mediagoblin
         group=www-data
-        mode=0640
+        mode=0755
       with_items:
         - mediagoblin-celery-worker
         - mediagoblin-paster
@@ -248,11 +255,9 @@
 
     - name: mediagoblin apply
       become_user: mediagoblin
-      shell: gmg dbupdate
+      shell: gmg assetlink && gmg dbupdate
       args:
         chdir: "{{ goblin_home }}"
-
-    # gmg assetlink
 
     - name: start mediagoblin
       service:
