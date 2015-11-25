@@ -1,6 +1,4 @@
-# 5 Minutes Stacks, épisode premier : Shinken #
-
-Bienvenue à l'inauguration de la série des 5 Minutes Stacks !
+# 5 Minutes Stacks, épisode 15 : Shinken #
 
 ## Le concept
 
@@ -15,7 +13,7 @@ pouvez commencer à l'exploiter immédiatement.
 Si vous avez des questions, remarques, idées d'améliorations n'hésitez
 pas à ouvrir une issue sur Github ou à soumettre une pull-request.
 
-## Episode premier : Shinken
+## Episode 15 : Shinken
 
 Shinken est une application permettant la surveillance système et réseau.
 Elle surveille les hôtes et services spécifiés, alertant lorsque les systèmes
@@ -176,21 +174,24 @@ outputs:
 Dans un shell, lancer le script `stack-start.sh` en passant en paramètre le nom que vous souhaitez lui attribuer :
 
 ~~~
-./stack-start.sh MA_LAMPE
+./stack-start.sh shinken
 ~~~
 Exemple :
 
-pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ ./stack-start.sh EXP_STACK
+'''
+~/os_image_factory/images/bundle-trusty-shinken$ ./stack-start.sh EXP_STACK
 +--------------------------------------+-----------------+--------------------+----------------------+
 | id                                   | stack_name      | stack_status       | creation_time        |
 +--------------------------------------+-----------------+--------------------+----------------------+
 
 | ee873a3a-a306-4127-8647-4bc80469cec4 | EXP_STACK       | CREATE_IN_PROGRESS | 2015-11-25T11:03:51Z |
 +--------------------------------------+-----------------+--------------------+----------------------+
+'''
 
 Enfin, attendez 5 minutes que le déploiement soit complet.
 
-pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ heat resource-list EXP_STACK
+'''
+~/os_image_factory/images/bundle-trusty-shinken$ heat resource-list EXP_STACK
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
 | resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
@@ -201,6 +202,7 @@ pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ heat resource-list
 | server           | f5b22d22-1cfe-41bb-9e30-4d089285e5e5              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-25T11:04:00Z |
 | floating_ip_link | 44dd841f-8570-4f02-a8cc-f21a125cc8aa-84.39.38.215 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-25T11:04:30Z |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------
+'''
 
 Le script `start-stack.sh` s'occupe de lancer les appels nécessaires sur les API Cloudwatt pour :
 
@@ -212,27 +214,35 @@ Le script `start-stack.sh` s'occupe de lancer les appels nécessaires sur les AP
 Une fois tout ceci fait, vous pouvez lancez le script `stack-get-url.sh` qui va récupérer l'url d'entrée de votre stack.
 
 Exemple:
-pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ ./stack-get-url.sh EXP_STACK
-EXP_STACK 84.39.38.215
 
-=>Après l'etape précédente, tester la connectivité en ssh sur la machine qui heberge le serveur shinken ( n'oubliez pas de renseigner votre clé):
+'''
+~/os_image_factory/images/bundle-trusty-shinken$ ./stack-get-url.sh EXP_STACK
+EXP_STACK 84.39.38.215
+'''
+
+* Après l'étape précédente, tester la connectivité en ssh sur la machine qui héberge le serveur shinken ( n'oubliez pas de renseigner votre clé):
 Exemple:
-pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ ssh 84.39.38.215 -i ~/.ssh/buildshinken.pem -l cloud -vvv
+
+'''
+~/os_image_factory/images/bundle-trusty-shinken$ ssh 84.39.38.215 -i ~/.ssh/buildshinken.pem -l cloud -vvv
+'''
 
 Après avoir executé la commande précedente, vous serez connecté en ssh sur votre machine à distance.
+
+'''
 cloud@exp-stack-server-gr7irra3c2tv:~$ sudo ifconfig
 eth0      Link encap:Ethernet  HWaddr 02:bf:17:c9:28:09  
           inet addr:10.0.7.100  Bcast:10.0.7.255  Mask:255.255.255.0
-
-
-pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ ssh 84.39.38.215 -i ~/.ssh/buildshinken.pem -l cloud -vvv
+'''
 
 Nous voici connecté à notre machine qui héberge shinken-server ( les fichiers de configuration de shinken sont dans: /etc/shinken/)   
-cloud@exp-stack-server-gr7irra3c2tv:/etc/shinken$ ls
+'''
+exp-stack-server-gr7irra3c2tv:/etc/shinken$ ls
 arbiters  certs     contactgroups  daemons       dev.cfg    escalations  hosts    notificationways  pollers       realms     resource.d  sample.cfg  servicegroups  shinken.cfg  timeperiods
 brokers   commands  contacts       dependencies  discovery  hostgroups   modules  packs             reactionners  receivers  sample      schedulers  services       templates
+'''
 
-=> A ce niveau, vous pouvez vous connecter sur votre navigateur web avec le floatting IP de la machine sur le port http://84.39.38.215:7767
+* A ce niveau, vous pouvez vous connecter sur votre navigateur web avec le floatting IP de la machine sur le port http://84.39.38.215:7767
    Pour s'authentifier sur l'interface web: (login: admin  et le mot de passe: admin)
 ![Minimum setup](http://84.39.38.215:7767/user/login)
 
@@ -242,10 +252,10 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
 
 ![Bigger production setup](https://assets.digitalocean.com/articles/Shrinken_Ubuntu/2.png)
 
-=> Pour lancer la configuration sur les machines clientes,
+* Pour lancer la configuration sur les machines clientes,
   Pour vous créer une machine cliente sur la plateforme de cloudwatt,connectez-vous sur cloudwatt.com, cliquez sur l'onglet  'produit' puis sur l'option 'application' et Choisissez 'ghost'.
 
-=> connectez-vous à la console de cloudwatt (https://console.cloudwatt.com), dans l'onglet 'stack' vous pourrez recuperer l'addresse ip de votre stack et dans l'onglet 'access_and_security' autoriser les ports :
+* connectez-vous à la console de cloudwatt (https://console.cloudwatt.com), dans l'onglet 'stack' vous pourrez recuperer l'addresse ip de votre stack et dans l'onglet 'access_and_security' autoriser les ports :
 - { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
 - { direction: ingress, protocol: TCP, port_range_min: 7767, port_range_max: 7767 }
 - { direction: ingress, protocol: UDP, port_range_min: 161, port_range_max: 161 }
@@ -257,8 +267,8 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
 - { direction: egress, protocol: TCP }
 - { direction: egress, protocol: UDP }
 
-
-pierre@cloud:~$ heat resource-list stack-ghost       //création de votre  machine cliente
+'''
+~$ heat resource-list stack-ghost       //création de votre  machine cliente
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
 | resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
@@ -269,10 +279,12 @@ pierre@cloud:~$ heat resource-list stack-ghost       //création de votre  machi
 | server           | 81ce0266-3361-471a-9b0c-6c37e32c9e9e              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-24T15:18:38Z |
 | floating_ip_link | a7357436-68b0-4108-a77c-7f25489380d1-84.39.36.143 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T15:19:31Z |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------
+'''
 
 Si vous êtes dans un sous réseau différent, vous aurez besoins de créer un routeur pour interconnecter les deux sous-reseaux
 Exemple:
-pierre@cloud:~$ neutron router-create nomrouter         // création du routeur
+'''
+~$ neutron router-create nomrouter         // création du routeur
 Created a new router:
 +-----------------------+--------------------------------------+
 | Field                 | Value                                |
@@ -284,9 +296,9 @@ Created a new router:
 | status                | ACTIVE                               |
 | tenant_id             | 8acb072da1b14c61b9dced19a6be3355     |
 +-----------------------+--------------------------------------+
-pierre@cloud:~$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c      // Add id du router + subnet host ghost
+~$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c      // Add id du router + subnet host ghost
 Added interface a31a1d46-63f4-4315-8eb6-594bd17bc42f to router babdd078-c0c6-4280-88f5-0f77951a5933.
-pierre@cloud:~$ heat resource-list BUILD_SHINE      
+~$ heat resource-list maresource      
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
 | resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
@@ -297,36 +309,37 @@ pierre@cloud:~$ heat resource-list BUILD_SHINE
 | server           | fd868139-6333-49ae-a1d4-6b9099eab4cd              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-24T14:47:41Z |
 | floating_ip_link | ce734a7e-2079-46a9-84c7-e136446cb879-84.39.33.194 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T14:48:30Z |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
-pierre@cloud:~$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 57b4ea12-75c9-4f0c-87e9-2c1ebe58e860        // Add id du router + subnet host server
+~$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 57b4ea12-75c9-4f0c-87e9-2c1ebe58e860        // Add id du router + subnet host server
 Added interface 4455951e-17ce-4dfb-bee9-6c7025494103 to router babdd078-c0c6-4280-88f5-0f77951a5933.
-
-// copier le contenu de votre clé d'authentication à la plateforme de cloudwatt et coller ce contenu dans un fichier sur la machine hebergeant shinken server
-
-pierre@cloud:~$ cat .ssh/buildshinken.pem                                                
------BEGIN RSA PRIVATE KEY-----
-MIIEowIBAAKCAQEAqwgQd7Rz2siIsp0OOKP6WxPHIN5mKSRRz9YjI+ZWmYDMsSQS
-ukRKSpmMIU5dJe45+IAp3mI/+pi2aXWUc6SHbwJhIL1K5MCa8HMoreuPltDFzawb
-v5ONXSQsLoX6pFS8r9fRJGSgaqMLOoKuMKS1Cx5SAP9nyJySzCBgoyKPCyoaNT/I
-Kso0efT4uug/fRVm4xQ6rQlE2vRf0O7CmBfSiUXckCEM2vJyaEVkIijoTghgY0Gf
-Bz6IFbX1hQimMa3jpv3PFJKa5/YfgC4H7SUOQaHmWsaF8ObvnGlm2OJ+GynnkLc7
-j0gR4IcMoTq5f8vpaIbCMlscWTN1VujwJ0aIowIDAQABAoIBACXYhPxYHALfuQ/9
-HPZ/opigycGGNQkJlmjtM51wDN2u2JyiJNq+3cmgLJf6JTaNfpp0kc854nprbIHt
-mMn2MFnqJt/9wyLXU/G9KdVCeOWgkQSv/vvnhLKFnJk24H2YmqA2m3r4IV83cPaj
------END RSA PRIVATE KEY-----
+'''
+// copier le contenu de votre clé d'authentication à la plateforme de cloudwatt et coller ce contenu dans un fichier sur la machine hebergeant shinken server.
+'''
+pierre@cloud:~$ cat .ssh/buildshinken.pem       
+'''                                         
 
 Et par la suite, connecter vous à la machine qui heberge shinken serveur
 
 1. edit un fichier file.pem puis coller le contenu de la clé précedente
-cloud@exp-stack-server-gr7irra3c2tv# vim .ssh/build_shinken.pem
+'''
+exp-stack-server-gr7irra3c2tv# vim .ssh/build_shinken.pem
+'''
 2.Donner des permissions d'execution de votre file.pem
-cloud@exp-stack-server-gr7irra3c2tv# chmod 600 .ssh/file.pem
+'''
+exp-stack-server-gr7irra3c2tv# chmod 600 .ssh/file.pem
+'''
 3.connectez-vous en ssh à l'adrese IP de la machine cliente
-cloud@exp-stack-server-gr7irra3c2tv#ssh '@IP machine cliente '-l cloud -i .ssh/file.pem
-4.renseignez le fichier hosts d'ansible installer automatiquement sur la machine serveur               
-cloud@exp-stack-server-gr7irra3c2tv# vim /etc/ansible/hosts                                             
-cloud@exp-stack-server-gr7irra3c2tv# ansible slaves -m ping
+'''
+exp-stack-server-gr7irra3c2tv#ssh '@IP machine cliente '-l cloud -i .ssh/file.pem
+'''
+4.renseignez le fichier hosts d'ansible installer automatiquement sur la machine serveur     
+'''         
+exp-stack-server-gr7irra3c2tv# vim /etc/ansible/hosts                                             
+exp-stack-server-gr7irra3c2tv# ansible slaves -m ping
+'''
 5.Deployer la configuration slave-monitoring.yml sur la machine cliente
-cloud@exp-stack-server-gr7irra3c2tv#ansible-playbook slave-monitoring.yml
+'''
+exp-stack-server-gr7irra3c2tv#ansible-playbook slave-monitoring.yml
+'''
 
 <a name="console" />
 
