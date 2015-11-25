@@ -213,11 +213,11 @@ EXP_STACK `floatting IP `
 
 Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les différentes métriques monitorées par shinken
 
-![Bigger production setup](https://assets.digitalocean.com/articles/Shrinken_Ubuntu/2.png)
+![Bigger production setup](http://shinken.readthedocs.org/en/latest/_images/shinken_webui.png)
 
 * Vous pouvez enrichir votre `Dashboard` avec des widgets comme suit:
 
-![Bigger production ](https://assets.digitalocean.com/articles/Shrinken_Ubuntu/4.png)
+![Bigger production ](http://shinkenlab.io/images/course2/course2-dasboardfilled.png)
 
 * Pour monitorer les machines composants vos packs informatiques, deployer  automatiquement la configuration éffectuée dans le fichier
   slave-monitoring.yml sur les machines clientes, depuis la machine qui héberge shinken-server.
@@ -339,6 +339,7 @@ Vous pouvez commencer à construire votre site en prenant la main sur votre serv
 
 * [shinken-monitoring Homepage](http://www.shinken-monitoring.org/)
 * [Shinken Solutions - Index](http://www.shinken-solutions.com/)
+* [Shinken manual](http://shinken.readthedocs.org/en/latest/)
 * [Shinken blog](http://shinkenlab.io/online-course-2-webui/)
 * [shinken-monitoring architecture](https://shinken.readthedocs.org/en/latest/)
 * [shinken, webui installation](http://blogduyax.madyanne.fr/installation-de-shinken.html)
