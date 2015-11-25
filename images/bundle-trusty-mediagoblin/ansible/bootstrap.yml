@@ -87,7 +87,7 @@
         - libreoffice
 
     - name: pip installed
-      easy_install: name=pip
+      shell: sudo easy_install pip
 
     - name: version-specific pip packages
       pip: name={{ item.name }} version={{ item.version }} state=present
@@ -258,6 +258,10 @@
       shell: gmg assetlink && gmg dbupdate
       args:
         chdir: "{{ goblin_home }}"
+      register: result
+      until: result|success
+      retries: 3
+      delay: 2
 
     - name: start mediagoblin
       service:
