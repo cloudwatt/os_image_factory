@@ -1,26 +1,17 @@
 # 5 Minutes Stacks, épisode 15 : Shinken #
 
-## Le concept
-
-Régulièrement, Cloudwatt publiera, de façon conjointe sur ce blog et
-sur son github, des stacks applicatives avec un guide de déploiement.
-Le but est de vous facilitez la vie pour démarrer des projets. La
-procédure prend quelques minutes à préparer et 5 minutes à déployer.
-
-Une fois la pile applicative déployée, vous êtes maître dessus et vous
-pouvez commencer à l'exploiter immédiatement.
-
-Si vous avez des questions, remarques, idées d'améliorations n'hésitez
-pas à ouvrir une issue sur Github ou à soumettre une pull-request.
-
 ## Episode 15 : Shinken
 
+![Minimum setup](http://www.samuelpoggioli.fr/wp-content/uploads/2014/12/Shinken-624x192.jpg)
 Shinken est une application permettant la surveillance système et réseau.
 Elle surveille les hôtes et services spécifiés, alertant lorsque les systèmes
 vont mal et quand ils vont mieux. C'est un logiciel libre sous licence GNU AGPL.
 Elle est complètement compatible avec le logiciel Nagios et elle a pour but
 d'apporter une supervision distribuée et hautement disponible facile à mettre en
 place.
+Voici comment se présente l'architecture de shinken :
+
+![Minimum setup](http://blog.nicolargo.com/wp-content/uploads/2012/10/shinken-architecture.png)
 La base de déploiement est une instance Debian jessie. Le serveur shinken,
 l'interface graphique webui (apporte de l'interface graphique sur shinken ),
 la base de données SQlitedb sont déployés dans une instance unique. De la machine
@@ -81,11 +72,6 @@ est celui nommé `keypair_name` dont la valeur `default` doit contenir le nom d'
 C'est dans ce même fichier que vous pouvez ajuster la taille de l'instance par le paramètre `flavor`.
 
 ~~~ yaml
-heat_template_version: 2013-05-23
-
-
-description: Basic all-in-one LAMP stack
-
 
 heat_template_version: 2013-05-23
 
@@ -245,8 +231,6 @@ brokers   commands  contacts       dependencies  discovery  hostgroups   modules
 * A ce niveau, vous pouvez vous connecter sur votre navigateur web avec le floatting IP de la machine sur le port http://xx.xx.xx.xx:7767
    Pour s'authentifier sur l'interface web: (login: admin  et le mot de passe: admin)
 
-![Minimum setup](https://assets.digitalocean.com/articles/Shrinken_Ubuntu/1.png)
-
 Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les différentes métriques monitorées par shinken
 
 ![Bigger production setup](https://assets.digitalocean.com/articles/Shrinken_Ubuntu/2.png)
@@ -368,7 +352,7 @@ exp-stack-server-gr7irra3c2tv#ansible-playbook slave-monitoring.yml
 
 ### C’est bien tout ça, mais vous n’auriez pas un moyen de lancer l’application par la console ?
 
-Et bien si ! En utilisant la console, vous pouvez déployer un serveur LAMP :
+Et bien si ! En utilisant la console, vous pouvez déployer un serveur shinken :
 
 1.	Allez sur le Github Cloudwatt dans le répertoire applications/bundle-trusty-shinken
 2.	Cliquez sur le fichier nommé bundle-trusty-shinken.heat.yml
@@ -393,7 +377,7 @@ Vous avez un point d'entrée sur votre machine virtuelle en SSH via l'IP flottan
 
 Vous pouvez commencer à construire votre site en prenant la main sur votre serveur. Les points d'entrée utiles :
 
-* `/ etc / shinken`: le repertoire contenant les fichiers de configuration de shinken
+* `/ etc / shinken / hosts/`: le repertoire contenant le fichier hosts ( les machines à monitorer)
 * `/ usr / bin / shinken-`: le repertoire contenant les scripts de shinken
 * `/ var / lib / shinken`: le repertoire contenant les modules de monitoring de shinken
 * `/ var / log / shinken`: le repertoire contenant les log
@@ -406,5 +390,6 @@ Vous pouvez commencer à construire votre site en prenant la main sur votre serv
 * [shinken, webui installation](http://blogduyax.madyanne.fr/installation-de-shinken.html)
 * [Installing MongoDB on Ubuntu](https://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/)
 * [Installing sqlitedb on Ubuntu](http://www.tutorialspoint.com/sqlite/sqlite_installation.htm)
+
 -----
 Have fun. Hack in peace.
