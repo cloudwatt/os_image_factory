@@ -178,7 +178,7 @@ Dans un shell, lancer le script `stack-start.sh` en passant en paramètre le nom
 ~~~
 Exemple :
 
-'''
+```
 ~/os_image_factory/images/bundle-trusty-shinken$ ./stack-start.sh EXP_STACK
 +--------------------------------------+-----------------+--------------------+----------------------+
 | id                                   | stack_name      | stack_status       | creation_time        |
@@ -186,11 +186,11 @@ Exemple :
 
 | ee873a3a-a306-4127-8647-4bc80469cec4 | EXP_STACK       | CREATE_IN_PROGRESS | 2015-11-25T11:03:51Z |
 +--------------------------------------+-----------------+--------------------+----------------------+
-'''
+```
 
 Enfin, attendez 5 minutes que le déploiement soit complet.
 
-'''
+```
 ~/os_image_factory/images/bundle-trusty-shinken$ heat resource-list EXP_STACK
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
 | resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
@@ -202,7 +202,7 @@ Enfin, attendez 5 minutes que le déploiement soit complet.
 | server           | f5b22d22-1cfe-41bb-9e30-4d089285e5e5              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-25T11:04:00Z |
 | floating_ip_link | 44dd841f-8570-4f02-a8cc-f21a125cc8aa-84.39.38.215 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-25T11:04:30Z |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------
-'''
+```
 
 Le script `start-stack.sh` s'occupe de lancer les appels nécessaires sur les API Cloudwatt pour :
 
@@ -215,32 +215,32 @@ Une fois tout ceci fait, vous pouvez lancez le script `stack-get-url.sh` qui va 
 
 Exemple:
 
-'''
+```
 ~/os_image_factory/images/bundle-trusty-shinken$ ./stack-get-url.sh EXP_STACK
 EXP_STACK 84.39.38.215
-'''
+```
 
 * Après l'étape précédente, tester la connectivité en ssh sur la machine qui héberge le serveur shinken ( n'oubliez pas de renseigner votre clé):
 Exemple:
 
-'''
+```
 ~/os_image_factory/images/bundle-trusty-shinken$ ssh 84.39.38.215 -i ~/.ssh/buildshinken.pem -l cloud -vvv
-'''
+```
 
 Après avoir executé la commande précedente, vous serez connecté en ssh sur votre machine à distance.
 
-'''
+```
 cloud@exp-stack-server-gr7irra3c2tv:~$ sudo ifconfig
 eth0      Link encap:Ethernet  HWaddr 02:bf:17:c9:28:09  
           inet addr:10.0.7.100  Bcast:10.0.7.255  Mask:255.255.255.0
-'''
+```
 
 Nous voici connecté à notre machine qui héberge shinken-server ( les fichiers de configuration de shinken sont dans: /etc/shinken/)   
-'''
+```
 exp-stack-server-gr7irra3c2tv:/etc/shinken$ ls
 arbiters  certs     contactgroups  daemons       dev.cfg    escalations  hosts    notificationways  pollers       realms     resource.d  sample.cfg  servicegroups  shinken.cfg  timeperiods
 brokers   commands  contacts       dependencies  discovery  hostgroups   modules  packs             reactionners  receivers  sample      schedulers  services       templates
-'''
+```
 
 * A ce niveau, vous pouvez vous connecter sur votre navigateur web avec le floatting IP de la machine sur le port http://84.39.38.215:7767
    Pour s'authentifier sur l'interface web: (login: admin  et le mot de passe: admin)
@@ -270,7 +270,7 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
 - { direction: egress, protocol: ICMP }
 - { direction: egress, protocol: TCP }
 - { direction: egress, protocol: UDP }
-'''
+```
 <<<<<<< HEAD
 
 $ heat resource-list stack-ghost       //création de votre  machine cliente
@@ -286,7 +286,7 @@ $ heat resource-list stack-ghost       //création de votre  machine cliente
 | floating_ip_link | a7357436-68b0-4108-a77c-7f25489380d1-84.39.36.143 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T15:19:31Z |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------
 <<<<<<< HEAD
-'''
+```
 
 Si vous êtes dans un sous réseau différent, vous aurez besoins de créer un routeur pour interconnecter les deux sous-reseaux
 Exemple:
@@ -335,11 +335,11 @@ $ heat resource-list BUILD_SHINE
 <<<<<<< HEAD
 ~$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 57b4ea12-75c9-4f0c-87e9-2c1ebe58e860        // Add id du router + subnet host server
 Added interface 4455951e-17ce-4dfb-bee9-6c7025494103 to router babdd078-c0c6-4280-88f5-0f77951a5933.
-'''
+```
 // copier le contenu de votre clé d'authentication à la plateforme de cloudwatt et coller ce contenu dans un fichier sur la machine hebergeant shinken server.
-'''
+```
 pierre@cloud:~$ cat .ssh/buildshinken.pem       
-'''                                         
+```                                         
 =======
 
 $ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 57b4ea12-75c9-4f0c-87e9-2c1ebe58e860        // Add id du router + subnet host server
@@ -348,34 +348,34 @@ Added interface 4455951e-17ce-4dfb-bee9-6c7025494103 to router babdd078-c0c6-428
 ```
 
 // copier le contenu de votre clé d'authentication à la plateforme de cloudwatt et coller ce contenu dans un fichier sur la machine hebergeant shinken server
-'''
+```
 pierre@cloud:~$ cat .ssh/buildshinken.pem                                                
 
 >>>>>>> 601ca7f296b1c6d3d3318ff87834d10d6981eca5
-'''
+```
 Et par la suite, connecter vous à la machine qui heberge shinken serveur
 
 1. edit un fichier file.pem puis coller le contenu de la clé précedente
-'''
+```
 exp-stack-server-gr7irra3c2tv# vim .ssh/build_shinken.pem
-'''
+```
 2.Donner des permissions d'execution de votre file.pem
-'''
+```
 exp-stack-server-gr7irra3c2tv# chmod 600 .ssh/file.pem
-'''
+```
 3.connectez-vous en ssh à l'adrese IP de la machine cliente
-'''
+```
 exp-stack-server-gr7irra3c2tv#ssh '@IP machine cliente '-l cloud -i .ssh/file.pem
-'''
+```
 4.renseignez le fichier hosts d'ansible installer automatiquement sur la machine serveur     
-'''         
+```         
 exp-stack-server-gr7irra3c2tv# vim /etc/ansible/hosts                                             
 exp-stack-server-gr7irra3c2tv# ansible slaves -m ping
-'''
+```
 5.Deployer la configuration slave-monitoring.yml sur la machine cliente
-'''
+```
 exp-stack-server-gr7irra3c2tv#ansible-playbook slave-monitoring.yml
-'''
+```
 
 <a name="console" />
 
