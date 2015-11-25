@@ -380,7 +380,7 @@ Pour rappel, voici les ports par défaut où répondent les rôles Shinken :
     Scheduler : 7768
     Poller : 7771
 
-[Bigger production setup](http://blog.gamb.fr/public/Gamb/Geek/shinken_flux-reseaux.png)
+![Aperçu réseau](http://blog.gamb.fr/public/Gamb/Geek/shinken_flux-reseaux.png)
 
 
 ## So watt ?
