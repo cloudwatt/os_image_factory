@@ -290,11 +290,20 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
     ```
    * Connectez-vous à la console de cloudwatt (https://console.cloudwatt.com), dans l'onglet 'stack' vous pourrez recuperer l'addresse ip de  votre stack et dans l'onglet `access_and_security` autoriser les ports `22 (connexion en ssh)` ,`7767 en tcp ( port d'écoute du server shinken)` ,`161 en udp (port d'échanges d'informations avec le protocole  snmp)` ,`123 en protocole udp (port de synchronisation du server NTP)`
 
-    4.Sur la machine qui héberge le shinken-server, déployer la configuration slave-monitoring.yml sur la machine cliente
+    4.A partir de la machine qui héberge le shinken-server, déployer la configuration slave-monitoring.yml sur la machine cliente
     ```
     exp-stack-server-gr7irra3c2tv#ansible-playbook slave-monitoring.yml
     ```
-
+    5.Renseignez le fichier slave.cfg, `adresses IP` et  `hostname` des hosts à monitorer
+    ```
+    exp-stack-server-gr7irra3c2tv# vim /etc/shinken/hosts/slave.cfg         // vous pouvez choisir de les renseigner dans le fichier localhost.cfg
+    ```
+    6.Redemarrer le serveur shinken
+    ```
+    exp-stack-server-gr7irra3c2tv# service shinken restart
+    ```
+    7.Reconnectez-vous en interface graphique à l'adresse http://xx.xx.xx.xx:7767  et cliquez sur l'onglet `ALL`
+    
 <a name="console" />
 
 ### C’est bien tout ça, mais vous n’auriez pas un moyen de lancer l’application par la console ?
