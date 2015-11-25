@@ -259,7 +259,7 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
 - { direction: egress, protocol: UDP }
 
 ```
-pierre@cloud:~$ heat resource-list stack-ghost       //création de votre  machine cliente
+$ heat resource-list stack-ghost       //création de votre  machine cliente
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
 | resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
@@ -274,7 +274,10 @@ pierre@cloud:~$ heat resource-list stack-ghost       //création de votre  machi
 
 Si vous êtes dans un sous réseau différent, vous aurez besoins de créer un routeur pour interconnecter les deux sous-reseaux
 Exemple:
-pierre@cloud:~$ neutron router-create nomrouter         // création du routeur
+
+```
+$ neutron router-create nomrouter         // création du routeur
+
 Created a new router:
 +-----------------------+--------------------------------------+
 | Field                 | Value                                |
@@ -282,13 +285,17 @@ Created a new router:
 | admin_state_up        | True                                 |
 | external_gateway_info |                                      |
 | id                    | babdd078-c0c6-4280-88f5-0f77951a5933 |
-| name                  | nomrouter                           |
+| name                  | nomrouter                            |
 | status                | ACTIVE                               |
 | tenant_id             | 8acb072da1b14c61b9dced19a6be3355     |
 +-----------------------+--------------------------------------+
-pierre@cloud:~$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c      // Add id du router + subnet host ghost
+
+$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c      // Add id du router + subnet host ghost
+
 Added interface a31a1d46-63f4-4315-8eb6-594bd17bc42f to router babdd078-c0c6-4280-88f5-0f77951a5933.
-pierre@cloud:~$ heat resource-list BUILD_SHINE      
+
+$ heat resource-list BUILD_SHINE
+
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
 | resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
@@ -299,8 +306,11 @@ pierre@cloud:~$ heat resource-list BUILD_SHINE
 | server           | fd868139-6333-49ae-a1d4-6b9099eab4cd              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-24T14:47:41Z |
 | floating_ip_link | ce734a7e-2079-46a9-84c7-e136446cb879-84.39.33.194 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T14:48:30Z |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
-pierre@cloud:~$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 57b4ea12-75c9-4f0c-87e9-2c1ebe58e860        // Add id du router + subnet host server
+
+$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 57b4ea12-75c9-4f0c-87e9-2c1ebe58e860        // Add id du router + subnet host server
+
 Added interface 4455951e-17ce-4dfb-bee9-6c7025494103 to router babdd078-c0c6-4280-88f5-0f77951a5933.
+```
 
 // copier le contenu de votre clé d'authentication à la plateforme de cloudwatt et coller ce contenu dans un fichier sur la machine hebergeant shinken server
 
