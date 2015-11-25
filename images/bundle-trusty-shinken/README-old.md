@@ -3,13 +3,15 @@
 ## Episode 15 : Shinken
 
 ![Minimum setup](http://www.samuelpoggioli.fr/wp-content/uploads/2014/12/Shinken-624x192.jpg)
-
 Shinken est une application permettant la surveillance système et réseau.
 Elle surveille les hôtes et services spécifiés, alertant lorsque les systèmes
 vont mal et quand ils vont mieux. C'est un logiciel libre sous licence GNU AGPL.
 Elle est complètement compatible avec le logiciel Nagios et elle a pour but
 d'apporter une supervision distribuée et hautement disponible facile à mettre en
 place.
+Voici comment se présente l'architecture de shinken :
+
+![Minimum setup](http://blog.nicolargo.com/wp-content/uploads/2012/10/shinken-architecture.png)
 La base de déploiement est une instance Debian jessie. Le serveur shinken,
 l'interface graphique webui (apporte de l'interface graphique sur shinken ),
 la base de données SQlitedb sont déployés dans une instance unique. De la machine
@@ -155,12 +157,14 @@ outputs:
 
 ### Démarrer la stack
 
+ Schema de base
 
+ [Bigger production setup](http://blog.gamb.fr/public/Gamb/Geek/poc_shinken_distrib.png)
 
 Dans un shell, lancer le script `stack-start.sh` en passant en paramètre le nom que vous souhaitez lui attribuer :
 
 ~~~
-./stack-start.sh nom_de_votre_stack
+./stack-start.sh shinken
 ~~~
 Exemple :
 
@@ -206,94 +210,147 @@ Exemple:
 EXP_STACK 84.39.38.215
 ```
 
-* A ce niveau, vous pouvez vous connecter sur votre navigateur web avec le floatting IP de la machine sur le port 7767 (http://xx.xx.xx.xx:7767)
-   Pour s'authentifier sur l'interface web: (login: admin  et le mot de passe: admin)
+* Après l'étape précédente, tester la connectivité en ssh sur la machine qui héberge le serveur shinken ( n'oubliez pas de renseigner votre clé):
+Exemple:
 
-![Interface connection shinken](http://shinkenlab.io/images/course2/course2-fail.png)
+```
+~/os_image_factory/images/bundle-trusty-shinken$ ssh 84.39.38.215 -i ~/.ssh/buildshinken.pem -l cloud -vvv
+```
+
+Après avoir executé la commande précedente, vous serez connecté en ssh sur votre machine à distance.
+
+```
+cloud@exp-stack-server-gr7irra3c2tv:~$ sudo ifconfig
+eth0      Link encap:Ethernet  HWaddr 02:bf:17:c9:28:09  
+          inet addr:10.0.7.100  Bcast:10.0.7.255  Mask:255.255.255.0
+```
+
+Nous voici connecté à notre machine qui héberge shinken-server ( les fichiers de configuration de shinken sont dans: /etc/shinken/)   
+```
+exp-stack-server-gr7irra3c2tv:/etc/shinken$ ls
+arbiters  certs     contactgroups  daemons       dev.cfg    escalations  hosts    notificationways  pollers       realms     resource.d  sample.cfg  servicegroups  shinken.cfg  timeperiods
+brokers   commands  contacts       dependencies  discovery  hostgroups   modules  packs             reactionners  receivers  sample      schedulers  services       templates
+```
+
+* A ce niveau, vous pouvez vous connecter sur votre navigateur web avec le floatting IP de la machine sur le port http://xx.xx.xx.xx:7767
+   Pour s'authentifier sur l'interface web: (login: admin  et le mot de passe: admin)
 
 Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les différentes métriques monitorées par shinken
 
 ![Bigger production setup](https://assets.digitalocean.com/articles/Shrinken_Ubuntu/2.png)
 
-Vous pouvez enrichir votre Dashboard avec des widgets comme suit:
+* Pour lancer la configuration sur les machines clientes,
+  Pour vous créer une machine cliente sur la plateforme de cloudwatt,connectez-vous sur cloudwatt.com, cliquez sur l'onglet  'produit' puis sur l'option 'application' et Choisissez 'ghost'.
 
-![Bigger production ](https://assets.digitalocean.com/articles/Shrinken_Ubuntu/4.png)
+* connectez-vous à la console de cloudwatt (https://console.cloudwatt.com), dans l'onglet 'stack' vous pourrez recuperer l'addresse ip de votre stack et dans l'onglet 'access_and_security' autoriser les ports :
+```
+- { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
+- { direction: ingress, protocol: TCP, port_range_min: 7767, port_range_max: 7767 }
+- { direction: ingress, protocol: UDP, port_range_min: 161, port_range_max: 161 }
+- { direction: ingress, protocol: UDP, port_range_min: 123, port_range_max: 123 }
+- { direction: ingress, protocol: ICMP }
+- { direction: egress, protocol: UDP, port_range_min: 161, port_range_max: 161 }
+- { direction: egress, protocol: UDP, port_range_min: 123, port_range_max: 123 }
+- { direction: egress, protocol: ICMP }
+- { direction: egress, protocol: TCP }
+- { direction: egress, protocol: UDP }
+```
+```
+$ heat resource-list stack-ghost       //création de votre  machine cliente
 
-* Pour monitorer les machines composants vos packs informatiques, deployer  automatiquement la configuration éffectuée dans le fichier
-  slave-monitoring.yml sur les machines clientes, depuis la machine qui héberge shinken-server.
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+| resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+| security_group   | 8e86058f-4933-4835-9d95-d2145f46dbc5              | OS::Neutron::SecurityGroup      | CREATE_COMPLETE | 2015-11-24T15:18:27Z |
+| floating_ip      | a7357436-68b0-4108-a77c-7f25489380d1              | OS::Neutron::FloatingIP         | CREATE_COMPLETE | 2015-11-24T15:18:29Z |
+| network          | ad58e87f-c52b-4a43-a9a4-eae6445534b3              | OS::Neutron::Net                | CREATE_COMPLETE | 2015-11-24T15:18:29Z |
+| subnet           | bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c              | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-24T15:18:30Z |
+| server           | 81ce0266-3361-471a-9b0c-6c37e32c9e9e              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-24T15:18:38Z |
+| floating_ip_link | a7357436-68b0-4108-a77c-7f25489380d1-84.39.36.143 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T15:19:31Z |
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------
+
+```
+
+Si vous êtes dans un sous réseau différent, vous aurez besoins de créer un routeur pour interconnecter les deux sous-reseaux.
+
+Exemple:
 
 
-  1.Renseignez le fichier hosts d'ansible installer automatiquement sur votre machine qui héberge shinken-server     
-  ```         
-  exp-stack-server-gr7irra3c2tv# vim /etc/ansible/hosts     
+```
+$ neutron router-create nomrouter         // création du routeur
 
-  # This is the default ansible 'hosts' file.
-  #
-  # It should live in /etc/ansible/hosts
-  #   - A hostname/ip can be a member of multiple groups
-  [...]
- [shinken]
- localhost  ansible_connection=local
+Created a new router:
++-----------------------+--------------------------------------+
+| Field                 | Value                                |
++-----------------------+--------------------------------------+
+| admin_state_up        | True                                 |
+| external_gateway_info |                                      |
+| id                    | babdd078-c0c6-4280-88f5-0f77951a5933 |
+| name                  | nomrouter                            |
+| status                | ACTIVE                               |
+| tenant_id             | 8acb072da1b14c61b9dced19a6be3355     |
++-----------------------+--------------------------------------+
 
- [slaves]
-  xx.xx.xx.xx ansible_ssh_user=cloud ansible_ssh_private_key_file=/home/pierre/.ssh/buildshinken.pem
-  ...
-  xx.xx.xx.xx  ansible_ssh_user=cloud ansible_ssh_private_key_file=/home/pierre/.ssh/buildshinken.pem
-  ```
-  2.Tester la connectivité
-  ```                                     
-  exp-stack-server-gr7irra3c2tv# ansible slaves -m ping
-  ```
+~$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c      // Add id du router + subnet host ghost
+Added interface a31a1d46-63f4-4315-8eb6-594bd17bc42f to router babdd078-c0c6-4280-88f5-0f77951a5933.
+~$ heat resource-list maresource      
 
-  3.Dans le cas où vos machines ne sont pas dans le meme sous réseau, alors vous devez créer un routeur
-    avec la technologie openstack, comme suit :
+$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c      // Add id du router + subnet host ghost
 
+Added interface a31a1d46-63f4-4315-8eb6-594bd17bc42f to router babdd078-c0c6-4280-88f5-0f77951a5933.
 
-    ```
-    $ neutron router-create nomrouter         // création du routeur
+$ heat resource-list BUILD_SHINE
 
-    Created a new router:
-    +-----------------------+--------------------------------------+
-    | Field                 | Value                                |
-    +-----------------------+--------------------------------------+
-    | admin_state_up        | True                                 |
-    | external_gateway_info |                                      |
-    | id                    | babdd078-c0c6-4280-88f5-0f77951a5933 |
-    | name                  | nomrouter                            |
-    | status                | ACTIVE                               |
-    | tenant_id             | 8acb072da1b14c61b9dced19a6be3355     |
-    +-----------------------+--------------------------------------+
-    ```
-    Il s'agira par la suite d'ajouter  le `subnet_host` de votre host à l'interface du routeur `id du routeur` :
-    ```
-    ~$ neutron router-interface-add `id_router` `subnet_host`                                // Add id du router + subnet host
-    Added interface `subnet_host` to router `id_router`
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+| resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+| floating_ip      | ce734a7e-2079-46a9-84c7-e136446cb879              | OS::Neutron::FloatingIP         | CREATE_COMPLETE | 2015-11-24T14:47:33Z |
+| security_group   | 916f6d0c-02ac-4ce9-ad3a-67ddf9a61b03              | OS::Neutron::SecurityGroup      | CREATE_COMPLETE | 2015-11-24T14:47:35Z |
+| network          | e9ca7722-e5c7-4b17-b842-1343155b4461              | OS::Neutron::Net                | CREATE_COMPLETE | 2015-11-24T14:47:36Z |
+| subnet           | 57b4ea12-75c9-4f0c-87e9-2c1ebe58e860              | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-24T14:47:37Z |
+| server           | fd868139-6333-49ae-a1d4-6b9099eab4cd              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-24T14:47:41Z |
+| floating_ip_link | ce734a7e-2079-46a9-84c7-e136446cb879-84.39.33.194 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T14:48:30Z |
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
 
-    ```
-  * Si vous voulez créer vos hosts sur la plateforme de cloudwatt, connectez-vous sur cloudwatt.com. Allez sur l'onglet  `produit` puis sur
-       l'option `application` et cliquez sur `Ghost`.
-    Après avoir créer votre machine host, vous pouvez recuperer son subnet comme suit:
+~$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 57b4ea12-75c9-4f0c-87e9-2c1ebe58e860        // Add id du router + subnet host server
+Added interface 4455951e-17ce-4dfb-bee9-6c7025494103 to router babdd078-c0c6-4280-88f5-0f77951a5933.
+```
+* copier le contenu de votre clé d'authentication à la plateforme de cloudwatt et coller ce contenu dans un fichier sur la machine hebergeant shinken server.
+```
+$ cat .ssh/buildshinken.pem       
+```                                         
+```
+$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 57b4ea12-75c9-4f0c-87e9-2c1ebe58e860        // Add id du router + subnet host server
+Added interface 4455951e-17ce-4dfb-bee9-6c7025494103 to router babdd078-c0c6-4280-88f5-0f77951a5933.
+```
 
-    ```
-    $ heat resource-list nom_stack_ghost       //création de votre  machine cliente
+* copier le contenu de votre clé d'authentication à la plateforme de cloudwatt et coller ce contenu dans un fichier sur la machine hebergeant shinken server
+```
+$ cat .ssh/buildshinken.pem                                                
+```
+Et par la suite, connecter vous à la machine qui heberge shinken serveur
 
-    +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
-    | resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
-    +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
-    | security_group   | 8e86058f-4933-4835-9d95-d2145f46dbc5              | OS::Neutron::SecurityGroup      | CREATE_COMPLETE | 2015-11-24T15:18:27Z |
-    | floating_ip      | a7357436-68b0-4108-a77c-7f25489380d1              | OS::Neutron::FloatingIP         | CREATE_COMPLETE | 2015-11-24T15:18:29Z |
-    | network          | ad58e87f-c52b-4a43-a9a4-eae6445534b3              | OS::Neutron::Net                | CREATE_COMPLETE | 2015-11-24T15:18:29Z |
-    | subnet           | bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c              | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-24T15:18:30Z |
-    | server           | 81ce0266-3361-471a-9b0c-6c37e32c9e9e              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-24T15:18:38Z |
-    | floating_ip_link | a7357436-68b0-4108-a77c-7f25489380d1-84.39.36.143 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T15:19:31Z |
-    +------------------+---------------------------------------------------+---------------------------------+-----------------+---------------
-    ```
-   * Connectez-vous à la console de cloudwatt (https://console.cloudwatt.com), dans l'onglet 'stack' vous pourrez recuperer l'addresse ip de  votre stack et dans l'onglet `access_and_security` autoriser les ports `22 (connexion en ssh)` ,`7767 en tcp ( port d'écoute du server shinken)` ,`161 en udp (port d'échanges d'informations basées sur le protocle  snmp)` ,`123 en protocle udp (port de synchronisation du server NTP)`
-
-    4.Sur la machine qui héberge le shinken-server, déployer la configuration slave-monitoring.yml sur la machine cliente
-    ```
-    exp-stack-server-gr7irra3c2tv#ansible-playbook slave-monitoring.yml
-    ```
+1.edit un fichier file.pem puis coller le contenu de la clé précedente
+```
+exp-stack-server-gr7irra3c2tv# vim .ssh/build_shinken.pem
+```
+2.Donner des permissions d'execution de votre file.pem
+```
+exp-stack-server-gr7irra3c2tv# chmod 600 .ssh/file.pem
+```
+3.connectez-vous en ssh à l'adrese IP de la machine cliente
+```
+exp-stack-server-gr7irra3c2tv#ssh '@IP machine cliente '-l cloud -i .ssh/file.pem
+```
+4.renseignez le fichier hosts d'ansible installer automatiquement sur la machine serveur     
+```         
+exp-stack-server-gr7irra3c2tv# vim /etc/ansible/hosts                                             
+exp-stack-server-gr7irra3c2tv# ansible slaves -m ping
+```
+5.Deployer la configuration slave-monitoring.yml sur la machine cliente
+```
+exp-stack-server-gr7irra3c2tv#ansible-playbook slave-monitoring.yml
+```
 
 <a name="console" />
 
@@ -313,6 +370,7 @@ Et bien si ! En utilisant la console, vous pouvez déployer un serveur shinken :
 
 La stack va se créer automatiquement (vous pouvez en voir la progression cliquant sur son nom). Quand tous les modules deviendront « verts », la création sera terminée. Vous pourrez alors aller dans le menu « Instances » pour découvrir l’IP flottante qui a été générée automatiquement. Ne vous reste plus qu’à lancer votre IP dans votre navigateur.
 
+## Ouvert au réseau
 Pour rappel, voici les ports par défaut où répondent les rôles Shinken :
 
     Arbiter : 7770
@@ -321,6 +379,9 @@ Pour rappel, voici les ports par défaut où répondent les rôles Shinken :
     Reactionner : 7769
     Scheduler : 7768
     Poller : 7771
+
+![Aperçu réseau](http://blog.gamb.fr/public/Gamb/Geek/shinken_flux-reseaux.png)
+
 
 ## So watt ?
 
