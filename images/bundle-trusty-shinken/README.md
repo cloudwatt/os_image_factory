@@ -271,6 +271,7 @@ pierre@cloud:~$ heat resource-list stack-ghost       //création de votre  machi
 | floating_ip_link | a7357436-68b0-4108-a77c-7f25489380d1-84.39.36.143 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T15:19:31Z |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------
 `
+
 Si vous êtes dans un sous réseau différent, vous aurez besoins de créer un routeur pour interconnecter les deux sous-reseaux
 Exemple:
 pierre@cloud:~$ neutron router-create nomrouter         // création du routeur
