@@ -253,6 +253,15 @@
 
     # - shell: systemctl daemon-reload
 
+    - name: the touchy part again
+      shell: ./bootstrap.sh && ./configure --without-virtualenv && make && python setup.py develop
+      args:
+        chdir: "{{ goblin_home }}"
+      register: result
+      until: result|success
+      retries: 3
+      delay: 2
+
     - name: mediagoblin apply
       become_user: mediagoblin
       shell: gmg assetlink && gmg dbupdate
