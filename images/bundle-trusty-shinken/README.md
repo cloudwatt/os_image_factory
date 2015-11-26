@@ -155,7 +155,7 @@ EXP_STACK `floatting IP `
 * A ce niveau, vous pouvez vous connecter sur votre navigateur web avec votre floatting IP, sur le port 7767 (http://xx.xx.xx.xx:7767)
    Pour s'authentifier sur l'interface web: (login: admin  et le mot de passe: admin)
 
-![Interface connection shinken](http://shinkenlab.io/images/course2/course2-fail.png)
+![Interface connection shinken](https://mescompetencespro.files.wordpress.com/2012/12/authentification-shinken.png)
 
 Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les différentes métriques monitorées par shinken
 
