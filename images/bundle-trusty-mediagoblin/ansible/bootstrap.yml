@@ -253,6 +253,12 @@
 
     # - shell: systemctl daemon-reload
 
+    - name: mediagoblin submodules again
+      become_user: mediagoblin
+      shell: git submodule init && git submodule update
+      args:
+        chdir: "{{ goblin_home }}"
+
     - name: the touchy part again
       shell: ./bootstrap.sh && ./configure --without-virtualenv && make && python setup.py develop
       args:
