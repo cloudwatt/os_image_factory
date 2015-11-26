@@ -297,9 +297,6 @@ Vous pouvez commencer à faire vivre votre monitoring en prenant la main sur vot
 * [Shinken manual](http://shinken.readthedocs.org/en/latest/)
 * [Shinken blog](http://shinkenlab.io/online-course-2-webui/)
 * [shinken-monitoring architecture](https://shinken.readthedocs.org/en/latest/)
-* [shinken, webui installation](http://blogduyax.madyanne.fr/installation-de-shinken.html)
-* [Installing MongoDB ](https://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/)
-* [Installing sqlitedb ](http://www.tutorialspoint.com/sqlite/sqlite_installation.htm)
 
 -----
 Have fun. Hack in peace.
