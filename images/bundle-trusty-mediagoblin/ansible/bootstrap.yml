@@ -179,13 +179,9 @@
         chdir: "{{ goblin_home }}"
 
     - name: the touchy part
-      shell: ./bootstrap.sh && ./configure --without-virtualenv && make && python setup.py develop
+      shell: ./bootstrap.sh && ./configure --without-virtualenv
       args:
         chdir: "{{ goblin_home }}"
-      register: result
-      until: result|success
-      retries: 3
-      delay: 2
 
     - name: ini conf files
       copy:
@@ -216,6 +212,29 @@
         owner=mediagoblin
         group=www-data
         mode=0750
+
+    - name: mediagoblin has rights
+      file:
+        path={{ goblin_home }}
+        state=directory
+        owner=mediagoblin
+        group=www-data
+        recurse=yes
+
+    - name: mediagoblin make
+      become_user: mediagoblin
+      shell: make
+      args:
+        chdir: "{{ goblin_home }}"
+
+    - name: python setup.py develop
+      shell: python setup.py develop
+      args:
+        chdir: "{{ goblin_home }}"
+      register: result
+      until: result|success
+      retries: 3
+      delay: 2
 
     - name: mediagoblin nginx config set
       template:
@@ -253,14 +272,13 @@
 
     # - shell: systemctl daemon-reload
 
-    - name: mediagoblin submodules again
-      become_user: mediagoblin
-      shell: git submodule init && git submodule update
-      args:
-        chdir: "{{ goblin_home }}"
+    - name: mediagoblin bin absent
+      file:
+        path={{ goblin_home }}/bin
+        state=absent
 
-    - name: the touchy part again
-      shell: ./bootstrap.sh && ./configure --without-virtualenv && make && python setup.py develop
+    - name: python setup.py develop
+      shell: python setup.py develop
       args:
         chdir: "{{ goblin_home }}"
       register: result
