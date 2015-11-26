@@ -224,7 +224,7 @@ Cela permettra au serveur Shinken de se connecter pour récupérer les métrique
     ```
 
   Quelques minutes plus tard, le serveur Shinken et le serveur Ghost pourront se contacter directement. Afin de vous fournir une "documentation exécutable"
-  de l'intégration d'une serveur Ubuntu, nous utiliserons Ansible pour la suite.
+  de l'intégration d'un serveur Ubuntu, nous utiliserons Ansible pour la suite.
 
   5. Assurez vous de pouvoir vous connecter :
       * en SSH
@@ -286,7 +286,7 @@ Vous avez un point d'entrée sur votre machine virtuelle en SSH via l'IP flottan
 Vous pouvez commencer à faire vivre votre monitoring en prenant la main sur votre serveur. Les points d'entrée utiles :
 
 * `/etc/shinken/hosts/`: le répertoire contenant le fichier hosts ( les machines à monitorer)
-* `/usr/bin/shinken-`: le répertoire contenant les scripts de shinken
+* `/usr/bin/shinken-*`: le répertoire contenant les scripts de shinken
 * `/var/lib/shinken`: le répertoire contenant les modules de monitoring de shinken
 * `/var/log/shinken`: le répertoire contenant les log
 
