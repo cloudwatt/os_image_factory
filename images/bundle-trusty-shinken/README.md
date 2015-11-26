@@ -10,7 +10,7 @@ vont mal et quand ils vont mieux. C'est un logiciel libre sous licence GNU AGPL.
 Elle est complètement compatible avec le logiciel Nagios et elle a pour but
 d'apporter une supervision distribuée et hautement disponible facile à mettre en
 place.
-La base de déploiement est une instance Debian jessie. Le serveur shinken,
+La base de déploiement est une instance Debian Jessie. Le serveur shinken,
 l'interface graphique webui (apporte de l'interface graphique sur shinken ),
 la base de données SQlitedb sont déployés dans une instance unique. De la machine
 qui heberge le serveur shinken, vous pouvez lancer le déployement de la configuration
@@ -20,7 +20,7 @@ des machines à monitorer.
 
 ### Les versions
 
-* Debian jessie 8.2
+* Debian Jessie 8.2
 * shinken 2.4.2
 * SQlitedb 3.8.2
 
@@ -103,7 +103,7 @@ parameters:
 
 
 
-Dans un shell, placer vous dans votre dossier cloné (`$ sudo cd ~/os_image_factory/images/bundle-trusty-shinken`) et lancer le script `stack-start.sh` en passant en paramètre le nom que vous souhaitez lui attribuer :
+Dans un shell, placer vous dans votre dossier cloné (`$ cd ~/os_image_factory/images/bundle-trusty-shinken`) et lancer le script `stack-start.sh` en passant en paramètre le nom que vous souhaitez lui attribuer :
 
 ~~~
 ./stack-start.sh nom_de_votre_stack
@@ -123,7 +123,7 @@ $ ./stack-start.sh EXP_STACK
 Enfin, attendez 5 minutes que le déploiement soit complet.
 
 ```
-~/os_image_factory/images/bundle-trusty-shinken$ heat resource-list EXP_STACK
+$ heat resource-list EXP_STACK
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
 | resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
 +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
@@ -138,7 +138,7 @@ Enfin, attendez 5 minutes que le déploiement soit complet.
 
 Le script `start-stack.sh` s'occupe de lancer les appels nécessaires sur les API Cloudwatt pour :
 
-* démarrer une instance basée sur Debian jessie, pré-provisionnée avec la stack shinken,webui,sqlitedb
+* démarrer une instance basée sur Debian Jessie, pré-provisionnée avec la stack shinken, webui, sqlitedb
 * l'exposer sur Internet via une IP flottante
 
 ### Enjoy
@@ -165,16 +165,32 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
 
 ![Bigger production ](http://shinkenlab.io/images/course2/course2-dasboardfilled.png)
 
-* Pour monitorer les machines, deployer  automatiquement la configuration éffectuée dans le fichier
-`slave-monitoring.yml` sur les machines clientes, depuis la machine qui héberge shinken-server (pour plus de détails, consulter le fichier de configuration `bootstrap.yml` et le fichier d'orchestration `heat bundle-trusty-shinken-heat.yml`)
+ Bravo !!! Vous pouvez visualiser les métriques monitorées par shinken-server.
 
-* Connectez-vous à la console de cloudwatt (https://console.cloudwatt.com), dans l'onglet `access_and_security` autoriser les ports `22 (connexion en ssh)`,`161 en udp (port d'échanges d'informations avec le protocole  snmp)` ,`123 en protocole udp (port de synchronisation du server NTP)`
+### Pour monitorer plus de  machines
+    Déployer  automatiquement la configuration effectuée dans le fichier   `slave-monitoring.yml` sur les machines clientes, depuis la machine qui héberge shinken-server (pour plus de détails, consulter le fichier de configuration `bootstrap.yml` et le fichier d'orchestration `heat bundle-trusty-shinken-heat.yml`)
+
+### UN exemple pour créer et monitorer un host sur la plateforme de cloudwatt
+
+  *  Connectez-vous à la console de cloudwatt (https://console.cloudwatt.com).Allez sur l'onglet  `produit` puis sur l'option `application`
+     et cliquez sur `Ghost` et enfin sur `Déployer`. Vous pouvez vous identifier afin d'avoir accès à la console de cloudwatt.
+
+    Une fois que vous avez accès à la console de cloudwatt, il vous suffit de renseigner les champs suivants pour créer votre host à monitorer.
+
+    `Nom de l'application - Stack Name:
+    Description: All-in-one GHOST stack
+    Paire de cles SSH - SSH Keypair:
+    Manage my keypairs… (SSH Keys)
+    Type instance - Instance Type (Flavor):
+    Tenant:`
+
+   Vous pouvez suivre le processus de création dans l'onglet `Stacks` et voir l'adresse IP de votre machine.
+
+  * Dans l'onglet `access_and_security` autoriser les ports `22 (connexion en ssh)`,`161 en udp (port d'échanges d'informations *
+    avec le protocole  snmp)` ,`123 en protocole udp (port de synchronisation du server NTP)`
 
 
-### Si vous voulez créer vos hosts sur la plateforme de cloudwatt, connectez-vous sur cloudwatt.com.
-
-    Allez sur l'onglet  `produit` puis sur l'option `application` et cliquez sur `Ghost`.
-    Après avoir créer votre machine host, vous pouvez recuperer son subnet comme suit:
+  * Après avoir créer votre machine host, vous pouvez recuperer son subnet comme suit:
 
   1. connectez-vous a la machine host que vous venez de créer et procedez comme suit:
   ```
@@ -192,32 +208,9 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
   +------------------+---------------------------------------------------+---------------------------------+-----------------+---------------
   ```
 
-  2. Connectez-vous en mode root à la machine qui héberge la machine shinken-server
-     Renseignez le fichier `hosts` d'ansible installer automatiquement sur votre machine qui héberge shinken-server     
-  ```         
-  # vim /etc/ansible/hosts     
+  2. Dans le cas où votre host n'est pas dans le meme sous réseau que votre machine qui héberge Shinken-server,
+    alors vous devez créer un routeur avec la technologie openstack, comme suit :
 
-  # This is the default ansible 'hosts' file.
-  #
-  # It should live in /etc/ansible/hosts
-  #   - A hostname/ip can be a member of multiple groups
-  [...]
- [shinken]
- localhost  ansible_connection=local
-
- [slaves]
-  xx.xx.xx.xx ansible_ssh_user=cloud ansible_ssh_private_key_file=/home/pierre/.ssh/buildshinken.pem
-  ...
-  xx.xx.xx.xx  ansible_ssh_user=cloud ansible_ssh_private_key_file=/home/pierre/.ssh/buildshinken.pem
-  ```
-
-  3. Tester la connectivité toujours en restant en mode root
-  ```                                     
-  # ansible slaves -m ping
-  ```
-
-  4. Dans le cas où vos machines ne sont pas dans le meme sous réseau, alors vous devez créer un routeur
-    avec la technologie openstack, comme suit :
      * Ouvrez une nouvelle fenêtre dans le terminal shell
 
     ```
@@ -241,7 +234,32 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
     Added interface `subnet_host` to router `id_router`
 
     ```
-  5. A partir de la machine qui héberge le shinken-server, déployer la configuration slave-monitoring.yml sur la machine cliente
+  3. Connectez-vous en mode root à la machine qui héberge  shinken-server
+     Renseignez le fichier `hosts` d'ansible installer automatiquement sur votre machine qui héberge shinken-server     
+  ```         
+  # vim /etc/ansible/hosts     
+
+  # This is the default ansible 'hosts' file.
+  #
+  # It should live in /etc/ansible/hosts
+  #   - A hostname/ip can be a member of multiple groups
+  [...]
+ [shinken]
+ localhost  ansible_connection=local
+
+ [slaves]
+  xx.xx.xx.xx ansible_ssh_user=cloud ansible_ssh_private_key_file=/home/pierre/.ssh/buildshinken.pem
+  ...
+  xx.xx.xx.xx  ansible_ssh_user=cloud ansible_ssh_private_key_file=/home/pierre/.ssh/buildshinken.pem
+  ```
+
+  4. Tester la connectivité toujours en restant en mode root
+  ```                                     
+  # ansible slaves -m ping
+  ```
+
+
+  5. Déployer la configuration slave-monitoring.yml sur la machine cliente
   ```
   #ansible-playbook slave-monitoring.yml
   ```
