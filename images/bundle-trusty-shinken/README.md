@@ -175,7 +175,7 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
    - en visibilité dans le réseau
    - l'agent SNMP est bien installé sur la ou les machine(s)  avec le paquet snmpd
    - les ports `161 (port d'échanges d'informations avec le protocole  snmp)` ,`123 en protocole udp (port de synchronisation du server NTP)`
-     sont autorsés
+     sont autorisés
    - le fichier `localhost.cfg` présent dans le repertoitre  /etc/shinken/hosts/localhost.cfg (sur la machine qui héberge Shinken-server)
      contient les adresses IP de vos machines à monitorer
 
@@ -185,7 +185,7 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
 
   *  cliquez [ici](https://dev.cloudwatt.com/fr/blog/5-minutes-stacks-episode-cinq-ghost.html)
 
-  * Dans l'onglet `access_and_security` autoriser les ports `22 (connexion en ssh)`,`161 en udp (port d'échanges d'informations *
+  * Dans l'onglet `access_and_security` autoriser les ports `22 (connexion en ssh)`,`161 en udp (port d'échanges d'informations
     avec le protocole  snmp)` ,`123 en protocole udp (port de synchronisation du server NTP)`
 
 
