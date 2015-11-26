@@ -16,11 +16,13 @@ la base de données SQlitedb sont déployés dans une instance unique. De la mac
 qui heberge le serveur shinken, vous pouvez lancer le déployement de la configuration
 des machines à monitorer.
 
+
+
 ### Les versions
 
-* Debian jessie
+* Debian jessie 8.2
 * shinken 2.4.2
-* SQlitedb
+* SQlitedb 3.8.2
 
 ### Les pré-requis pour déployer cette stack
 
@@ -95,69 +97,13 @@ parameters:
         - s1.cw.small-1
          [...]
 
-resources:
-  network:
-    type: OS::Neutron::Net
-
-  subnet:
-    type: OS::Neutron::Subnet
-    properties:
-      network_id: { get_resource: network }
-      ip_version: 4
-      cidr: 10.0.7.0/24
-      allocation_pools:
-        - { start: 10.0.7.100, end: 10.0.7.199 }
-
-  security_group:
-    type: OS::Neutron::SecurityGroup
-    properties:
-      rules:
-        - { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
-        - { direction: ingress, protocol: TCP, port_range_min: 7767, port_range_max: 7767 }
-        - { direction: ingress, protocol: UDP, port_range_min: 161, port_range_max: 161 }
-        - { direction: ingress, protocol: UDP, port_range_min: 123, port_range_max: 123 }
-        - { direction: ingress, protocol: ICMP }
-        - { direction: egress, protocol: ICMP }
-        - { direction: egress, protocol: TCP }
-        - { direction: egress, protocol: UDP }
-
-  floating_ip:
-    type: OS::Neutron::FloatingIP
-    properties:
-      floating_network_id: 6ea98324-0f14-49f6-97c0-885d1b8dc517
-
-  floating_ip_link:
-    type: OS::Nova::FloatingIPAssociation
-    properties:
-      floating_ip: { get_resource: floating_ip }
-      server_id: { get_resource: server }
-
-  server:
-    type: OS::Nova::Server
-    properties:
-      key_name: { get_param: keypair_name }
-      image: 168f7c6b-20a6-4a4e-8052-d1200aa36a1e                         <-------  your os image
-      flavor: { get_param: flavor_name }
-      networks:
-        - network: { get_resource: network }
-      security_groups:
-        - { get_resource: security_group }
-
-outputs:
-  floating_ip_url:
-    description: Shinken URL
-    value:
-      str_replace:
-        template: http://$floating_ip:7767/
-        params:
-          $floating_ip: { get_attr: [floating_ip, floating_ip_address] }
 ~~~
 
 ### Démarrer la stack
 
 
 
-Dans un shell, lancer le script `stack-start.sh` en passant en paramètre le nom que vous souhaitez lui attribuer :
+Dans un shell, placer vous dans votre dossier cloné (`$ sudo cd ~/os_image_factory/images/bundle-trusty-shinken`) et lancer le script `stack-start.sh` en passant en paramètre le nom que vous souhaitez lui attribuer :
 
 ~~~
 ./stack-start.sh nom_de_votre_stack
@@ -165,7 +111,7 @@ Dans un shell, lancer le script `stack-start.sh` en passant en paramètre le nom
 Exemple :
 
 ```
-~/os_image_factory/images/bundle-trusty-shinken$ ./stack-start.sh EXP_STACK
+$ ./stack-start.sh EXP_STACK
 +--------------------------------------+-----------------+--------------------+----------------------+
 | id                                   | stack_name      | stack_status       | creation_time        |
 +--------------------------------------+-----------------+--------------------+----------------------+
@@ -202,7 +148,7 @@ Une fois tout ceci fait, vous pouvez lancez le script `stack-get-url.sh` qui va 
 Exemple:
 
 ```
-~/os_image_factory/images/bundle-trusty-shinken$ ./stack-get-url.sh EXP_STACK
+$ ./stack-get-url.sh EXP_STACK
 EXP_STACK `floatting IP `
 ```
 
@@ -219,13 +165,37 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
 
 ![Bigger production ](http://shinkenlab.io/images/course2/course2-dasboardfilled.png)
 
-* Pour monitorer les machines composants vos packs informatiques, deployer  automatiquement la configuration éffectuée dans le fichier
-  slave-monitoring.yml sur les machines clientes, depuis la machine qui héberge shinken-server.
+* Pour monitorer les machines, deployer  automatiquement la configuration éffectuée dans le fichier
+`slave-monitoring.yml` sur les machines clientes, depuis la machine qui héberge shinken-server (pour plus de détails, consulter le fichier de configuration `bootstrap.yml` et le fichier d'orchestration `heat bundle-trusty-shinken-heat.yml`)
+
+* Connectez-vous à la console de cloudwatt (https://console.cloudwatt.com), dans l'onglet `access_and_security` autoriser les ports `22 (connexion en ssh)`,`161 en udp (port d'échanges d'informations avec le protocole  snmp)` ,`123 en protocole udp (port de synchronisation du server NTP)`
 
 
-  1.Renseignez le fichier hosts d'ansible installer automatiquement sur votre machine qui héberge shinken-server     
+### Si vous voulez créer vos hosts sur la plateforme de cloudwatt, connectez-vous sur cloudwatt.com.
+
+    Allez sur l'onglet  `produit` puis sur l'option `application` et cliquez sur `Ghost`.
+    Après avoir créer votre machine host, vous pouvez recuperer son subnet comme suit:
+
+  1. connectez-vous a la machine host que vous venez de créer et procedez comme suit:
+  ```
+  $ heat resource-list nom_stack_ghost                       //création de votre  machine cliente
+
+  +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+  | resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
+  +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+  | security_group   | 8e86058f-4933-4835-9d95-d2145f46dbc5              | OS::Neutron::SecurityGroup      | CREATE_COMPLETE | 2015-11-24T15:18:27Z |
+  | floating_ip      | a7357436-68b0-4108-a77c-7f25489380d1              | OS::Neutron::FloatingIP         | CREATE_COMPLETE | 2015-11-24T15:18:29Z |
+  | network          | ad58e87f-c52b-4a43-a9a4-eae6445534b3              | OS::Neutron::Net                | CREATE_COMPLETE | 2015-11-24T15:18:29Z |
+  | subnet           | bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c              | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-24T15:18:30Z |
+  | server           | 81ce0266-3361-471a-9b0c-6c37e32c9e9e              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-24T15:18:38Z |
+  | floating_ip_link | a7357436-68b0-4108-a77c-7f25489380d1-`floating @IP`| OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T15:19:31Z |
+  +------------------+---------------------------------------------------+---------------------------------+-----------------+---------------
+  ```
+
+  2. Connectez-vous en mode root à la machine qui héberge la machine shinken-server
+     Renseignez le fichier `hosts` d'ansible installer automatiquement sur votre machine qui héberge shinken-server     
   ```         
-  exp-stack-server-gr7irra3c2tv# vim /etc/ansible/hosts     
+  # vim /etc/ansible/hosts     
 
   # This is the default ansible 'hosts' file.
   #
@@ -240,14 +210,15 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
   ...
   xx.xx.xx.xx  ansible_ssh_user=cloud ansible_ssh_private_key_file=/home/pierre/.ssh/buildshinken.pem
   ```
-  2.Tester la connectivité
+
+  3. Tester la connectivité toujours en restant en mode root
   ```                                     
-  exp-stack-server-gr7irra3c2tv# ansible slaves -m ping
+  # ansible slaves -m ping
   ```
 
-  3.Dans le cas où vos machines ne sont pas dans le meme sous réseau, alors vous devez créer un routeur
+  4. Dans le cas où vos machines ne sont pas dans le meme sous réseau, alors vous devez créer un routeur
     avec la technologie openstack, comme suit :
-
+     * Ouvrez une nouvelle fenêtre dans le terminal shell
 
     ```
     $ neutron router-create nomrouter         // création du routeur
@@ -270,40 +241,17 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
     Added interface `subnet_host` to router `id_router`
 
     ```
-  * Si vous voulez créer vos hosts sur la plateforme de cloudwatt, connectez-vous sur cloudwatt.com. Allez sur l'onglet  `produit` puis sur
-       l'option `application` et cliquez sur `Ghost`.
-    Après avoir créer votre machine host, vous pouvez recuperer son subnet comme suit:
+  5. A partir de la machine qui héberge le shinken-server, déployer la configuration slave-monitoring.yml sur la machine cliente
+  ```
+  #ansible-playbook slave-monitoring.yml
+  ```
 
+  6. Redemarrer le serveur shinken
     ```
-    $ heat resource-list nom_stack_ghost       //création de votre  machine cliente
+  # service shinken restart
+    ```
+  7. Reconnectez-vous en interface graphique à l'adresse http://xx.xx.xx.xx:7767  et cliquez sur l'onglet `ALL`
 
-    +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
-    | resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
-    +------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
-    | security_group   | 8e86058f-4933-4835-9d95-d2145f46dbc5              | OS::Neutron::SecurityGroup      | CREATE_COMPLETE | 2015-11-24T15:18:27Z |
-    | floating_ip      | a7357436-68b0-4108-a77c-7f25489380d1              | OS::Neutron::FloatingIP         | CREATE_COMPLETE | 2015-11-24T15:18:29Z |
-    | network          | ad58e87f-c52b-4a43-a9a4-eae6445534b3              | OS::Neutron::Net                | CREATE_COMPLETE | 2015-11-24T15:18:29Z |
-    | subnet           | bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c              | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-24T15:18:30Z |
-    | server           | 81ce0266-3361-471a-9b0c-6c37e32c9e9e              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-24T15:18:38Z |
-    | floating_ip_link | a7357436-68b0-4108-a77c-7f25489380d1-`floating @IP`| OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T15:19:31Z |
-    +------------------+---------------------------------------------------+---------------------------------+-----------------+---------------
-    ```
-   * Connectez-vous à la console de cloudwatt (https://console.cloudwatt.com), dans l'onglet 'stack' vous pourrez recuperer l'addresse ip de  votre stack et dans l'onglet `access_and_security` autoriser les ports `22 (connexion en ssh)` ,`7767 en tcp ( port d'écoute du server shinken)` ,`161 en udp (port d'échanges d'informations avec le protocole  snmp)` ,`123 en protocole udp (port de synchronisation du server NTP)`
-
-    4.A partir de la machine qui héberge le shinken-server, déployer la configuration slave-monitoring.yml sur la machine cliente
-    ```
-    exp-stack-server-gr7irra3c2tv#ansible-playbook slave-monitoring.yml
-    ```
-    5.Renseignez le fichier slave.cfg, `adresses IP` et  `hostname` des hosts à monitorer
-    ```
-    exp-stack-server-gr7irra3c2tv# vim /etc/shinken/hosts/slave.cfg         // vous pouvez choisir de les renseigner dans le fichier localhost.cfg
-    ```
-    6.Redemarrer le serveur shinken
-    ```
-    exp-stack-server-gr7irra3c2tv# service shinken restart
-    ```
-    7.Reconnectez-vous en interface graphique à l'adresse http://xx.xx.xx.xx:7767  et cliquez sur l'onglet `ALL`
-    
 <a name="console" />
 
 ### C’est bien tout ça, mais vous n’auriez pas un moyen de lancer l’application par la console ?
@@ -339,10 +287,10 @@ Vous avez un point d'entrée sur votre machine virtuelle en SSH via l'IP flottan
 
 Vous pouvez commencer à construire votre site en prenant la main sur votre serveur. Les points d'entrée utiles :
 
-* `/ etc / shinken / hosts/`: le repertoire contenant le fichier hosts ( les machines à monitorer)
-* `/ usr / bin / shinken-`: le repertoire contenant les scripts de shinken
-* `/ var / lib / shinken`: le repertoire contenant les modules de monitoring de shinken
-* `/ var / log / shinken`: le repertoire contenant les log
+* `/etc/shinken/hosts/`: le répertoire contenant le fichier hosts ( les machines à monitorer)
+* `/usr/bin/shinken-`: le répertoire contenant les scripts de shinken
+* `/var/lib/shinken`: le répertoire contenant les modules de monitoring de shinken
+* `/var/log/shinken`: le répertoire contenant les log
 
 #### Autres sources pouvant vous interesser:
 
