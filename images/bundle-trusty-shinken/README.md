@@ -181,7 +181,7 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
 
 
 
-### Exemple pour créer et monitorer un Ghost sur la plateforme de cloudwatt
+### Exemple pour créer et monitorer un Ghost sur la plateforme de Cloudwatt
 
   *  cliquez [ici](https://dev.cloudwatt.com/fr/blog/5-minutes-stacks-episode-cinq-ghost.html)
 
@@ -192,6 +192,7 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
   * Après avoir crée votre machine ghost, vous pouvez recuperer son subnet comme suit:
 
   1. connectez-vous à la machine host que vous venez de créer et procedez comme suit:
+
   ```
   $ heat resource-list nom_stack_ghost                       //création de votre  machine cliente
 
@@ -264,6 +265,7 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
   ```
 
   6. Redemarrer le serveur shinken
+
     ```
   # service shinken restart
     ```
