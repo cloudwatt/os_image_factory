@@ -171,31 +171,25 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
 
 ### Pour monitorer plus de  machines
 
-  Déployer automatiquement sur vos machines clientes la configuration effectuée dans le fichier slave-monitoring.yml.
-  Pour plus de détails, consulter le fichier bootstrap.yml
+  Il faut s'assurer que les machines à monitorer sont :
+   - en visibilité dans le réseau
+   - l'agent SNMP est bien installé sur la ou les machine(s)  avec le paquet snmpd
+   - les ports `161 (port d'échanges d'informations avec le protocole  snmp)` ,`123 en protocole udp (port de synchronisation du server NTP)`
+     sont autorsés
+   - le fichier `localhost.cfg` présent dans le repertoitre  /etc/shinken/hosts/localhost.cfg (sur la machine qui héberge Shinken-server)
+     contient les adresses IP de vos machines à monitorer
 
 
-### Exemple pour créer et monitorer un host sur la plateforme de cloudwatt
 
-  *  Connectez-vous à la console de cloudwatt (https://console.cloudwatt.com).Allez sur l'onglet  `produit` puis sur l'option `application`
-     et cliquez sur `Ghost` et enfin sur `Déployer`. Vous pouvez vous identifier afin d'avoir accès à la console de cloudwatt.
+### Exemple pour créer et monitorer un Ghost sur la plateforme de cloudwatt
 
-    Une fois que vous avez accès à la console de cloudwatt, il vous suffit de renseigner les champs suivants pour créer votre host à monitorer.
-
-    `Nom de l'application - Stack Name:
-    Description: All-in-one GHOST stack
-    Paire de cles SSH - SSH Keypair:
-    Manage my keypairs… (SSH Keys)
-    Type instance - Instance Type (Flavor):
-    Tenant:`
-
-   Vous pouvez suivre le processus de création dans l'onglet `Stacks` et voir l'adresse IP de votre machine.
+  *  cliquez [ici](https://dev.cloudwatt.com/fr/blog/5-minutes-stacks-episode-cinq-ghost.html)
 
   * Dans l'onglet `access_and_security` autoriser les ports `22 (connexion en ssh)`,`161 en udp (port d'échanges d'informations *
     avec le protocole  snmp)` ,`123 en protocole udp (port de synchronisation du server NTP)`
 
 
-  * Après avoir crée votre machine host, vous pouvez recuperer son subnet comme suit:
+  * Après avoir crée votre machine ghost, vous pouvez recuperer son subnet comme suit:
 
   1. connectez-vous à la machine host que vous venez de créer et procedez comme suit:
   ```
