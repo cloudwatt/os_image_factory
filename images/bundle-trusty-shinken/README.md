@@ -171,8 +171,8 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
 
 ### Pour monitorer plus de  machines
 
-    Déployer  automatiquement la configuration effectuée dans le fichier   slave-monitoring.yml sur les machines clientes, depuis la machine qui héberge shinken-server (pour plus de détails, consulter le fichier de configuration bootstrap.yml et le fichier d'orchestration heat bundle-trusty-shinken-heat.yml)
-
+  Déployer automatiquement sur vos machines clientes la configuration effectuée dans le fichier slave-monitoring.yml.
+  Pour plus de détails, consulter le fichier bootstrap.yml
 
 
 ### Exemple pour créer et monitorer un host sur la plateforme de cloudwatt
@@ -195,9 +195,9 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
     avec le protocole  snmp)` ,`123 en protocole udp (port de synchronisation du server NTP)`
 
 
-  * Après avoir créer votre machine host, vous pouvez recuperer son subnet comme suit:
+  * Après avoir crée votre machine host, vous pouvez recuperer son subnet comme suit:
 
-  1. connectez-vous a la machine host que vous venez de créer et procedez comme suit:
+  1. connectez-vous à la machine host que vous venez de créer et procedez comme suit:
   ```
   $ heat resource-list nom_stack_ghost                       //création de votre  machine cliente
 
