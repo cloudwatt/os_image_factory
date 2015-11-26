@@ -167,10 +167,15 @@ Un fois l'authentication est faite, cliquez sur l'onglet 'ALL' pour voir les dif
 
  Bravo !!! Vous pouvez visualiser les métriques monitorées par shinken-server.
 
-### Pour monitorer plus de  machines
-    Déployer  automatiquement la configuration effectuée dans le fichier   `slave-monitoring.yml` sur les machines clientes, depuis la machine qui héberge shinken-server (pour plus de détails, consulter le fichier de configuration `bootstrap.yml` et le fichier d'orchestration `heat bundle-trusty-shinken-heat.yml`)
 
-### UN exemple pour créer et monitorer un host sur la plateforme de cloudwatt
+
+### Pour monitorer plus de  machines
+
+    Déployer  automatiquement la configuration effectuée dans le fichier   slave-monitoring.yml sur les machines clientes, depuis la machine qui héberge shinken-server (pour plus de détails, consulter le fichier de configuration bootstrap.yml et le fichier d'orchestration heat bundle-trusty-shinken-heat.yml)
+
+
+
+### Exemple pour créer et monitorer un host sur la plateforme de cloudwatt
 
   *  Connectez-vous à la console de cloudwatt (https://console.cloudwatt.com).Allez sur l'onglet  `produit` puis sur l'option `application`
      et cliquez sur `Ghost` et enfin sur `Déployer`. Vous pouvez vous identifier afin d'avoir accès à la console de cloudwatt.
