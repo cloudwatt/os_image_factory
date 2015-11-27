@@ -286,15 +286,17 @@
       retries: 3
       delay: 2
 
-    - name: mediagoblin apply
+    - name: mediagoblin assetlink
       become_user: mediagoblin
-      shell: gmg assetlink && gmg dbupdate
+      shell: gmg assetlink
       args:
         chdir: "{{ goblin_home }}"
-      register: result
-      until: result|success
-      retries: 3
-      delay: 2
+
+    - name: mediagoblin database update
+      become_user: mediagoblin
+      shell: gmg dbupdate
+      args:
+        chdir: "{{ goblin_home }}"
 
     - name: start mediagoblin
       service:
