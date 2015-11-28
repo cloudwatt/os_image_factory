@@ -183,7 +183,6 @@ On the shinken-server, you must describe the configuration of file hosts who is 
 Let's see an example of integration of a server instance with the Ghost blog engine.
 
   * deploy a stack Ghost [as we saw in episode 5](https://dev.cloudwatt.com/fr/blog/5-minutes-stacks-episode-cinq-ghost.html).
-
   * for your section [Access and Security Cloudwatt console](https://console.cloudwatt.com/project/access_and_security/),   
     add two rules to the security group of the stack Ghost :
     * Rules UDP , Entry, Port 161
