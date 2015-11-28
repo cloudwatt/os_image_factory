@@ -156,7 +156,7 @@ you can to create a widget into your dashboard
 Good !!!
 <a name="console" />
 
-### For monitoring another machine or many hosts
+### For monitoring more machines 
 
   It must be ensured that the machines to be monitored:
 
