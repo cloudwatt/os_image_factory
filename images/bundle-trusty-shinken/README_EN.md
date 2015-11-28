@@ -4,25 +4,13 @@
 
 ![Minimum setup](http://www.samuelpoggioli.fr/wp-content/uploads/2014/12/Shinken-624x192.jpg)
 
-Shinken is an open source monitoring framework based on Nagios Core which has been rewritten in python to enhance flexibility, scalability, and ease of use. Shinken is fully compatible with Nagios and supports its plugins and configurations that can be used on the go without rewriting or adjusting.
-Shinken has no limits regarding distribution. It can be scaled to the LAN, through the DMZs and even across several datacenters.
-Shinken goes beyond the classical monitoring functions of Nagios, allowing distributed and highly available monitoring of assets, a smart and automatic management of openstack technology, and is able to monitor hosts applications automatically.
-Shinken is considered 5 times faster than Nagios, and comes with a large number of monitoring packages that can be easily installed, providing a faster way to start monitoring servers, services, and applications.
-For our scenario, we will start by declaring the debian Jessie monitored host (Shinken slave), install and configure SNMP on it, and then monitor it using a custom community string.
-The SNMP template will processes the following checks:
+Shinken is an application for system and network monitoring.
+It monitors specified hosts and services, alerting when systems
+go bad and when they get better. This is free software licensed under the GNU AGPL.
+Shinken is fully compatible with Nagios software.
 
-    host check each 5 minutes: check with a ping that the server is UP
-
-    check disk spaces
-
-    check load average
-
-    check the CPU usage
-
-    check physical memory and swap usage
-
-    check network interface activities
-Shinken server store his data in database SQlitedb for default. Once it's done, we'll use SSH package to check  SSH states on the slave as an example on how to use packages. Shinken engine was installed but no graphical interface. In this step, we chose to install webui recommended that brings viewing (configuration is done by editing the files and rebooting the Shinken services)
+The deployment base chosen for this bundle is an instance Debian Jessie. Shinken the server,
+his web interface and database are deployed in a single instance.
 
 ## Preparations
 
