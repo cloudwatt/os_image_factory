@@ -1,14 +1,14 @@
-# 5 Minutes Stacks, Episode 1: Shinken
+# 5 Minutes Stacks, Episode 15: Shinken
 
-## Episode 1: Shinken
+## Episode 15: Shinken-server
 
-**Draft - Image not yet available...**
+![Minimum setup](http://www.samuelpoggioli.fr/wp-content/uploads/2014/12/Shinken-624x192.jpg)
 
 Shinken is an open source monitoring framework based on Nagios Core which has been rewritten in python to enhance flexibility, scalability, and ease of use. Shinken is fully compatible with Nagios and supports its plugins and configurations that can be used on the go without rewriting or adjusting.
 Shinken has no limits regarding distribution. It can be scaled to the LAN, through the DMZs and even across several datacenters.
 Shinken goes beyond the classical monitoring functions of Nagios, allowing distributed and highly available monitoring of assets, a smart and automatic management of openstack technology, and is able to monitor hosts applications automatically.
 Shinken is considered 5 times faster than Nagios, and comes with a large number of monitoring packages that can be easily installed, providing a faster way to start monitoring servers, services, and applications.
-For our scenario, we will start by declaring the debian jessie monitored host (Shinken slave), install and configure SNMP on it, and then monitor it using a custom community string.
+For our scenario, we will start by declaring the debian Jessie monitored host (Shinken slave), install and configure SNMP on it, and then monitor it using a custom community string.
 The SNMP template will processes the following checks:
 
     host check each 5 minutes: check with a ping that the server is UP
@@ -22,14 +22,15 @@ The SNMP template will processes the following checks:
     check physical memory and swap usage
 
     check network interface activities
-Shinken server store his data in database. you can chose sqlitedb or mongodb when you installing. I chose sqlitedb for default.
-Once it's done, we'll use SSH package to check  SSH states on the slave as an example on how to use packages. Shinken engine was installed but no graphical interface. In this step, we chose to install webui recommended that brings viewing (configuration is done by editing the files and rebooting the Shinken services)
+Shinken server store his data in database SQlitedb for default. Once it's done, we'll use SSH package to check  SSH states on the slave as an example on how to use packages. Shinken engine was installed but no graphical interface. In this step, we chose to install webui recommended that brings viewing (configuration is done by editing the files and rebooting the Shinken services)
+
 ## Preparations
 
 ### The version
 
-* shinken (shinken-server/shinken-web) 2.4.2
-* SQlitedb
+* Debian Jessie 8.2
+* Shinken 2.4.2
+* SQlitedb 3.8.2
 
 ### The prerequisites to deploy this stack
 
@@ -75,14 +76,14 @@ Once this done, the Openstack command line tools can interact with your Cloudwat
 
 ### Adjust the parameters
 
-In the `.heat.yml` files (heat templates), you will find a section named `parameters` near the top. The mandatory parameters are the `keypair_name` and the `password` for the shinken *admin* user.
+In the `.heat.yml` files (heat templates), you will find a section named `parameters` near the top. The mandatory parameters are the `keypair_name` and the `password` for the Shinken *admin* user.
 
 You can set the `keypair_name`'s `default` value to save yourself time, as shown below.
 Remember that key pairs are created [from the console](https://console.cloudwatt.com/project/access_and_security/?tab=access_security_tabs__keypairs_tab), and only keys created this way can be used.
 
-The `password` field provides the password for shinken default *admin* user. You will need it upon initial login, but you can always create other users later. You can also adjust (and set the default for) the instance type by playing with the `flavor` parameter accordingly.
+The `password` field provides the password for Shinken default *admin* user. You will need it upon initial login, but you can always create other users later. You can also adjust (and set the default for) the instance type by playing with the `flavor` parameter accordingly.
 
-By default, the stack network and subnet are generated for the stack, in which the shinken server sits alone. This behavior can be changed within the `.heat.yml` as well, if needed.
+By default, the stack network and subnet are generated for the stack, in which the Shinken server sits alone. This behavior can be changed within the `.heat.yml` as well, if needed.
 
 ~~~ yaml
 
@@ -94,12 +95,13 @@ description: All-in-one Shinken stack
 
 parameters:
   keypair_name:
+    default: buildshinken                            <-- put here your keypair_name
     description: Keypair to inject in instance
     label: SSH Keypair
     type: string
 
   flavor_name:
-    default: s1.cw.small-1
+    default: s1.cw.small-1                                    
     description: Flavor to use for the deployed instance
     type: string
     label: Instance Type (Flavor)
@@ -109,118 +111,177 @@ parameters:
         - s1.cw.small-1
          [...]
 
-resources:
-  network:
-    type: OS::Neutron::Net
-
-  subnet:
-    type: OS::Neutron::Subnet
-    properties:
-      network_id: { get_resource: network }
-      ip_version: 4
-      cidr: 10.0.7.0/24
-      allocation_pools:
-        - { start: 10.0.7.100, end: 10.0.7.199 }
-
-  security_group:
-    type: OS::Neutron::SecurityGroup
-    properties:
-      rules:
-        - { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
-        - { direction: ingress, protocol: TCP, port_range_min: 7767, port_range_max: 7767 }
-        - { direction: ingress, protocol: UDP, port_range_min: 161, port_range_max: 161 }
-        - { direction: ingress, protocol: UDP, port_range_min: 123, port_range_max: 123 }
-        - { direction: ingress, protocol: ICMP }
-        - { direction: egress, protocol: ICMP }
-        - { direction: egress, protocol: TCP }
-        - { direction: egress, protocol: UDP }
-
-  floating_ip:
-    type: OS::Neutron::FloatingIP
-    properties:
-      floating_network_id: 6ea98324-0f14-49f6-97c0-885d1b8dc517
-
-  floating_ip_link:
-    type: OS::Nova::FloatingIPAssociation
-    properties:
-      floating_ip: { get_resource: floating_ip }
-      server_id: { get_resource: server }
-
-  server:
-    type: OS::Nova::Server
-    properties:
-      key_name: { get_param: keypair_name }
-      image: 168f7c6b-20a6-4a4e-8052-d1200aa36a1e                         <-------  your os image
-      flavor: { get_param: flavor_name }
-      networks:
-        - network: { get_resource: network }
-      security_groups:
-        - { get_resource: security_group }
-
-outputs:
-  floating_ip_url:
-    description: Shinken URL
-    value:
-      str_replace:
-        template: http://$floating_ip:7767/
-        params:
-          $floating_ip: { get_attr: [floating_ip, floating_ip_address] }
 ~~~
 
 <a name="startup" />
 
 ### Stack up with a terminal
 
-In a shell, run the script `stack-start.sh`:
+In a shell, go in the `bundle-trusty-shinken/` directory and run the script `stack-start.sh`:
 
 ~~~ bash
-$ ./stack-start.sh TICKERTAPE «my-keypair-name»
-Enter your new admin password:
-Enter your new password once more:
+$ ./stack-start.sh `name_of_my_stack`
+
 Creating stack...
-+--------------------------------------+------------+--------------------+----------------------+
-| id                                   | stack_name | stack_status       | creation_time        |
-+--------------------------------------+------------+--------------------+----------------------+
-| xixixx-xixxi-ixixi-xiixxxi-ixxxixixi | TICKERTAPE | CREATE_IN_PROGRESS | 2025-10-23T07:27:69Z |
-+--------------------------------------+------------+--------------------+----------------------+
++--------------------------------------+------------+--------------------+-----------------------------+
+| id                                   | stack_name         | stack_status       | creation_time        |
++--------------------------------------+------------+--------------------+------------------------------+
+| xixixx-xixxi-ixixi-xiixxxi-ixxxixixi | `name_of_my_stack` | CREATE_IN_PROGRESS | 2025-10-23T07:27:69Z |
++--------------------------------------+------------+--------------------+------------------------------+
 ~~~
 
 Within 5 minutes the stack will be fully operational. (Use watch to see the status in real-time)
 
 ~~~ bash
 $ watch -n 1 heat stack-list
-+--------------------------------------+------------+-----------------+----------------------+
-| id                                   | stack_name | stack_status    | creation_time        |
-+--------------------------------------+------------+-----------------+----------------------+
-| xixixx-xixxi-ixixi-xiixxxi-ixxxixixi | TICKERTAPE | CREATE_COMPLETE | 2025-10-23T07:27:69Z |
-+--------------------------------------+------------+-----------------+----------------------+
++--------------------------------------+------------+-----------------+------------------------------+
+| id                                   | stack_name         | stack_status    | creation_time        |
++--------------------------------------+------------+-----------------+------------------------------+
+| xixixx-xixxi-ixixi-xiixxxi-ixxxixixi | `name_of_my_stack` | CREATE_COMPLETE | 2025-10-23T07:27:69Z |
++--------------------------------------+------------+-----------------+------------------------------+
 ~~~
 
 ### Stack URL with a terminal
 
-Once all of this done, you can run the `stack-get-url.sh` script.
+Once all of this done, you can run the `stack-get-url.sh` script to get the floating_network_id
 
 ~~~ bash
-$ ./stack-get-url.sh TICKERTAPE
-TICKERTAPE  http://70.60.637.17:9000/
+$ ./stack-get-url.sh `name_of_my_stack`
+`name_of_my_stack`  floating_ip
 ~~~
 
-As shown above, it will parse the assigned floating-IP of your stack into a URL link, with the right port included. You can then click or paste this into your browser of choice and bask in the glory of a fresh shinken instance.
+As shown above, it will parse the assigned floating-IP of your stack into a URL link, with the right port included. You can then click or paste this into your browser of choice and bask in the glory of a fresh Shinken instance.
+* login : admin
+* mot de passe : admin
+For now, our monitoring server and client are configured. We need to access the Shinken Webui using the IP address of our server http://X.X.X.X:7767.
+
+![Interface connection shinken](https://mescompetencespro.files.wordpress.com/2012/12/authentification-shinken.png)
+
+Once the authentication is done, click on the `ALL` to see different metrics monitored by shinken
+
+![Bigger production setup](http://performance.izzop.com/sites/default/files/SHINKEN/image_01_WEBUI.png)
+
+you can to create a widget into your dashboard
+
+![Bigger production ](http://shinkenlab.io/images/course2/course2-dasboardfilled.png)
+
+Good !!!
+<a name="console" />
+
+### For monitoring another machine or many hosts
+
+  It must be ensured that the machines to be monitored:
+
+* Are visible on the network from the server Shinken
+* Have a functional SNMP daemon
+* Allow incoming UDP communications on port 161 (port for exchanging information with SNMP) and 123 (NTP server synchronization port)
+
+On the shinken-server, you must describe the configuration of file hosts who is in the directory `/etc/shinken/hosts/localhost.cfg` who describe the configuration of the hosts to monitor.
+
+### Example of monitoring a server Ghost
+
+Let's see an example of integration of a server instance with the Ghost blog engine.
+
+  * deploy a stack Ghost [as we saw in episode 5](https://dev.cloudwatt.com/fr/blog/5-minutes-stacks-episode-cinq-ghost.html).
+
+  * for your section[Access and Security Cloudwatt console](https://console.cloudwatt.com/project/access_and_security/),   
+    add two rules to the security group of the stack Ghost :
+    * Rules UDP , Entry, Port 161
+    * Rules UDP , Entry, Port 123
+
+This will allow the Shinken server to connect to retrieve the metric of the machine. We must now create the network between our visibility and our stack stack Shinken Ghost, through the creation of a Neutron router:
+
+
+  1. Get the subnet ID of the stack Ghost:
+
+  ```
+  $ heat resource-list $NOM_DE_STACK_GHOST | grep subnet
+
+  | subnet           | bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c              | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-24T15:18:30Z |
+  ```
+
+  2. Get the subnet ID of the stack Shinken:
+
+  ```
+  $ heat resource-list $NOM_DE_STACK_SHINKEN | grep subnet
+
+  | subnet           | babdd078-ddc8-4280-8cbe-0f77951a5933              | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-24T15:18:30Z |
+  ```
+
+  3. Create a new router :
+
+    ```
+    $ neutron router-create SHINKEN_GHOST
+
+    Created a new router:
+    +-----------------------+--------------------------------------+
+    | Field                 | Value                                |
+    +-----------------------+--------------------------------------+
+    | admin_state_up        | True                                 |
+    | external_gateway_info |                                      |
+    | id                    | babdd078-c0c6-4280-88f5-0f77951a5933 |
+    | name                  | SHINKEN_GHOST                        |
+    | status                | ACTIVE                               |
+    | tenant_id             | 8acb072da1b14c61b9dced19a6be3355     |
+    +-----------------------+--------------------------------------+
+    ```
+
+  4. Add to a router interface, the subnet of the Ghost stack and  the subnet of the stack Shinken:
+
+    ```
+    $ neutron router-interface-add $SHINKEN_GHOST_ROUTER_ID $SHINKEN_SUBNET_ID
+
+    $ neutron router-interface-add $SHINKEN_GHOST_ROUTER_ID $GHOST_SUBNET_ID
+
+    ```
+
+  A few minutes later, the Shinken server and the Ghost server will contact each other directly. To provide an "executable documentation" the integration of a Ubuntu server, we will use Ansible for the future.
+
+  5. Make sure you can log:
+      * SSH
+      * user `cloud`
+      * Ghost server
+      * since Shinken-server
+
+  6. Since the Shinken-server, add the connection information in the inventory `/etc/ansible/hosts` :
+
+  ```         
+  [...]
+
+  [slaves]
+  xx.xx.xx.xx ansible_ssh_user=cloud ansible_ssh_private_key_file=/home/cloud/.ssh/id_rsa_ghost_server.pem
+
+  [...]
+  ```
+
+  7. Start the playbook `slave-monitoring.yml` as Shinken root on the server:
+  ```
+  # ansible-playbook /root/slave-monitoring.yml
+  ```
+
+This playbook  will do all the installation and setup on the Ghost server to integrate monitoring Shinken.
+
+For now, our monitoring server and client are configured. We need to access the Shinken Web UI using the IP address of our server http://X.X.X.X:7767.
+
+![Bigger production setup](http://shinken.readthedocs.org/en/latest/_images/shinken_webui.png)
+
 
 <a name="console" />
 
+
 ### Please console me
 
-There there, it's okay... shinken stacks can be spawned from our console as well!
+There there, it's okay... Shinken stacks can be spawned from our console as well!
 
-To create our shinken stack from the console:
+To create our Shinken stack from the console:
 
-1.	Go the Cloudwatt Github in the [applications/bundle-trusty-shinken](https://github.com/cloudwatt/applications/tree/master/bundle-trusty-shinken) repository
+1.	Go the Cloudwatt Github in the [applications/bundle-trusty-Shinken](https://github.com/cloudwatt/applications/tree/master/bundle-trusty-Shinken) repository
 2.	Click on the file named `bundle-trusty-shinken.heat.yml`
 3.	Click on RAW, a web page will appear containing purely the template
 4.	Save the page to your PC. You can use the default name proposed by your browser (just remove the .txt if needed)
 5.  Go to the [Stacks](https://console.cloudwatt.com/project/stacks/) section of the console
-6.	Click on **Launch stack**, then **Template file** and select the file you just saved to your PC, and finally click on **NEXT**
+6.	Click on **Launch stack**, then **Template file** and select the file you just saved to your PC, and finally click
+    on **NEXT**
 7.	Name your stack in the **Stack name** field
 8.	Enter the name of your keypair in the **SSH Keypair** field
 9.	Enter your new admin password
@@ -228,56 +289,34 @@ To create our shinken stack from the console:
 
 The stack will be automatically generated (you can see its progress by clicking on its name). When all modules become green, the creation will be complete. You can then go to the "Instances" menu to find the floating-IP, or simply refresh the current page and check the Overview tab for a handy link.
 
-Remember that the shinken UI is on port 9000, not the default port 80!
+Remember that the differents ports where Shinken-server listening:
+
+            Arbiter : 7770
+            Broker : 7772
+            WebUI : 7767
+            Reactionner : 7769
+            Scheduler : 7768
+            Poller : 7771
 
 ## So watt?
 
-The goal of this tutorial is to accelerate your start. At this point **you** are the master of the stack. An easy way to [get started](http://docs.shinken.org/en/1.2/pages/getting_started.html#get-messages-in) is to have your shinken server log itself!
-
-shinken takes inputs from a plethora of ports and protocols, I recommend you take the time to document yourselves on the possibilities. Just remember that all input and output ports must be explicitly set for the [security group](https://console.cloudwatt.com/project/access_and_security/?tab=access_security_tabs__security_groups_tab). To add an input, click on **MANAGE RULES** for your stack's security group and then, once on the page *MANAGE SECURITY GROUP RULES*, click **+ ADD RULE**. If logs don't make it to your shinken instance, check the [security group](https://console.cloudwatt.com/project/access_and_security/?tab=access_security_tabs__security_groups_tab) first!
-
-You also now have an SSH access point on your virtual machine through the floating-IP and your private key pair (default user name `cloud`). Be warned, the default browser connection to shinken is not encrypted (HTTP): if you are using your shinken instance to store sensitive data, you may want to connect with an SSH tunnel instead.
-
-~~~ bash
-user@home$ cd applications/bundle-trusty-shinken/
-user@home$ ./stack-get-url.sh TICKERTAPE
-TICKERTAPE  http://70.60.637.17:9000/
-user@home$ ssh 70.60.637.17 -l cloud -i /path/to/your/.ssh/keypair.pem -L 5000:localhost:9000
-[...]
-cloud@shinken-server$ █
-~~~
-
-By doing the above, I could then access my shinken server from http://localhost:7767/ on my browser. ^^
-
-## Accessing the WebUI
-
-For now, our monitoring server and client are configured. We need to access the Shinken Web UI using the IP address of our server http://X.X.X.X:7767.
-
-![Minimum setup](https://assets.digitalocean.com/articles/Shrinken_Ubuntu/1.png)
-
-Once authenticated, we will see a blank page saying “You don't have any widget yet?” We will configure it later with custom widgets to get the information needed, but first we need to check if our client is configured and reachable by the server. Click on All tab and you will see a list of all monitored machines, including the server(localhost). On the same list you should find Shinken_slave like .
-
-![Bigger production setup](https://assets.digitalocean.com/articles/Shrinken_Ubuntu/2.png)
-
-In the dashboard, you can to create widgets. Since we have only one monitored droplet, we will add graph, problems and relation widgets. Click on add a widget then choose the one you want from the panel. By default, the widgets will get the localhost (monitoring server) states and informations. We can edit them to reflects the host we want by clicking and specifying the “Element name” as shown
-
-![Bigger production ](https://assets.digitalocean.com/articles/Shrinken_Ubuntu/4.png)
+This tutorial aims to improve your startup. At this stage you are master on board.
+You have an entry point to your virtual machine via SSH floating IP exposed and your private key (`cloud` user by default).
+You can start to live your monitoring taking hold of your server.
 
 #### The interesting directories are:
 
--"/ etc / shinken": the whole program configuration of shinken-server
-- "/ usr / bin / shinken-*": launch scripts of daemons
-- "/ var / lib / shinken": shinken the modules and supervision plugins (we will return)
-- "/ var / log / shinken": top secret
+* `/etc/shinken/hosts/`: the directory containing the file hosts (the machines to be monitored)
+* `/usr/bin/shinken-*`:  the directory containing scripts
+* `/var/lib/shinken`:    the directory containing the monitoring modules of Shinken
+* `/var/log/shinken`:    the directory containing the log
 
 #### Other resources you could be interested in:
 
 * [shinken-monitoring Homepage](http://www.shinken-monitoring.org/)
 * [Shinken Solutions - Index](http://www.shinken-solutions.com/)
+* [Shinken manual](http://shinken.readthedocs.org/en/latest/)
+* [Shinken blog](http://shinkenlab.io/online-course-2-webui/)
 * [shinken-monitoring architecture](https://shinken.readthedocs.org/en/latest/)
-* [shinken, webui installation](http://blogduyax.madyanne.fr/installation-de-shinken.html)
-* [Installing MongoDB on Ubuntu](https://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/)
-* [Installing sqlitedb on Ubuntu](http://www.tutorialspoint.com/sqlite/sqlite_installation.htm)
-
 -----
 Have fun. Hack in peace.
