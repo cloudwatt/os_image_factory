@@ -172,9 +172,9 @@ Good !!!
 
   It must be ensured that the machines to be monitored:
 
-* Are visible on the network from the server Shinken
-* Have a functional SNMP daemon
-* Allow incoming UDP communications on port 161 (port for exchanging information with SNMP) and 123 (NTP server synchronization port)
+* are visible on the network from the server Shinken
+* have a functional SNMP daemon
+* allow incoming UDP communications on port 161 (port for exchanging information with SNMP) and 123 (NTP server synchronization port)
 
 On the shinken-server, you must describe the configuration of file hosts who is in the directory `/etc/shinken/hosts/localhost.cfg` who describe the configuration of the hosts to monitor.
 
@@ -184,7 +184,7 @@ Let's see an example of integration of a server instance with the Ghost blog eng
 
   * deploy a stack Ghost [as we saw in episode 5](https://dev.cloudwatt.com/fr/blog/5-minutes-stacks-episode-cinq-ghost.html).
 
-  * for your section[Access and Security Cloudwatt console](https://console.cloudwatt.com/project/access_and_security/),   
+  * for your section [Access and Security Cloudwatt console](https://console.cloudwatt.com/project/access_and_security/),   
     add two rules to the security group of the stack Ghost :
     * Rules UDP , Entry, Port 161
     * Rules UDP , Entry, Port 123
@@ -318,5 +318,7 @@ You can start to live your monitoring taking hold of your server.
 * [Shinken manual](http://shinken.readthedocs.org/en/latest/)
 * [Shinken blog](http://shinkenlab.io/online-course-2-webui/)
 * [shinken-monitoring architecture](https://shinken.readthedocs.org/en/latest/)
+
+
 -----
 Have fun. Hack in peace.
