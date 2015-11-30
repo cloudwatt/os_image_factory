@@ -16,9 +16,9 @@ his web interface and database are deployed in a single instance.
 
 ### The version
 
-* Debian Jessie 8.2
-* Shinken 2.4.2
-* SQlitedb 3.8.2
+* Debian Jessie   8.2
+* Shinken         2.4.2
+* SQlitedb        3.8.2
 
 ### The prerequisites to deploy this stack
 
@@ -156,7 +156,7 @@ you can to create a widget into your dashboard
 Good !!!
 <a name="console" />
 
-### For monitoring more machines 
+### For monitoring more machines
 
   It must be ensured that the machines to be monitored:
 
