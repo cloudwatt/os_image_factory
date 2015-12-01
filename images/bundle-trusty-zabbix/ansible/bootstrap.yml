@@ -1,0 +1,129 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+- hosts: all
+  become: yes
+
+  vars:
+    db_name: zabbix
+
+  tasks:
+    - apt: update_cache=true upgrade=full
+
+    - name: removing conflicting system packages
+      apt: pkg='ntpdate' state=absent purge=yes
+
+    - name: install pip packages
+      pip: name={{ item }}
+      with_items:
+        - Pycurl
+        - cherrypy
+        - passlib
+        - html
+
+    - name: install packages
+      apt: pkg={{ item }} state=present
+      with_items:
+        - libsnmp-dev
+        - apache2
+        - build-essential
+        - libxml2-dev
+        - libcurl4-gnutls-dev
+        - libmysqlclient-dev
+        - python-mysqldb
+        - php5
+        - php5-mysql
+        - php5-gd
+        - zabbix-server-mysql
+        - zabbix-frontend-php
+        - zabbix-agent
+        - ntp
+      notify: restart ntp
+
+    - name: Create a new database with name 'zabbix'
+      mysql_db: name="{{ db_name }}" state=present
+
+    - name: Creates database user 'zabbix' and password 'zabbix' with all database privileges and 'WITH GRANT OPTION'
+      mysql_user: name="{{ db_name }}" password=zabbix priv=*.*:ALL,GRANT state=present
+
+    - name: checking zabbix db is inittialized
+      shell: "mysql {{ db_name }} -e 'show tables;'"
+      register: zabbix_tables
+
+    - name: Import schema mysql
+      mysql_db:
+        name="{{ db_name }}"
+        login_user=zabbix
+        login_password=zabbix
+        state=import
+        target="{{ item }}"
+      with_items:
+        - '/usr/share/zabbix-server-mysql/schema.sql.gz'
+        - '/usr/share/zabbix-server-mysql/images.sql.gz'
+        - '/usr/share/zabbix-server-mysql/data.sql.gz'
+      when: not zabbix_tables.stdout
+
+    - name: change DBPassword of zabbix-server
+      lineinfile:
+        name=/etc/zabbix/zabbix_server.conf
+          regexp="^\s*DBPassword"
+          line="DBPassword=zabbix"
+      notify: restart zabbix-server
+
+    - name: creating zabbix file
+      copy: src=zabbix_apache2.conf dest=/etc/apache2/sites-available/zabbix_apache2.conf owner=root group=root mode=0644
+      notify: enable zabbix apache conf
+
+    - name: enable date.timezone in php.ini
+      lineinfile:
+        name=/etc/php5/apache2/php.ini
+        regexp=".*date\.timezone.*"
+        line="date.timezone = \"Europe/Paris\""
+      notify: restart apache2
+
+    - name: creating zabbix.conf.php file for zabbix-server interface
+      file:
+        path=/etc/zabbix/zabbix.conf.php
+        owner=root
+        group=www-data
+        mode=660
+        state=touch
+
+    - name: enable zabbix-server
+      lineinfile:
+        name=/etc/default/zabbix-server
+          regexp="^START"
+          line="START=yes"
+      notify: restart zabbix-server
+
+  handlers:
+    - name: restart mysql
+      service:
+        name=mysql
+        state=restarted
+        enabled=true
+
+    - name: restart ntp
+      service:
+        name=ntp
+        state=restarted
+        enabled=true
+
+    - name: restart apache2
+      service:
+        name=apache2
+        state=restarted
+        enabled=true
+
+    - name: restart zabbix-server
+      service:
+        name=zabbix-server
+        state=restarted
+        enabled=true
+
+    - name: enable zabbix apache conf
+      shell: a2dissite 000-default && a2ensite zabbix
+      notify: restart apache2
