@@ -124,7 +124,7 @@
 #        state=touch
     - name: dissite 000-default.conf
       shell: a2dissite 000-default.conf
-      notify: restart apache2
+      
 
     - name: enable zabbix apache conf
       shell: a2ensite zabbix_apache2.conf
