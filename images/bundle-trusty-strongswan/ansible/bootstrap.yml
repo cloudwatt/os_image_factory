@@ -4,44 +4,12 @@
 ### Written by the CAT (Cloudwatt Automation Team)
 ##
 #
-- hosts: all
+- hosts: keeper
   become: yes
 
+  roles:
+    - keeper
   tasks:
-    - name: default sh is bash
-      file: src=/bin/bash dest=/bin/sh state=link
-
-    - name: packages installed
-      apt: pkg=aptitude state=present
-
-    - name: apt-get update & upgrade
-      apt: update_cache=yes upgrade=full
-
-    - name: packages installed
-      apt: pkg={{ item }} state=present
-      with_items:
-        - strongswan
-        - tmux
-        - tcpdump
-        - lsof
-        - vim
-
-    - name: configuration files uploaded
-      template:
-        src=templates/{{ item.file }}
-        dest={{ item.path }}
-        owner=root
-        group=root
-        mode=0644
-      with_items:
-        - { file: "etc_ipsec.conf.j2",    path: "/etc/ipsec.conf"    }
-        - { file: "etc_ipsec.secrets.j2", path: "/etc/ipsec.secrets" }
-        - { file: "strongswan.conf.j2", path: "/etc/strongswan.conf" }
-      notify:
-        - restart ipsec
-
-    - sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
-
     - name: old-school enabling ipsec service
       shell: systemctl daemon-reload && /usr/sbin/update-rc.d ipsec defaults && /usr/sbin/update-rc.d ipsec enable
 
