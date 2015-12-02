@@ -33,15 +33,6 @@ parameters:
         - n1.cw.highmem-8
         - n1.cw.highmem-12
 
-  # password:
-  #   label: Password
-  #   description: Password
-  #   type: string
-  #   hidden: true
-  #   constraints:
-  #     - length: { min: 6, max: 96 }
-  #       description: Password must be between 6 and 96 characters
-
 resources:
   network:
     type: OS::Neutron::Net
@@ -77,26 +68,6 @@ resources:
       floating_ip: { get_resource: floating_ip }
       server_id: { get_resource: server }
 
-  # rng_secret:
-  #   type: OS::Heat::RandomString
-  #   properties:
-  #     length: 96
-  #     salt: String
-
-  # secret_injection:
-  #   type: OS::Heat::SoftwareConfig
-  #   properties:
-  #     config:
-  #       str_replace:
-  #         template: |
-  #           #!/bin/bash
-  #           PASSWORD_SHA2="$(echo -n PASSWORD | shasum -a 256 | cut -d" " -f1)"
-  #           sudo sed -i "s/root_password_sha2 =/root_password_sha2 = $PASSWORD_SHA2/g"      /some/path/file.conf
-  #           sudo sed -i "s/secret =/secret = APPLICATION_SECRET/g"                          /some/path/file.conf
-  #         params:
-  #           PASSWORD: { get_param: password }
-  #           APPLICATION_SECRET: { get_resource: rng_secret }
-
   ssl_key_cert_generation:
     type: OS::Heat::SoftwareConfig
     properties:
@@ -127,7 +98,6 @@ resources:
       parts:
       - config: { get_resource: ssl_key_cert_generation }
       - config: { get_resource: floating_ip_injection }
-      # - config: { get_resource: secret_injection }
 
   server:
     type: OS::Nova::Server
@@ -151,11 +121,3 @@ outputs:
         template: https://$floating_ip/
         params:
           $floating_ip: { get_attr: [floating_ip, floating_ip_address] }
-
-  # secret:
-  #   description: MediaGoblin Secret
-  #   value:
-  #     str_replace:
-  #       template: SECRET
-  #       params:
-  #         SECRET: { get_resource: rng_secret }
