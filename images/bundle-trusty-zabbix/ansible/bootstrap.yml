@@ -82,15 +82,53 @@
         name=/etc/php5/apache2/php.ini
         regexp=".*date\.timezone.*"
         line="date.timezone = \"Europe/Paris\""
+
+    - name: enable max_execution_time in php.ini
+      lineinfile:
+        name=/etc/php5/apache2/php.ini
+        regexp=".*max_execution_time.*"
+        line="max_execution_time = 600"
+
+
+    - name: enable max_input_time  in php.ini
+      lineinfile:
+        name=/etc/php5/apache2/php.ini
+        regexp=".*max_input_time.*"
+        line="max_input_time = 600"
+
+
+    - name: enable post_max_size  in php.ini
+      lineinfile:
+        name=/etc/php5/apache2/php.ini
+        regexp=".*post_max_size.*"
+        line="post_max_size = 32M "
+
+
+    - name: enable upload_max_filesize  in php.ini
+      lineinfile:
+        name=/etc/php5/apache2/php.ini
+        regexp=".*upload_max_filesize.*"
+        line="upload_max_filesize = 16M"
       notify: restart apache2
 
-    - name: creating zabbix.conf.php file for zabbix-server interface
-      file:
-        path=/etc/zabbix/zabbix.conf.php
-        owner=root
-        group=www-data
-        mode=660
-        state=touch
+    - name: creating zabbix file
+      copy: src=zabbix.conf.php dest=/etc/zabbix/zabbix.conf.php owner=root group=www-data mode=660
+      notify: enable zabbix apache conf
+
+#    - name: creating zabbix.conf.php file for zabbix-server interface
+#      file:
+#        path=/etc/zabbix/zabbix.conf.php
+#        owner=root
+#        group=www-data
+#        mode=660
+#        state=touch
+    - name: dissite 000-default.conf
+      shell: a2dissite 000-default.conf
+      notify: restart apache2
+
+    - name: enable zabbix apache conf
+      shell: a2ensite zabbix_apache2.conf
+      notify: restart apache2
 
     - name: enable zabbix-server
       lineinfile:
@@ -112,18 +150,14 @@
         state=restarted
         enabled=true
 
-    - name: restart apache2
-      service:
-        name=apache2
-        state=restarted
-        enabled=true
-
     - name: restart zabbix-server
       service:
         name=zabbix-server
         state=restarted
         enabled=true
 
-    - name: enable zabbix apache conf
-      shell: a2dissite 000-default && a2ensite zabbix
-      notify: restart apache2
+    - name: restart apache2
+      service:
+        name=apache2
+        state=restarted
+        enabled=true
