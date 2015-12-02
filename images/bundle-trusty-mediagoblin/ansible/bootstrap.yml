@@ -112,6 +112,7 @@
         chdir: "{{ goblin_home }}"
 
     - name: the touchy part
+      become_user: mediagoblin
       shell: ./bootstrap.sh && ./configure && make
       args:
         chdir: "{{ goblin_home }}"
@@ -119,6 +120,12 @@
       until: result|success
       retries: 3
       delay: 2
+
+    - name: mediagoblin make
+      become_user: mediagoblin
+      shell: make
+      args:
+        chdir: "{{ goblin_home }}"
 
     - name: mediagoblin user_dev exists
       file:
