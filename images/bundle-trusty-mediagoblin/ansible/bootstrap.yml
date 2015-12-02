@@ -115,6 +115,10 @@
       shell: ./bootstrap.sh && ./configure && make
       args:
         chdir: "{{ goblin_home }}"
+      register: result
+      until: result|success
+      retries: 3
+      delay: 2
 
     - name: mediagoblin user_dev exists
       file:
