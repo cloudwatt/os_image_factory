@@ -77,6 +77,10 @@
       copy: src=zabbix_apache2.conf dest=/etc/apache2/sites-available/zabbix_apache2.conf owner=root group=root mode=0644
       notify: enable zabbix apache conf
 
+    - name: enable zabbix apache conf
+      shell: a2ensite zabbix_apache2.conf
+
+
     - name: enable date.timezone in php.ini
       lineinfile:
         name=/etc/php5/apache2/php.ini
@@ -109,7 +113,7 @@
         name=/etc/php5/apache2/php.ini
         regexp=".*upload_max_filesize.*"
         line="upload_max_filesize = 16M"
-      notify: restart apache2
+
 
     - name: creating zabbix file
       copy: src=zabbix.conf.php dest=/etc/zabbix/zabbix.conf.php owner=root group=www-data mode=660
@@ -124,10 +128,6 @@
 #        state=touch
     - name: dissite 000-default.conf
       shell: a2dissite 000-default.conf
-      
-
-    - name: enable zabbix apache conf
-      shell: a2ensite zabbix_apache2.conf
       notify: restart apache2
 
     - name: enable zabbix-server
