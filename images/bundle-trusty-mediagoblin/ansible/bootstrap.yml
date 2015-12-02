@@ -51,6 +51,16 @@
         - postgresql-client
         - python-psycopg2
 
+    - name: pip installed
+      shell: sudo easy_install pip
+
+    - name: version-specific pip packages
+      pip: name={{ item.name }} version={{ item.version }} state=present
+      with_items:
+        - { name: "mock", version: "1.0.1" }
+        - { name: "Paste", version: "1.7.5.1" }
+        - { name: "PasteScript", version: "1.7.5" }
+
     - name: mediagoblin system group
       group: name=mediagoblin state=present
 
