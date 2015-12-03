@@ -270,8 +270,6 @@
         group=mediagoblin
         mode=0744
 
-    # - shell: systemctl daemon-reload
-
     - name: mediagoblin bin absent
       file:
         path={{ goblin_home }}/bin
@@ -286,17 +284,15 @@
       retries: 3
       delay: 2
 
-    - name: mediagoblin assetlink
-      become_user: mediagoblin
-      shell: gmg assetlink
-      args:
-        chdir: "{{ goblin_home }}"
+    # - name: mediagoblin assetlink
+    #   become_user: mediagoblin
+    #   shell: gmg assetlink
+    #   args:
+    #     chdir: "{{ goblin_home }}"
 
     - name: mediagoblin database update
       become_user: mediagoblin
       shell: gmg dbupdate
-      args:
-        chdir: "{{ goblin_home }}"
 
     - name: start mediagoblin
       service:
