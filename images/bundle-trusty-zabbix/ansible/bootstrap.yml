@@ -9,6 +9,12 @@
 
   vars:
     db_name: zabbix
+    slaves_playbook_url: https://raw.githubusercontent.com/pierreane/os_image_factory/master/images/bundle-trusty-zabbix/ansible/slave-monitoring_zabbix.yml
+    host_inventory: |
+      [local]
+      127.0.0.1 ansible_connection=local
+      [slaves]
+      # put IP and connection information on shinken slaves here
 
   tasks:
     - apt: update_cache=true upgrade=full
@@ -136,6 +142,29 @@
           regexp="^START"
           line="START=yes"
       notify: restart zabbix-server
+
+
+    - name: playbook for enabling slave
+      get_url:
+        url="{{ item }}"
+        dest="/root/"
+      with_items:
+        - "{{ slaves_playbook_url }}"
+
+    - name: ansible hosts directory
+      file:
+        path=/etc/ansible
+        state=directory
+        owner=root
+        group=root
+        mode=0755
+
+    - name: generating host inventory
+      copy:
+        force=no
+        content="{{ host_inventory }}"
+        dest=/etc/ansible/hosts
+
 
   handlers:
     - name: restart mysql

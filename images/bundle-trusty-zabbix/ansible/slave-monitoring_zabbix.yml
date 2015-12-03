@@ -1,0 +1,61 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+- hosts: all
+  become: yes
+
+
+  tasks:
+    - apt: update_cache=true upgrade=full
+
+    - name: install packages
+      apt: pkg={{ item }} state=present
+      with_items:
+        - zabbix-agent
+        - ntp
+      notify: restart ntp
+
+
+    - name: get zabbix_server IP
+#      template: src=zabbix_agentd.conf.j2 dest=/etc/zabbix/zabbix_agentd.conf owner=root group=root mode=0644
+      lineinfile:
+        name=/etc/zabbix/zabbix_agentd.conf
+        regexp=".*Server=.*"
+        line="Server={{ ansible_default_ipv4.address }}"
+
+    - name: zabbix slave hostname
+      lineinfile:
+        name=/etc/zabbix/zabbix_agentd.conf
+        regexp=".*Hostname.*"
+        line="Hostname={{ansible_hostname}}"
+      notify: restart zabbix
+
+#    - debug: var={{ ansible_default_ipv4.address }}
+#    - debug: var={{ ansible_hostname }}
+
+
+    #- name: zabbix_agent | Deploy zabbix_agentd.conf file
+    #  template:
+    #     src="zabbix_agentd.conf.j2"
+    #     dest="/etc/zabbix/zabbix_agentd.conf"
+    #     owner=root
+    #     group=root
+    #     mode=0644
+    #  notify: restart zabbix_agent
+
+
+  handlers:
+    - name: restart ntp
+      service:
+        name=ntp
+        state=restarted
+        enabled=yes
+
+    - name: restart zabbix
+      service:
+        name=zabbix-agent
+        state=restarted
+        enabled=yes
