@@ -6,11 +6,7 @@
 # waived all copyright and related or neighboring rights to
 # mediagoblin-paster. This work is published from Sweden.
 #
-## CREDIT
-# Credit goes to jpope <http://jpope.org/> and
-# chimo <http://chimo.chromic.org/>. From which' Arch init scripts this is
-# based upon.
-#
+
 ### BEGIN INIT INFO
 # Provides:          mediagoblin-paster
 # Required-Start:    $network $named $local_fs
@@ -38,8 +34,7 @@ set -e
 
 DAEMON_NAME=mediagoblin-paster
 
-MG_BIN=$MG_ROOT/bin
-MG_PASTER_BIN=$MG_BIN/paster
+MG_PASTER_BIN=/usr/local/bin/paster
 MG_PASTE_INI=$MG_ROOT/paste_local.ini
 MG_FCGI_HOST=127.0.0.1
 MG_FCGI_PORT=26543

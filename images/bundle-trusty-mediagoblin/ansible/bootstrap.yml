@@ -34,22 +34,57 @@
         dest=/bin/sh
         state=link
 
+    - name: conflicting packages absent
+      apt:
+        pkg={{ item }}
+        state=absent
+        purge=yes
+      with_items:
+        - apache2
+        - python-scipy
+        - python-six
+        - python-six-whl
+        - python-paste
+        - python-pastescript
+        - python-pastedeploy
+        - python-pip
+        - python-pip-whl
+        - python-pastedeploy-tpl
+        - python-virtualenv
+
     - name: needed packages present
       apt: pkg={{ item }} state=present
       with_items:
-        - git-core
+        - git
+        - python-gi
+        - python3-gi
         - python
         - python-dev
         - python-lxml
         - python-imaging
-        - python-virtualenv
+        - python-psycopg2
+        - python-gst-1.0
+        - python-numpy
         - npm
         - nodejs-legacy
         - automake
         - nginx
         - postgresql
         - postgresql-client
-        - python-psycopg2
+        - postgresql-contrib
+        - gstreamer1.0-tools
+        - gir1.2-gstreamer-1.0
+        - gir1.2-gst-plugins-base-1.0
+        - gstreamer1.0-plugins-good
+        - gstreamer1.0-plugins-ugly
+        - gstreamer1.0-plugins-bad
+        - gstreamer1.0-libav
+        - libsndfile1-dev
+        - libasound2-dev
+        - blender
+        - poppler-utils
+        - unoconv
+        - libreoffice
 
     - name: pip installed
       shell: sudo easy_install pip
@@ -60,6 +95,38 @@
         - { name: "mock", version: "1.0.1" }
         - { name: "Paste", version: "1.7.5.1" }
         - { name: "PasteScript", version: "1.7.5" }
+
+    - name: pip packages installed
+      pip:
+        name={{ item }}
+        state=latest
+      with_items:
+        - pip
+        - virtualenv
+        - scikits.audiolab
+        - exifread
+        - Babel
+        - flup
+        - pytest-xdist
+        - PyLD
+        - WebOb
+        - jsonschema
+        - itsdangerous
+        - sphinx
+        - six
+        - Markdown
+        - kombu
+        - py-bcrypt
+        - pytz
+        - requests
+        - Unidecode
+        - Tempita
+        - functools32
+        - PasteDeploy
+        - celery
+        - python-dateutil
+        - Mako
+        - oauthlib
 
     - name: mediagoblin system group
       group: name=mediagoblin state=present
@@ -112,31 +179,7 @@
         chdir: "{{ goblin_home }}"
 
     - name: the touchy part
-      become_user: mediagoblin
-      shell: ./bootstrap.sh && ./configure && make
-      args:
-        chdir: "{{ goblin_home }}"
-      register: result
-      until: result|success
-      retries: 3
-      delay: 2
-
-    - name: mediagoblin make
-      become_user: mediagoblin
-      shell: make
-      args:
-        chdir: "{{ goblin_home }}"
-
-    - name: mediagoblin user_dev exists
-      file:
-        path={{ goblin_home }}/user_dev
-        state=directory
-        owner=mediagoblin
-        group=www-data
-        mode=0750
-
-    - name: install flup
-      shell: ./bin/easy_install flup
+      shell: ./bootstrap.sh && ./configure --without-virtualenv
       args:
         chdir: "{{ goblin_home }}"
 
@@ -151,15 +194,49 @@
         - paste_local.ini
         - mediagoblin_local.ini
 
-    - name: populate database with mediagoblin data structures
-      shell: ./bin/gmg dbupdate
+    - name: initd service files
+      template:
+        src=templates/{{ item }}.init.j2
+        dest=/etc/init.d/{{ item }}
+        owner=mediagoblin
+        group=www-data
+        mode=0755
+      with_items:
+        - mediagoblin-celery-worker
+        - mediagoblin-paster
+
+    - name: mediagoblin user_dev exists
+      file:
+        path={{ goblin_home }}/user_dev
+        state=directory
+        owner=mediagoblin
+        group=www-data
+        mode=0750
+
+    - name: mediagoblin has rights
+      file:
+        path={{ goblin_home }}
+        state=directory
+        owner=mediagoblin
+        group=www-data
+        recurse=yes
+
+    - name: mediagoblin make
+      become_user: mediagoblin
+      shell: make
       args:
         chdir: "{{ goblin_home }}"
 
-    - name: nginx started
-      service: name=nginx state=started enabled=yes
+    - name: python setup.py develop
+      shell: python setup.py develop
+      args:
+        chdir: "{{ goblin_home }}"
+      register: result
+      until: result|success
+      retries: 3
+      delay: 2
 
-    - name: mediagoblin nginx.conf set
+    - name: mediagoblin nginx config set
       template:
         src=templates/mediagoblin.nginx.j2
         dest={{ goblin_home }}/nginx.conf
@@ -167,7 +244,18 @@
         group=root
         mode=0640
 
-    - name: mediagoblin nginx.conf linked
+    - name: nginx started
+      service: name=nginx state=started enabled=yes
+
+    - name: /etc/mediagoblin/ssl exists
+      file:
+        path=/etc/mediagoblin/ssl
+        state=directory
+        owner=root
+        group=root
+        mode=0700
+
+    - name: nginx site enabled
       file:
         src={{ goblin_home }}/nginx.conf
         dest=/etc/nginx/sites-enabled/mediagoblin
@@ -182,16 +270,33 @@
         group=mediagoblin
         mode=0744
 
-    - name: initd service files
-      template:
-        src=templates/{{ item }}.init.j2
-        dest=/etc/init.d/{{ item }}
-        owner=root
-        group=root
-        mode=0755
-      with_items:
-        - mediagoblin-celery-worker
-        - mediagoblin-paster
+    # - shell: systemctl daemon-reload
+
+    - name: mediagoblin bin absent
+      file:
+        path={{ goblin_home }}/bin
+        state=absent
+
+    - name: python setup.py develop
+      shell: python setup.py develop
+      args:
+        chdir: "{{ goblin_home }}"
+      register: result
+      until: result|success
+      retries: 3
+      delay: 2
+
+    - name: mediagoblin assetlink
+      become_user: mediagoblin
+      shell: gmg assetlink
+      args:
+        chdir: "{{ goblin_home }}"
+
+    - name: mediagoblin database update
+      become_user: mediagoblin
+      shell: gmg dbupdate
+      args:
+        chdir: "{{ goblin_home }}"
 
     - name: start mediagoblin
       service:
