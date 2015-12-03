@@ -96,8 +96,8 @@ resources:
     type: OS::Heat::MultipartMime
     properties:
       parts:
-      - config: { get_resource: ssl_key_cert_generation }
-      - config: { get_resource: floating_ip_injection }
+        - config: { get_resource: ssl_key_cert_generation }
+        - config: { get_resource: floating_ip_injection }
 
   server:
     type: OS::Nova::Server
