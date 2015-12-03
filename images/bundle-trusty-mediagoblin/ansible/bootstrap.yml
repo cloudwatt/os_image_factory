@@ -293,6 +293,8 @@
     - name: mediagoblin database update
       become_user: mediagoblin
       shell: gmg dbupdate
+      args:
+        chdir: /var/lib/mediagoblin
 
     - name: start mediagoblin
       service:
