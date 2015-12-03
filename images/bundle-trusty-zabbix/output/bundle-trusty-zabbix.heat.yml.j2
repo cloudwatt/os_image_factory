@@ -51,7 +51,7 @@ resources:
     properties:
       rules:
         - { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
-        - { direction: ingress, protocol: TCP, port_range_min: 7767, port_range_max: 7767 }
+        - { direction: ingress, protocol: TCP, port_range_min: 80, port_range_max: 80 }
         - { direction: ingress, protocol: UDP, port_range_min: 161, port_range_max: 161 }
         - { direction: ingress, protocol: UDP, port_range_min: 123, port_range_max: 123 }
         - { direction: ingress, protocol: ICMP }
@@ -74,7 +74,7 @@ resources:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: keypair_name }
-      image: {{ result_img_id }}
+      image: ae3082cb-fac1-46b1-97aa-507aaa8f184f
       flavor: { get_param: flavor_name }
       networks:
         - network: { get_resource: network }
@@ -83,9 +83,9 @@ resources:
 
 outputs:
   floating_ip_url:
-    description: Shinken URL
+    description: Zabbix URL
     value:
       str_replace:
-        template: http://$floating_ip:7767/
+        template: http://$floating_ip
         params:
-          $floating_ip: { get_attr: [floating_ip, floating_ip_address] }
+          $FLOATING_IP$: { get_attr: [floating_ip, floating_ip_address] }
