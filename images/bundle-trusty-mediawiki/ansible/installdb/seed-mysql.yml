@@ -4,9 +4,25 @@
 
   vars:
     wp_db_name: mediawiki
-    wp_db_pass: "{{ lookup('password', '/root/keystore chars=ascii_letters,digits,hexdigits,punctuation') }}"
+
+
+    mediawiki:
+      sitename: "{{ lookup('file', '/etc/mediawiki/site_name') }}
+      floating_ip: "{{ lookup('file', '/etc/stack_floating_ip') }}"
+      password_db: "{{ lookup('password', '/etc/mediawiki/password_db chars=ascii_letters,digits,hexdigits,punctuation') }}"
+      secret_key: "{{ lookup('password', '/etc/mediawiki/secret_key length=65 chars=ascii_letters,digits') }}"
+      upgrade_key: "{{ lookup('password', '/etc/mediawiki/secret_key length=17 chars=ascii_letters,digits') }}"
+
 
   tasks:
+    - name: LocalSetting
+      template:
+      src=installdb/LocalSettings.php.j2
+      dest=/etc/mediawiki/LocalSettings.php
+      owner=root
+      group=www-data
+      mode=0600
+
     - name: mediawiki configuration
       template:
         src=templates/mediawiki.etc.conf.j2
@@ -23,6 +39,6 @@
     - name: mysql user is created
       mysql_user:
         name=mediawiki
-        password="{{ wp_db_pass }}"
+        password="{{ mediawiki.password_db }}"
         priv="wordpress.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER"
         state=present
