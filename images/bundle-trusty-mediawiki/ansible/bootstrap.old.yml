@@ -28,6 +28,8 @@
         state=present
       with_items:
         - apache2
+        - mysql-server
+        - php5
         - libapache2-mod-php5
         - php5-mysql
         - mediawiki
@@ -38,19 +40,12 @@
     - name: apache2 enabled
       service: name=apache2 enabled=yes
 
-    - name: Apache conf
+    - name: Mediawiki conf
       file:
         dest=/etc/apache2/sites-available/mediawiki.conf
         src=/etc/mediawiki/apache.conf
         state=link
       notify: enable apache site
-
-    - name: lib mediaWiki
-      file:
-        dest=/var/www/mediawiki
-        src=/var/lib/mediawiki
-        state=link
-      notify: restart apache
 
     - name: DBconf
       copy:
