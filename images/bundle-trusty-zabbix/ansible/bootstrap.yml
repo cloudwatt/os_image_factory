@@ -14,7 +14,7 @@
       [local]
       127.0.0.1 ansible_connection=local
       [slaves]
-      # put IP and connection information on shinken slaves here
+      # put IP and connection information on zabbix slaves here
 
   tasks:
     - apt: update_cache=true upgrade=full
@@ -143,13 +143,17 @@
           line="START=yes"
       notify: restart zabbix-server
 
+    - name: services enabled
+      service: name="{{ item }}" state=started enabled=yes
+      with_items:
+        - ntp
+        - zabbix-server
+
 
     - name: playbook for enabling slave
       get_url:
-        url="{{ item }}"
+        url="{{ slaves_playbook_url }}"
         dest="/root/"
-      with_items:
-        - "{{ slaves_playbook_url }}"
 
     - name: ansible hosts directory
       file:
@@ -179,14 +183,14 @@
         state=restarted
         enabled=true
 
-    - name: restart zabbix-server
-      service:
-        name=zabbix-server
-        state=restarted
-        enabled=true
-
     - name: restart apache2
       service:
         name=apache2
+        state=restarted
+        enabled=true
+
+    - name: restart zabbix-server
+      service:
+        name=zabbix-server
         state=restarted
         enabled=true
