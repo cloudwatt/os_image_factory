@@ -52,13 +52,28 @@
         state=link
       notify: restart apache
 
-    - name: DBconf
+    - name: cp seed mysql
       copy:
-        src=installdb/
+        src=installdb/seed-mysql.yml
         dest=/root/installdb/
         owner=root
         group=root
-        directory_mode=0700
+        mode=0644
+
+    - name: cp LocalSettings
+      copy:
+        src=installdb/LocalSettings.php.j2
+        dest=/root/installdb/
+        owner=root
+        group=root
+        mode=0644
+
+    - name: cp LocalSettings
+      copy:
+        src=installdb/mediawiki.etc.conf
+        dest=/root/installdb/
+        owner=root
+        group=root
         mode=0644
 
   handlers:
