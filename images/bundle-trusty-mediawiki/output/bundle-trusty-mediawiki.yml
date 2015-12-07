@@ -79,7 +79,6 @@ resources:
         echo "[local]" >> /etc/ansible/hosts
         echo "127.0.0.1 ansible_connection=local" >> /etc/ansible/hosts
         ansible-playbook /root/installdb/seed-mysql.yml
-        rm -rf /root/installdb
 
   floating_ip_link:
     type: OS::Nova::FloatingIPAssociation

@@ -54,10 +54,11 @@
 
     - name: DBconf
       copy:
-        src=installdb/seed-mysql.yml
+        src=installdb/
         dest=/root/installdb/
         owner=root
         group=root
+        directory_mode=0700
         mode=0644
 
   handlers:
