@@ -24,7 +24,7 @@ Ansible et une stack HEAT qui vont vous fournir un serveur de build d'image avec
 plus de confort, nous avons ajouté un serveur Jenkins dans la boîte à outils. Donc, pour démarrer votre propre usine :
 
 * Munissez vous de :
-    * votre [compte Cloudwatt](https://www.cloudwatt.com/authentification), avec une [paire de clés existante](https://console.cloudwatt.com/project/access_and_security/?tab=access_security_tabs__keypairs_tab)
+    * votre [compte Cloudwatt](https://www.cloudwatt.com/cockpit/#/create-contact), avec une [paire de clés existante](https://console.cloudwatt.com/project/access_and_security/?tab=access_security_tabs__keypairs_tab)
     * les outils [OpenStack CLI](http://docs.openstack.org/cli-reference/content/install_clients.html)
 * Faites un clone local du repository [os_image_factory](https://github.com/cloudwatt/os_image_factory)
 * Placez vous dedans
