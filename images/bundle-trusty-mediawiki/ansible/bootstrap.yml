@@ -52,10 +52,16 @@
         state=link
       notify: restart apache
 
+    -name: installdb create
+      file:
+        path=/root/installdb
+        state=directory
+        mode=0755
+
     - name: cp seed mysql
       copy:
         src=installdb/seed-mysql.yml
-        dest=/root/installdb/
+        dest=/root/installdb/seed-mysql.yml
         owner=root
         group=root
         mode=0644
@@ -63,7 +69,7 @@
     - name: cp LocalSettings
       copy:
         src=installdb/LocalSettings.php.j2
-        dest=/root/installdb/
+        dest=/root/installdb/LocalSettings.php.j2
         owner=root
         group=root
         mode=0644
@@ -71,7 +77,7 @@
     - name: cp LocalSettings
       copy:
         src=installdb/mediawiki.etc.conf
-        dest=/root/installdb/
+        dest=/root/installdb/mediawiki.etc.conf
         owner=root
         group=root
         mode=0644
