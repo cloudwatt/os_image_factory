@@ -52,7 +52,7 @@
         state=link
       notify: restart apache
 
-    -name: installdb create
+    - name: installdb create
       file:
         path=/root/installdb
         state=directory
