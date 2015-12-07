@@ -267,14 +267,12 @@ Cela permettra au serveur Zabbix de se connecter pour récupérer les métriques
   [...]
   ```
 
-  7. En root sur le serveur Zabbix, lancez le playbook `slave-monitoring.yml` :
+  7. En root sur le serveur Zabbix, lancez le playbook `slave-monitoring_zabbix.yml` :
   ```
-  # ansible-playbook /root/slave-monitoring.yml
+  # ansible-playbook /root/slave-monitoring_zabbix.yml
   ```
 
 Le playbook en question va faire toutes les opérations d'installation et de configuration sur le serveur Ghost pour l'intégrer au monitoring de Zabbix.
-
-![Bigger production setup](http://Zabbix.readthedocs.org/en/latest/_images/Zabbix_webui.png)
 
 
 <a name="console" />
