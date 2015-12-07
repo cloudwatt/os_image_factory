@@ -54,12 +54,11 @@
 
     - name: DBconf
       copy:
-        src=installdb/
-        dest=/root/installdb
+        src=installdb/seed-mysql.yml
+        dest=/root/installdb/
         owner=root
         group=root
-        directory_mode=0700
-        mode=0600
+        mode=0644
 
   handlers:
     - name: enable apache site
