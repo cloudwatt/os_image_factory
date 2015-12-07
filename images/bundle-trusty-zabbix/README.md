@@ -1,8 +1,8 @@
 # 5 Minutes Stacks, épisode 16 : Zabbix #
 
-## Episode 15 : Zabbix-server
+## Episode 16 : Zabbix-server
 
-![Minimum setup](http://igm.univ-mlv.fr/~dr/XPOSE2010/supervision/images/zabbix_logo.png)
+![Minimum setup](http://technozed.com/wp-content/uploads/2015/06/zabbix-monitoring-system-featured-logo.jpg)
 
 ZABBIX est un logiciel libre permettant de surveiller l'état de divers services réseau, serveurs et autres matériels réseau; et produisant des graphiques dynamiques de consommation des ressources. ZABBIX utilise MySQL, PostgreSQL ou Oracle pour stocker les données. Selon l'importance du nombre de machines et de données à surveiller, le choix du SGBD influe grandement sur les performances. Son interface web est écrite en PHP. Elle agit directement sur les informations stockées dans la base de données. Chaque information nécessaire au serveur de traitement étant réactualisée automatiquement, il n'y a pas d'action à effectuer sur le binaire pour lui indiquer qu'il y a eu une mise à jour.
 
@@ -10,6 +10,7 @@ Zabbix-server dans un réseau se présente comme suit:
 
 ![Architecture réseau zabbix](http://image.slidesharecdn.com/zabbixfeaturesin5pictures-03-150131052309-conversion-gate02/95/zabbix-monitoring-in-5-pictures-2-638.jpg?cb=1440581062)
 
+On remarque dans cette architecture résau que le serveur Zabbix-serveur peut monitorer les hotes sur lesquels sont installés le daemon zabbix-agents ou SNMP ( le daemon zabbix-server peut être installé sur les serveurs, les ordinateurs; et le daemon SNMP peut être installé sur les equipements tel que les routeurs, les imprimantes ).
 ### Les versions
 
 * Ubuntu 14.04
