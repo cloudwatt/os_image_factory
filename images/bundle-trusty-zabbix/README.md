@@ -10,12 +10,13 @@ Zabbix-server dans un réseau se présente comme suit:
 
 ![Architecture réseau zabbix](http://image.slidesharecdn.com/zabbixfeaturesin5pictures-03-150131052309-conversion-gate02/95/zabbix-monitoring-in-5-pictures-2-638.jpg?cb=1440581062)
 
-On remarque dans cette architecture résau que le serveur Zabbix-serveur peut monitorer les hotes sur lesquels sont installés le daemon zabbix-agents ou SNMP ( le daemon zabbix-server peut être installé sur les serveurs, les ordinateurs; et le daemon SNMP peut être installé sur les equipements tel que les routeurs, les imprimantes ).
+On remarque dans cette architecture résau que le serveur Zabbix-serveur peut monitorer les hotes sur lesquels sont installés le daemon zabbix-agents ou SNMP ( le daemon zabbix-server peut être installé sur les serveurs, les ordinateurs; et le daemon SNMP peut être installé sur les equipements tel que les routeurs, les imprimantes... ).
+
 ### Les versions
 
 * Ubuntu 14.04
 * Zabbix 2.2
-* Mysql
+* Mysql  5.6
 
 ### Les pré-requis pour déployer cette stack
 

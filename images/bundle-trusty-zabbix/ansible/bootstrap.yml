@@ -123,15 +123,7 @@
 
     - name: creating zabbix file
       copy: src=zabbix.conf.php dest=/etc/zabbix/zabbix.conf.php owner=root group=www-data mode=660
-  #    notify: enable zabbix apache conf
 
-#    - name: creating zabbix.conf.php file for zabbix-server interface
-#      file:
-#        path=/etc/zabbix/zabbix.conf.php
-#        owner=root
-#        group=www-data
-#        mode=660
-#        state=touch
     - name: dissite 000-default.conf
       shell: a2dissite 000-default.conf
       notify: restart apache2
