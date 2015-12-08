@@ -304,7 +304,7 @@ Remember that the differents ports where Zabbix-server listening:
 
 Port Listener trap: 1051
 Port of the database when the local socket is not in use: 3306
-Zabbix-server management web interface: 8D
+Zabbix-server management web interface: 80
 
 ## So watt?
 
