@@ -15,15 +15,7 @@
 
 
   tasks:
-    - name: LocalSetting
-      template:
-        src=LocalSettings.php.j2
-        dest=/etc/mediawiki/LocalSettings.php
-        owner=root
-        group=www-data
-        mode=0755
 
-        
     - name: mysql database is created
       mysql_db:
         name=mediawiki
@@ -33,5 +25,5 @@
       mysql_user:
         name=mediawiki
         password="{{ mediawiki.password_db }}"
-        priv=*.*:ALL
+        priv=*.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER"
         state=present

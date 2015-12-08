@@ -67,15 +67,7 @@
         group=root
         mode=0644
 
-    - name: cp LocalSettings
-      copy:
-        src=installdb/LocalSettings.php.j2
-        dest=/root/installdb/LocalSettings.php.j2
-        owner=root
-        group=root
-        mode=0644
-
-    - name: cp LocalSettings
+    - name: cp mediawiki.conf
       copy:
         src=installdb/mediawiki.etc.conf
         dest=/root/installdb/mediawiki.etc.conf
