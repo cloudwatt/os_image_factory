@@ -33,5 +33,5 @@
       mysql_user:
         name=mediawiki
         password="{{ mediawiki.password_db }}"
-        priv="mediawiki.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER"
+        priv=*.*:ALL
         state=present
