@@ -29,7 +29,6 @@
       with_items:
         - apache2
         - libapache2-mod-php5
-        - python-mysqldb
         - php5-mysql
         - mediawiki
 
@@ -67,15 +66,14 @@
         group=root
         mode=0644
 
-    - name: cp mediawiki.conf
+
+    - name: cp mediawiki.etc.conf
       copy:
         src=installdb/mediawiki.etc.conf
         dest=/root/installdb/mediawiki.etc.conf
         owner=root
         group=root
         mode=0644
-
-
 
   handlers:
     - name: enable apache site
