@@ -29,6 +29,7 @@
       with_items:
         - apache2
         - libapache2-mod-php5
+        - python-mysqldb
         - php5-mysql
         - mediawiki
 
@@ -81,6 +82,8 @@
         owner=root
         group=root
         mode=0644
+
+
 
   handlers:
     - name: enable apache site

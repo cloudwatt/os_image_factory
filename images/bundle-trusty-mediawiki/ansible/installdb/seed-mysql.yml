@@ -17,7 +17,7 @@
   tasks:
     - name: LocalSetting
       template:
-        src=installdb/LocalSettings.php.j2
+        src=LocalSettings.php.j2
         dest=/etc/mediawiki/LocalSettings.php
         owner=root
         group=www-data
