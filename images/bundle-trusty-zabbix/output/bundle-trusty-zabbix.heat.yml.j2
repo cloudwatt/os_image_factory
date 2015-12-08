@@ -1,7 +1,7 @@
 heat_template_version: 2013-05-23
 
 
-description: All-in-one Shinken stack
+description: All-in-one Zabbix stack
 
 
 parameters:
@@ -54,6 +54,8 @@ resources:
         - { direction: ingress, protocol: TCP, port_range_min: 80, port_range_max: 80 }
         - { direction: ingress, protocol: UDP, port_range_min: 161, port_range_max: 161 }
         - { direction: ingress, protocol: UDP, port_range_min: 123, port_range_max: 123 }
+        - { direction: ingress, protocol: UDP, port_range_min: 1050, port_range_max: 1050 }
+        - { direction: ingress, protocol: UDP, port_range_min: 1051, port_range_max: 1051 }
         - { direction: ingress, protocol: ICMP }
         - { direction: egress, protocol: ICMP }
         - { direction: egress, protocol: TCP }
@@ -74,7 +76,7 @@ resources:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: keypair_name }
-      image: ae3082cb-fac1-46b1-97aa-507aaa8f184f
+      image: {{ result_img_id }}
       flavor: { get_param: flavor_name }
       networks:
         - network: { get_resource: network }

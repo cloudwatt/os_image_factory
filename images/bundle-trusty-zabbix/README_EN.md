@@ -10,7 +10,7 @@ Zabbix-server in a network is as follows:
 
 ![Architecture réseau zabbix](http://image.slidesharecdn.com/zabbixfeaturesin5pictures-03-150131052309-conversion-gate02/95/zabbix-monitoring-in-5-pictures-2-638.jpg?cb=1440581062)
 
-We note in this network architecture that Zabbix server server can monitor the bed on which are installed zabbix-agent or SNMP daemon (the zabbix-server daemon can be installed on servers, computers, and the SNMP daemon can be installed on equipment such as routers, printers ...).
+We note in this network architecture that Zabbix server can monitor the hosts on which are installed zabbix-agent or SNMP daemon (the zabbix-server daemon can be installed on servers, computers, and the SNMP daemon can be installed on equipment such as routers, printers ...).
 
 ## Preparations
 
@@ -83,7 +83,7 @@ description: All-in-one zabbix stack
 
 parameters:
   keypair_name:
-    default: buildzabbix                            <-- put here your keypair_name
+    default: buildshinken                            <-- put here your keypair_name
     description: Keypair to inject in instance
     label: SSH Keypair
     type: string
