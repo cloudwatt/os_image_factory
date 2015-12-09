@@ -1,21 +1,20 @@
 heat_template_version: 2013-05-23
 
 
-description: All-in-one Backup stack
+description: All-in-one Zabbix stack
 
 
 parameters:
   keypair_name:
-    default: buildshinken
-    label: SSH Keypair
     description: Keypair to inject in instance
+    label: SSH Keypair
     type: string
 
   flavor_name:
     default: s1.cw.small-1
-    label: Instance Type (Flavor)
     description: Flavor to use for the deployed instance
     type: string
+    label: Instance Type (Flavor)
     constraints:
       - allowed_values:
         - t1.cw.tiny
@@ -43,10 +42,9 @@ resources:
     properties:
       network_id: { get_resource: network }
       ip_version: 4
-      cidr: 10.72.72.0/24
+      cidr: 10.0.10.0/24
       allocation_pools:
-        - { start: 10.72.72.100, end: 10.72.72.199 }
-
+        - { start: 10.0.10.100, end: 10.0.10.199 }
 
   security_group:
     type: OS::Neutron::SecurityGroup
@@ -54,7 +52,10 @@ resources:
       rules:
         - { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
         - { direction: ingress, protocol: TCP, port_range_min: 80, port_range_max: 80 }
-        - { direction: ingress, protocol: TCP, port_range_min: 443, port_range_max: 443 }
+        - { direction: ingress, protocol: UDP, port_range_min: 161, port_range_max: 161 }
+        - { direction: ingress, protocol: UDP, port_range_min: 123, port_range_max: 123 }
+        - { direction: ingress, protocol: UDP, port_range_min: 1050, port_range_max: 1050 }
+        - { direction: ingress, protocol: UDP, port_range_min: 1051, port_range_max: 1051 }
         - { direction: ingress, protocol: ICMP }
         - { direction: egress, protocol: ICMP }
         - { direction: egress, protocol: TCP }
@@ -75,7 +76,7 @@ resources:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: keypair_name }
-      image: ae3082cb-fac1-46b1-97aa-507aaa8f184f
+      image: 9f58c30e-5c90-497f-b11e-0bcf62bff0b4
       flavor: { get_param: flavor_name }
       networks:
         - network: { get_resource: network }
@@ -83,10 +84,10 @@ resources:
         - { get_resource: security_group }
 
 outputs:
-  floating_ip:
-    description: Backup Server Floating-IP
+  floating_ip_url:
+    description: Zabbix URL
     value:
       str_replace:
-        template: $FLOATING_IP$
+        template: http://$floating_ip
         params:
           $FLOATING_IP$: { get_attr: [floating_ip, floating_ip_address] }
