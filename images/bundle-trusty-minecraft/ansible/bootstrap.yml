@@ -26,9 +26,6 @@
         line='{{ ansible_ssh_user }} ALL=(minecraft) NOPASSWD: ALL' validate='visudo -cf %s'
       "
 
-    - name: apt repository added
-      apt_repository: repo='ppa:webupd8team/java' state=present
-
     - name: apt-get update & upgrade
       apt:
         upgrade=full
@@ -39,7 +36,7 @@
         pkg={{ item }}
         state=present
       with_items:
-        - oracle-java7-installer
+        - openjdk-7-jre-headless
 
     - name: minecraft system group
       group: name=minecraft state=present
@@ -71,9 +68,17 @@
     - name: minecraft init script added
       copy:
         src=files/minecraft.init
-        dest=/etc/init/minecraft.init
+        dest=/etc/init/minecraft.conf
         owner=root
         group=root
+        mode=0644
+
+    - name: minecraft eula.txt added
+      copy:
+        src=files/eula.txt
+        dest=/opt/minecraft/eula.txt
+        owner=minecraft
+        group=minecraft
         mode=0644
 
     - name: minecraft started
