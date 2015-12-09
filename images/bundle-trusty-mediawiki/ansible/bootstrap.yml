@@ -65,7 +65,7 @@
         dest=/root/installdb/seed-mysql.yml
         owner=root
         group=root
-        mode=0744
+        mode=0644
 
 
     - name: cp mediawiki.etc.conf
