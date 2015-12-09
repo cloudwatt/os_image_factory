@@ -11,13 +11,13 @@ conn %default
 	keyexchange=ikev2
 	mobike=no
 
-conn net-net
-	left={{ his_floating_ip }}
-	leftsubnet={{ his_private_subnet }}
-	leftid=@{{ his_floating_ip }}
+conn sidekick
+	left={{ tunnel_partner_ip }}
+	leftsubnet={{ tunnel_cidr }}
+	leftid=@{{ tunnel_partner_ip }}
 	leftfirewall=yes
 	right={{ ansible_default_ipv4.address }}
-	rightsubnet={{ my_private_subnet }}
-	rightid=@{{ my_floating_ip }}
+	rightid=@{{ floating_ip }}
+	rightsubnet={{ local_cidr }}
 	rightfirewall=yes
 	auto=start

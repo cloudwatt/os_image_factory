@@ -1,0 +1,8 @@
+---
+bundle:
+  name: bundle-trusty-strongswan
+  img_base: 168f7c6b-20a6-4a4e-8052-d1200aa36a1e
+  properties:
+    img_os: Debian
+    cw_bundle: STRONGSWAN
+    cw_origin: Cloudwatt

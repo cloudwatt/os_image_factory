@@ -1,0 +1,17 @@
+# /etc/ntp.conf, configuration for ntpd; see ntp.conf(5) for help
+
+{% for referral in common.ntp.referrals %}
+server {{ referral }} iburst
+{% endfor %}
+
+# Internal clock
+server 127.127.1.0
+fudge 127.127.1.0 stratum 10
+
+# restrict default ignore
+restrict -4 default kod nomodify notrap nopeer noquery limited
+restrict -6 default kod nomodify notrap nopeer noquery limited
+restrict 127.0.0.1
+restrict -6 ::1
+
+driftfile /var/lib/ntp/ntp.drift
