@@ -14,7 +14,7 @@ parameters:
     description: Keypair to inject in instance
     label: SSH Keypair
     type: string
-s
+
   flavor_name:
     default: s1.cw.small-1
     description: Flavor to use for the deployed instance
@@ -76,14 +76,12 @@ resources:
        str_replace:
           template: |
             #!/bin/bash
-            echo "$site_name$" >> /etc/mediawiki/site_name
             echo "$floating_ip$" >> /etc/stack_floating_ip
             mkdir /etc/ansible
             echo "[local]" >> /etc/ansible/hosts
             echo "127.0.0.1 ansible_connection=local" >> /etc/ansible/hosts
 
           params:
-            $site_name$: { get_param: site_name }
             $floating_ip$: { get_attr: [floating_ip, floating_ip_address] }
 
 
