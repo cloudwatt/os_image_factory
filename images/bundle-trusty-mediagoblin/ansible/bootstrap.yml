@@ -33,12 +33,6 @@
         line='{{ ansible_ssh_user }} ALL=(mediagoblin) NOPASSWD: ALL' validate='visudo -cf %s'
       "
 
-    - name: cat /etc/sudoers
-      shell: cat /etc/sudoers
-      register: sudoers_contents
-
-    - debug: msg="{{sudoers_contents.stdout}}"
-
     - name: apt-get update & upgrade
       apt:
         upgrade=full
