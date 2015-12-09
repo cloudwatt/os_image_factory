@@ -57,7 +57,7 @@
       file:
         path=/root/installdb
         state=directory
-        mode=0755
+        mode=0644
 
     - name: cp seed mysql
       copy:
