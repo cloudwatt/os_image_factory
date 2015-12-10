@@ -18,7 +18,7 @@ We note in this network architecture that Zabbix server can monitor the hosts on
 
 * Ubuntu 14.04
 * Zabbix 2.2
-* Mysql  5.6
+* Mysql  5.5
 
 ### The prerequisites to deploy this stack
 

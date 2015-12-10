@@ -140,7 +140,8 @@
       with_items:
         - ntp
         - zabbix-server
-
+        - zabbix-agent
+        
 
     - name: playbook for enabling slave
       get_url:
@@ -180,6 +181,12 @@
         name=apache2
         state=restarted
         enabled=true
+
+    - name: restart zabbix-agent
+      service:
+        name=zabbix-agent
+        state=restarted
+        enabled=yes
 
     - name: restart zabbix-server
       service:

@@ -16,7 +16,7 @@ On remarque dans cette architecture résau que le serveur Zabbix-serveur peut mo
 
 * Ubuntu 14.04
 * Zabbix 2.2
-* Mysql  5.6
+* Mysql  5.5
 
 ### Les pré-requis pour déployer cette stack
 
@@ -73,7 +73,7 @@ description: All-in-one Zabbix stack
 
 parameters:
   keypair_name:
-    default: buildshinken                             <-- Mettez ici le nom de votre paire de clés
+    default:                                              <-- Mettez ici le nom de votre paire de clés
     description: Keypair to inject in instance
     label: SSH Keypair
     type: string
@@ -143,7 +143,7 @@ EXP_STACK `floatting IP `
 
 A ce niveau, vous pouvez vous connecter sur votre instance de serveur Zabbix avec un navigateur web en pointant sur votre floatting IP, sur le port 80 (http://xx.xx.xx.xx). Pour s'authentifier sur l'interface web :
 
-* login : Admin
+* login : admin
 * mot de passe : zabbix
 
 ![Interface connection zabbix](https://cdn-02.memo-linux.com/wp-content/uploads/2015/03/zabbix-07-300x253.png)
