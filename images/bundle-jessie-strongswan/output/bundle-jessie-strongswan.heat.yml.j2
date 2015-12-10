@@ -124,7 +124,7 @@ resources:
             git clone https://github.com/cloudwatt/applications.git /root/cw-applications
 
             cat >> /root/.bashrc << EOF
-            ipsec_post_inst {
+            function ipsec_post_install {
 
               PLAYBOOK_PATH="/root/cw-applications/bundle-jessie-strongswan/post_install.yml"
 
@@ -132,7 +132,6 @@ resources:
                                -e tunnel_partner_ip=\$1    \\
                                -e @/root/ipsec_vars.yml
             }
-            alias ipsec_postinstall=ipsec_post_inst
             EOF
 
           params:
