@@ -123,7 +123,17 @@ resources:
 
             git clone https://github.com/cloudwatt/applications.git /root/cw-applications
 
-            echo "alias ipsec_postinstall=\"ansible-playbook /root/cw-applications/bundle-jessie-strongswan/post_install.yml -e tunnel_partner_ip=\$1 -e @/root/ipsec_vars.yml\"" >> /root/.bashrc
+            cat >> /root/.bashrc << EOF
+            ipsec_post_inst {
+
+              PLAYBOOK_PATH="/root/cw-applications/bundle-jessie-strongswan/post_install.yml"
+
+              ansible-playbook \$PLAYBOOK_PATH              \\
+                               -e tunnel_partner_ip=\$1    \\
+                               -e @/root/ipsec_vars.yml
+            }
+            alias ipsec_postinstall=ipsec_post_inst
+            EOF
 
           params:
             $floating_ip$: { get_attr: [floating_ip, floating_ip_address] }
