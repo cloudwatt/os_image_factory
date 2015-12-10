@@ -83,7 +83,7 @@ description: All-in-one zabbix stack
 
 parameters:
   keypair_name:
-    default: buildshinken                            <-- put here your keypair_name
+    default:                                   <-- put here your keypair_name
     description: Keypair to inject in instance
     label: SSH Keypair
     type: string
