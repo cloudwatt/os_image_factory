@@ -1,0 +1,110 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+- hosts: local
+  user: cloud
+  sudo: true
+
+  vars:
+    xonotic_url:  "http://dl.xonotic.org/xonotic-0.8.1.zip"
+    xonotic_home: "/opt/xonotic"
+  tasks:
+    - name: fr_FR locale present
+      locale_gen: name="{{ item }}" state=present
+      with_items:
+        - fr_FR.UTF-8
+        - en_US.UTF-8
+
+    - name: ansible_ssh_user can become xonotic
+      lineinfile: "
+        dest=/etc/sudoers
+        state=present
+        regexp='^{{ ansible_ssh_user }}.*xonotic.*$'
+        line='{{ ansible_ssh_user }} ALL=(xonotic) NOPASSWD: ALL' validate='visudo -cf %s'
+      "
+
+    - name: apt-get update & upgrade
+      apt:
+        upgrade=full
+        update_cache=yes
+
+    - name: packages installed
+      apt:
+        pkg={{ item }}
+        state=present
+      with_items:
+        - zip
+        - screen
+
+    - name: xonotic system group
+      group: name=xonotic state=present
+
+    - name: xonotic system user
+      user:
+        name=xonotic
+        home="{{ xonotic_home }}"
+        system=yes
+        groups=www-data,xonotic
+        comment="GNU Minecraft system account"
+        append=true
+
+    - name: xonotic home directory ready
+      file:
+        path="{{ xonotic_home }}"
+        state=directory
+        owner=xonotic
+        group=www-data
+        mode=0755
+
+    - name: xonotic zip download
+      become_user: xonotic
+      get_url:
+        url="{{ xonotic_url }}"
+        dest="{{ xonotic_home }}/xonotic.zip"
+        force=no
+
+    - name: xonotic unzip
+      unarchive:
+        src="{{ xonotic_home }}/xonotic.zip"
+        dest="{{ xonotic_home }}"
+        creates="{{ xonotic_home }}/Xonotic"
+        copy=no
+
+    - name: xonotic server script moved
+      copy:
+        src="{{ xonotic_home }}/Xonotic/server/server_linux.sh"
+        dest="{{ xonotic_home }}/Xonotic/server_linux.sh"
+        owner=xonotic
+        group=xonotic
+        mode=0775
+
+    - name: xonotic data directory ready
+      file:
+        path="{{ xonotic_home }}/.xonotic/data"
+        state=directory
+        recurse=yes
+        owner=xonotic
+        group=xonotic
+        mode=0755
+
+    - name: xonotic server config added
+      copy:
+        src=files/server.cfg
+        dest="{{ xonotic_home }}/.xonotic/data/server.cfg"
+        owner=xonotic
+        group=xonotic
+        mode=0664
+
+    - name: xonotic init script added
+      copy:
+        src=files/xonotic.init
+        dest=/etc/init/xonotic.conf
+        owner=root
+        group=root
+        mode=0644
+
+    - name: xonotic started
+      service: name=xonotic state=started enabled=yes
