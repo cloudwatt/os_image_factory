@@ -11,15 +11,15 @@ description: All-in-one Xonotic stack
 
 parameters:
   keypair_name:
-    description: Keypair to inject in instance
     label: SSH Keypair
+    description: Keypair to inject in instance
     type: string
 
   flavor_name:
     default: s1.cw.small-1
+    label: Instance Type (Flavor)
     description: Flavor to use for the deployed instance
     type: string
-    label: Instance Type (Flavor)
     constraints:
       - allowed_values:
         - t1.cw.tiny
@@ -37,6 +37,31 @@ parameters:
         - n1.cw.highmem-4
         - n1.cw.highmem-8
         - n1.cw.highmem-12
+
+  server_hostname:
+    default: Xonotic Server
+    label: Xonotic Server Hostname
+    description: Server name for public server list
+    type: string
+
+  is_public:
+    default: 1
+    type: boolean
+    label: Xonotic Server is Public
+    description: Server is included on the public server list (yes-1/no-0)
+    constraints:
+      - allowed_values:
+        - 1
+        - 0
+
+  server_port:
+    default: 26000
+    label: Xonotic Server Port
+    description: Server port for player connections
+    type: number
+    constraints:
+      - range: { min: 1025, max: 65534 }
+        description: Must be a valid free port (1025 - 65534)
 
 resources:
   network:
@@ -68,6 +93,22 @@ resources:
     properties:
       floating_network_id: 6ea98324-0f14-49f6-97c0-885d1b8dc517
 
+  server_settings:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config:
+        str_replace:
+          template: |
+            #!/bin/bash
+            sudo sed -i "s/SERVER_NAME/$server_hostname$/g" /opt/xonotic/.xonotic/data/server.cfg
+            sudo sed -i "s/\/\/port 26000/port $server_port$/g" /opt/xonotic/.xonotic/data/server.cfg
+            sudo sed -i "s/\/\/sv_public 1/sv_public $is_public$/g" /opt/xonotic/.xonotic/data/server.cfg
+            sudo pkill xonotic-linux64
+          params:
+            $server_hostname$: { get_param: server_hostname }
+            $server_port$:     { get_param: server_port }
+            $is_public$:       { get_param: is_public }
+
   server:
     type: OS::Nova::Server
     properties:
@@ -78,6 +119,9 @@ resources:
         - network: { get_resource: network }
       security_groups:
         - { get_resource: security_group }
+      user_data_format: RAW
+      user_data:
+        get_resource: server_settings
 
   floating_ip_link:
     type: OS::Nova::FloatingIPAssociation
@@ -89,3 +133,13 @@ outputs:
   floating_ip:
     description: IP address of the Xonotic server
     value: { get_attr: [floating_ip, floating_ip_address] }
+
+outputs:
+  floating_ip_url:
+    description: Xonotic Server IP Address
+    value:
+      str_replace:
+        template: floating_ip:server_port
+        params:
+          floating_ip: { get_attr: [floating_ip, floating_ip_address] }
+          floating_ip: { get_param: server_port }
