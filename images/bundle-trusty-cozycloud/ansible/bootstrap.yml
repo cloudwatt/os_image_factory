@@ -22,13 +22,34 @@
         update_cache=yes
         cache_valid_time=3600
 
+    - name: Config Key
+      apt_key:
+        url=https://ubuntu.cozycloud.cc/cozy.gpg.key
+        state=present
+
+
+    - name: Config Repo
+      apt_repository:
+        repo="deb https://ubuntu.cozycloud.cc/debian trusty main"
+        update_cache=yes
+        state=present
+
+    - name: cp playbook postconf
+      copy:
+        src=Debconf-cozyinstall/debconf.yml
+        dest=/root/debconf/debconf.yml
+        owner=root
+        group=root
+        mode=0644
+
     - name: packages installed
       apt:
         pkg={{ item }}
         state=present
+
       with_items:
         - ca-certificates
         - apt-transport-https
-        - cozycloud
+        - cozy
 
 
