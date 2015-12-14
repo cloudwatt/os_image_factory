@@ -1,6 +1,6 @@
 - hosts: local
   user: cloud
-  sudo: true
+  become: true
 
   vars:
     cozycloud:
@@ -22,7 +22,6 @@
         - { name: 'postfix', question: 'postfix/main_mailer_type', vtype: 'select', value: 'Local only'}
         - { name: 'postfix', question: 'postfix/mailname', vtype: 'string', value: "{{ ansible_fqdn }}"}
 
-    - name: install Cozy
-      apt:
-        pkg=cozy
-        state=present
+    - name: Reconfigure Cozy
+      shell:
+        dpkg-reconfigure -u -f noninteractive cozy
