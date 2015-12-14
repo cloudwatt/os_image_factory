@@ -1,0 +1,8 @@
+---
+bundle:
+  name: bundle-trusty-clamav
+  img_base: ae3082cb-fac1-46b1-97aa-507aaa8f184f
+  properties:
+    img_os: Ubuntu
+    cw_bundle: CLAMAV
+    cw_origin: Cloudwatt
