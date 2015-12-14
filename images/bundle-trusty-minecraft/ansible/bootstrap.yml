@@ -37,6 +37,7 @@
         state=present
       with_items:
         - openjdk-7-jre-headless
+        - expect
 
     - name: minecraft system group
       group: name=minecraft state=present
@@ -66,8 +67,8 @@
         force=no
 
     - name: minecraft init script added
-      copy:
-        src=files/minecraft.init
+      template:
+        src=templates/minecraft.init.j2
         dest=/etc/init/minecraft.conf
         owner=root
         group=root
@@ -76,10 +77,18 @@
     - name: minecraft eula.txt added
       copy:
         src=files/eula.txt
-        dest=/opt/minecraft/eula.txt
+        dest="{{ minecraft_home }}/eula.txt"
         owner=minecraft
         group=minecraft
         mode=0644
 
     - name: minecraft started
       service: name=minecraft state=started enabled=yes
+
+    - name: minecraft admin-set script added
+      copy:
+        src=files/minecraft_op.expect
+        dest="{{ minecraft_home }}/minecraft_op.expect"
+        owner=root
+        group=root
+        mode=0755
