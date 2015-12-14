@@ -5,10 +5,8 @@
 ##
 #
 - hosts: all
+  user: cloud
   become: yes
-
-  vars:
-
 
   tasks:
     - apt: update_cache=true upgrade=full
@@ -28,7 +26,6 @@
         - clamav-daemon
         - inotify-tools
         - libnotify-bin
-        - clamtk
 
     - name: install pip packages
       pip: name={{ item }}
@@ -43,8 +40,8 @@
     - name: create  script to scan system
       copy: src=clamav-tr.sh  dest=/etc/cron.hourly/ owner=root group=root mode=755
 
-    - name: scan system houly
+    - name: scan system hourly
       script: fileclamav.sh  --some-arguments 1234 creates=/var/log/tes.txt
 
-    - name:
+    - name: Update Virus Definition
       script: fileclamav.sh --some-arguments 1234 creates=/var/log/resul_freshclam.txt
