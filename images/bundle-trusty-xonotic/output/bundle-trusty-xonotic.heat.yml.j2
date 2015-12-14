@@ -44,15 +44,15 @@ parameters:
     description: Server name for public server list
     type: string
 
-  is_public:
+  is_shown:
     default: 1
     label: Xonotic Server is Public
-    description: Server is included on the public server list (yes-1/no-0)
-    type: number
+    description: Server is included on the public server list
+    type: string
     constraints:
       - allowed_values:
-        - 1
         - 0
+        - 1
 
   server_port:
     default: 26000
@@ -102,12 +102,15 @@ resources:
             #!/bin/bash
             sudo sed -i "s/SERVER_NAME/$server_hostname$/g" /opt/xonotic/.xonotic/data/server.cfg
             sudo sed -i "s/\/\/port 26000/port $server_port$/g" /opt/xonotic/.xonotic/data/server.cfg
-            sudo sed -i "s/\/\/sv_public 1/sv_public $is_public$/g" /opt/xonotic/.xonotic/data/server.cfg
+            sudo sed -i "s/\/\/sv_public 1/sv_public $is_shown$/g" /opt/xonotic/.xonotic/data/server.cfg
+            cd /opt/xonotic
+            sudo pkill xonotic-linux64
+            sleep 25
             sudo pkill xonotic-linux64
           params:
             $server_hostname$: { get_param: server_hostname }
             $server_port$:     { get_param: server_port }
-            $is_public$:       { get_param: is_public }
+            $is_shown$:        { get_param: is_shown }
 
   server:
     type: OS::Nova::Server
