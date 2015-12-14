@@ -22,13 +22,26 @@ parameters:
     label: Instance Type (Flavor)
     constraints:
       - allowed_values:
-          - s1.cw.small-1
-          - n1.cw.standard-1
-          - n1.cw.standard-2
-          - n1.cw.standard-4
-          - n1.cw.standard-8
-          - n1.cw.standard-12
-          - n1.cw.standard-16
+        - t1.cw.tiny
+        - s1.cw.small-1
+        - n1.cw.highcpu-2
+        - n1.cw.highcpu-4
+        - n1.cw.highcpu-8
+        - n1.cw.standard-1
+        - n1.cw.standard-2
+        - n1.cw.standard-4
+        - n1.cw.standard-8
+        - n1.cw.standard-12
+        - n1.cw.standard-16
+        - n1.cw.highmem-2
+        - n1.cw.highmem-4
+        - n1.cw.highmem-8
+        - n1.cw.highmem-12
+
+  admin_username:
+    label: Admin Username
+    description: Minecraft username to become first admin
+    type: string
 
 resources:
   network:
@@ -59,6 +72,24 @@ resources:
     properties:
       floating_network_id: 6ea98324-0f14-49f6-97c0-885d1b8dc517
 
+  server_settings:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config:
+        str_replace:
+          template: |
+            #!/bin/bash
+            cd /opt/minecraft
+            initctl stop minecraft
+            sudo sed -i "s/ADMIN_USERNAME/$admin_username$/g" ./minecraft_op.expect
+            if [ "$?" != "0" ]; then echo "ERROR: sed failed!"; exit 1; fi
+            ./minecraft_op.expect
+            if [ "$?" != "0" ]; then echo "ERROR: expect failed!"; exit 1; fi
+            initctl start minecraft
+            if [ "$?" != "0" ]; then echo "ERROR: minecraft server start failed!"; exit 1; fi
+          params:
+            $admin_username$: { get_param: admin_username }
+
   server:
     type: OS::Nova::Server
     properties:
@@ -69,6 +100,9 @@ resources:
         - network: { get_resource: network }
       security_groups:
         - { get_resource: security_group }
+      user_data_format: RAW
+      user_data:
+        get_resource: server_settings
 
   floating_ip_link:
     type: OS::Nova::FloatingIPAssociation
