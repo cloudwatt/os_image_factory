@@ -1,0 +1,50 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+- hosts: all
+  become: yes
+
+  vars:
+
+
+  tasks:
+    - apt: update_cache=true upgrade=full
+
+    - name: removing conflicting system packages
+      apt: pkg='ntpdate' state=absent purge=yes
+
+    - name:
+      apt_repository: repo='ppa:ubuntu-clamav/ppa'
+
+    - name: installing system packages
+      apt: pkg="{{ item }}" state=present
+      with_items:
+        - python-pycurl
+        - clamav
+        - ntp
+        - clamav-daemon
+        - inotify-tools
+        - libnotify-bin
+        - clamtk
+
+    - name: install pip packages
+      pip: name={{ item }}
+      with_items:
+        - cherrypy
+        - passlib
+        - html
+
+    - name: create  script to update clamav script file
+      copy: src=fileclamav.sh dest=/etc/cron.daily/ owner=root group=root mode=755
+
+    - name: create  script to scan system
+      copy: src=clamav-tr.sh  dest=/etc/cron.hourly/ owner=root group=root mode=755
+
+    - name: scan system houly
+      script: fileclamav.sh  --some-arguments 1234 creates=/var/log/tes.txt
+
+    - name:
+      script: fileclamav.sh --some-arguments 1234 creates=/var/log/resul_freshclam.txt
