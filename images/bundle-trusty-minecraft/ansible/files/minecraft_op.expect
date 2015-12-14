@@ -2,7 +2,7 @@
 spawn sudo -u minecraft java -Xmx1024M -Xms1024M -jar minecraft_server.jar nogui
 
 # Wait for minecraft prompt to be ready.
-expect "[Server thread/INFO]: Done" {send "op ADMIN_USERNAME\r"}
+expect "Done" {send "op ADMIN_USERNAME\r"}
 
 # Wait for admin to be confirmed.
 expect "UUID of player ADMIN_USERNAME is" {puts "\n\nADMIN_USERNAME set as admin!\n"; exit}
