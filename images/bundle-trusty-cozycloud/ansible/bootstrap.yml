@@ -34,6 +34,12 @@
         update_cache=yes
         state=present
 
+    - name: debconf rep create
+      file:
+        path=/root/debconf
+        state=directory
+        mode=0644
+
     - name: cp playbook postconf
       copy:
         src=Debconf-cozyinstall/debconf.yml

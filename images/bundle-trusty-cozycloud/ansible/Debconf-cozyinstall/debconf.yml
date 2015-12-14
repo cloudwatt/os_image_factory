@@ -18,7 +18,7 @@
         - { question: "cozy/nodejs_minimum", vtype: "boolean", value: true }
         - { question: "cozy/fqdn", vtype: "text", value: "{{ cozycloud.floatting_ip }}" }
         - { question: "cozy/purge_db", vtype: "boolean", value: true}
-        - { question: "cozy/certificate", vtype: "text", value: "" }
+        - { question: "cozy/certificate", vtype: "not", value: "" }
         - { question: "cozy/nodejs_maximum", vtype: "boolean", value: true}
 
     - name: install Cozy
