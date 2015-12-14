@@ -6,56 +6,52 @@
 #
 - hosts: local
   user: cloud
-  sudo: true
+  become: true
 
   tasks:
-
-    - name: fr_FR locale present
+    - name: desired locale are present
       locale_gen: name="{{ item }}" state=present
       with_items:
         - fr_FR.UTF-8
         - en_US.UTF-8
 
-    - name: apt-get update & upgrade
+    - name: system is up-to-date
       apt:
         upgrade=full
         update_cache=yes
         cache_valid_time=3600
 
-    - name: Config Key
+    - name: cozy-cloud apt repository key is trusted
       apt_key:
         url=https://ubuntu.cozycloud.cc/cozy.gpg.key
         state=present
 
-
-    - name: Config Repo
+    - name: cozy-cloud apt repository is known
       apt_repository:
         repo="deb https://ubuntu.cozycloud.cc/debian trusty main"
         update_cache=yes
         state=present
 
-    - name: debconf rep create
+    - name: post-install playbook directory is created
       file:
-        path=/root/debconf
+        path=/root/cozy-install
         state=directory
-        mode=0644
-
-    - name: cp playbook postconf
-      copy:
-        src=Debconf-cozyinstall/debconf.yml
-        dest=/root/debconf/debconf.yml
         owner=root
         group=root
-        mode=0644
+        mode=0700
 
-    - name: packages installed
+    - name: post-install playbook is uploaded
+      copy:
+        src=Debconf-cozyinstall/cozy-install.yml
+        dest=/root/cozy-install/cozy-install.yml
+        owner=root
+        group=root
+        mode=0600
+
+    - name: needed packages are installed
       apt:
         pkg={{ item }}
         state=present
-
       with_items:
         - ca-certificates
         - apt-transport-https
-        - cozy
-
-
