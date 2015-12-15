@@ -24,7 +24,7 @@ We note in this network architecture that Zabbix server can monitor the hosts on
 
 These should be routine by now:
 
-* Internet accessansible/bootstrap.yml
+* Internet access
 * A Linux shell
 * A [Cloudwatt account](https://www.cloudwatt.com/authentification) with a [valid keypair](https://console.cloudwatt.com/project/access_and_security/?tab=access_security_tabs__keypairs_tab)
 * The tools of the trade: [OpenStack CLI](http://docs.openstack.org/cli-reference/content/install_clients.html)
@@ -35,14 +35,17 @@ These should be routine by now:
 By default, the stack deploys on an instance of type "Small" (s1.cw.small-1). A variety of other instance types exist to suit your various needs, allowing you to pay only for the services you need. Instances are charged by the minute and capped at their monthly price (you can find more details on the [Tarifs page](https://www.cloudwatt.com/fr/produits/tarifs.html) on the Cloudwatt website).
 
 Stack parameters, of course, are yours to tweak at your fancy.
-ansible/bootstrap.yml
+
 ## What will you find in the repository
 
 Once you have cloned the github repository, you will find in the `bundle-trusty-zabbix/` directory:
 
 * `bundle-trusty-zabbix.heat.yml`: Heat orchestration template. It will be use to deploy the necessary infrastructure.
 * `stack-start.sh`: Stack launching script, which simplifies the parameters and secures the admin password creation.
-* `stack-get-url.sh`: Returns the floating-IP in a URansible/bootstrap.yml
+* `stack-get-url.sh`: Returns the floating-IP in a URL, which can also be found in the stack output.
+
+## Start-up
+
 ### Initialize the environment
 
 Have your Cloudwatt credentials in hand and click [HERE](https://console.cloudwatt.com/project/access_and_security/api_access/openrc/).
@@ -57,25 +60,24 @@ Please enter your OpenStack Password:
 
 ~~~
 
-Once this done, the Openstack command line tools can in
+Once this done, the Openstack command line tools can interact with your Cloudwatt user account.
 
-~~~
+### Adjust the parameters
 
 In the `.heat.yml` files (heat templates), you will find a section named `parameters` near the top. The mandatory parameters are the `keypair_name` and the `password` for the zabbix *admin* user.
 
-You can set the `keypair_name`'s `default` value to save
-In the `.heat.yml` files (heat templates), you will find a section named `parameters` near the top. The mandatory parameters are the `keypair_name` and the `password` for the zabbix *admin* user.
-
+You can set the `keypair_name`'s `default` value to save yourself time, as shown below.
+Remember that key pairs are created [from the console](https://console.cloudwatt.com/project/access_and_security/?tab=access_security_tabs__keypairs_tab), and only keys created this way can be used.
 
 The `password` field provides thttp://wiki.monitoring-fr.org/zabbix/zabbix-work
-By default, the stack network and subnet are generated for the
-In the `.heat.yml` files (heat templates), you will find a section named `parameters` near the top. The mandatory parameters are the `keypair_name` and the `password` for the zabbix *admin* user.
+By default, the stack network and subnet are generated for the stack, in which the Zabbix server sits alone. This behavior can be changed within the `.heat.yml` as well, if needed.
 
+~~~ yaml
 
 heat_template_version: 2013-05-23
 
 
-In the `.heat.yml` files (heat templates), you will find a section named `parameters` near the top. The mandatory parameters are the `keypair_name` and the `password` for the zabbix *admin* user.
+description: All-in-one zabbix stack
 
 
 parameters:
@@ -96,6 +98,7 @@ parameters:
         - s1.cw.small-1
          [...]
 
+~~~
 
 <a name="startup" />
 
@@ -120,9 +123,9 @@ Within 5 minutes the stack will be fully operational. (Use watch to see the stat
 $ watch -n 1 heat stack-list
 +--------------------------------------+------------+-----------------+------------------------------+
 | id                                   | stack_name         | stack_status    | creation_time        |
-+--------------------------------------+------------+-------
-         [...]
-----------+------------------------------+
++--------------------------------------+------------+-----------------+------------------------------+
+| xixixx-xixxi-ixixi-xiixxxi-ixxxixixi | `name_of_my_stack` | CREATE_COMPLETE | 2025-10-23T07:27:69Z |
++--------------------------------------+------------+-----------------+------------------------------+
 ~~~
 
 ### Stack URL with a terminal
@@ -146,6 +149,31 @@ Once authentication is complete you will have access to Zabbix-server.
 
 ![Bigger production setup](https://cdn-02.memo-linux.com/wp-content/uploads/2015/03/zabbix-08-300x276.png)
 
+You can click on the tab 'Host' to add a host to be monitored:
+
+![Bigger production ](http://wiki.monitoring-fr.org/_media/zabbix/zabbix-use_host-1.png?cache=&w=900&h=434)
+
+In the window Configuration / Host groups, you click on "Create Group" to display the creation form a group. Creating a host group only requires the naming. It may be possible to directly add hosts members of this new group.
+
+![Bigger production ](http://wiki.monitoring-fr.org/_media/zabbix/zabbix-use_hostgroup-1.png?cache=&w=900&h=434)
+
+From the Configuration / Hosts, it is possible to create a template based on the display filter, on the right. This module includes all the templates provided by default Zabbix.
+
+![Bigger production ](http://wiki.monitoring-fr.org/_media/zabbix/zabbix-use_template-1.png?cache=&w=900&h=552)
+
+The creation of an item is done in Configuration / Hosts. After the display of selected items, you must click on Create Item to load the configuration page of a new item:
+
+![Bigger production ](http://wiki.monitoring-fr.org/_media/zabbix/zabbix-use_item-1.png?cache=)
+
+Through the Configuration / Hosts, it is possible to create a trigger that will allow to trigger events based on the lift of an item.
+
+![Bigger production ](http://wiki.monitoring-fr.org/_media/zabbix/zabbix-use_trigger-1.png?cache=&w=900&h=434)
+
+The trigger alerts (or notifications) is through action. These particular monitor events generated by triggers which they are attached, then according to their test conditions, they generate alerts.
+
+The creation of an action is done in Configuration / Actions by clicking Create Action, here the setting form:
+
+![Bigger production ](http://wiki.monitoring-fr.org/_media/zabbix/zabbix-use_action-1.png?cache=&w=900&h=434)
 
 Good !!!
 <a name="console" />
@@ -181,41 +209,10 @@ This will allow the Zabbix server to connect to retrieve the metric of the machi
   ```
   $ heat resource-list $NOM_DE_STACK_GHOST | grep subnet
 
-  | subnet  | bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c              | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-24T15:18:30Z |
+  | subnet           | bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c              | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-24T15:18:30Z |
   ```
-  Le playbook en question va faire toutes les opérations d'installation et de configuration sur le serveur Ghost pour l'intégrer au serveur     Zabbix.
 
-  Puis sur l'interface web de Zabbix-server, faire les operations suivantes pour que le host ajouté soit pris en compte par Zabbix-server:
-
-    * Cliquer sur le menu `configuration`
-    * Cliquer sur le sous menu `Hosts`
-    * Cliquer sur la fenêtre en haut à droit ` Create Host `
-
-  ![Bigger productisur ](http://tecadmin.net/add-host-zabbix-server-monitor/#)
-
-  Maintenant, remplissez les détails suivants de l'hôte distant et allez à l'onglet Modèles.
-
-    *  ` Enter Hostname`: Nom d'hôte du système à distance
-    *  `Visible name`: Nom à l'affichage dans zabbix
-    *  `Group`: Sélectionnez le groupe désiré pour vous hôte
-    *  `Agent interface`: Complétez les informations de l'agent Zabbix tournant sur l'hôte
-    *  `Status`: Sélectionnez état initial
-
-  ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-2.png)
-
-    *  Cliquer sur `add` lien
-    *  Sélectionnez modèle souhaité: S'il vous plaît choisir soigneusement, Parce que ce sera permis à tous les contrôles de l'hôte
-    *  Cliquer sur `save `
-
-  ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-3.png)  
-
-
-  ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-4.png)  
-
-    Congratulation! Vous pouvez visualiser les metriques de vos agents zabbix, monitorées par Zabbix-server.
-
-  ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/graph-network.png)
-
+  2. Get the subnet ID of the stack Zabbix:
 
   ```
   $ heat resource-list $NOM_DE_STACK_Zabbix | grep subnet
@@ -274,42 +271,9 @@ This will allow the Zabbix server to connect to retrieve the metric of the machi
   # ansible-playbook /root/slave-monitoring_zabbix.yml
   ```
 
-  Le playbook en question va faire toutes les opérations d'installation et de configuration sur le serveur Ghost pour l'intégrer au serveur     Zabbix.
+This playbook  will do all the installation and setup on the Ghost server to integrate monitoring Zabbix.
 
-  After login follow the steps given below, You may also refer screenshot showing just after these steps.
-
-    * Click on Configuration Menu
-    * Click on Hosts submenu
-    * Click on Create Host button at right side
-
-
-  ![Bigger productisur ](http://tecadmin.net/add-host-zabbix-server-monitor/#)
-
-  Now fill the following details of remote host and go to Templates tab.
-
-    * Enter Hostname: Hostname of Remote system
-    * Visible name: Name to be display in zabbix
-    * Group: Select the desired group for you host
-    * Agent interface: Fill the info of Zabbix agent running on host
-    * Status: Select initial status
-
-
-  ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-2.png)
-
-
-    * Click on add link
-    * Select desired Template : Please select carefully, Because it will enabled all checks for the host
-    * Click on save button
-
-  ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-3.png)  
-
-
-  ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-4.png)  
-
-    Congratulation! Vous pouvez visualiser les metriques de vos agents zabbix, monitorées par Zabbix-server.
-
-  ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/graph-network.png)
-
+For now, our monitoring server and client are configured. We need to access the Zabbix Web UI using the IP address of our server http://X.X.X.X
 
 
 <a name="console" />
