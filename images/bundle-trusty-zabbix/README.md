@@ -252,7 +252,7 @@ Le playbook en question va faire toutes les opérations d'installations et de co
    * Cliquer sur le sous menu `Hosts`
    * Cliquer sur la fenêtre en haut à droit ` Create Host `
 
- ![Bigger productisur ](http://tecadmin.net/add-host-zabbix-server-monitor/#)
+ ![Bigger production ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-1.png)
 
  Depuis l'onglet template, renseigner les champs suivants:
 
@@ -262,20 +262,20 @@ Le playbook en question va faire toutes les opérations d'installations et de co
    *  `Agent interface`: Complétez les informations de l'agent Zabbix tournant sur l'hôte.
    *  `Status`: Sélectionnez l'état initial
 
- ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-2.png)
+ ![Bigger production ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-2.png)
 
    *  Cliquer sur `add`
    *  Sélectionner le template souhaité
    *  Cliquer sur `save `
 
- ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-3.png)  
+ ![Bigger production ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-3.png)  
 
 
- ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-4.png)  
+ ![Bigger production ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-4.png)  
 
    Congratulation! vous pouvez visualiser les métriques des agents monitorés par le serveur Zabbix.
 
- ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/graph-network.png)
+ ![Bigger production ](http://tecadmin.net/wp-content/uploads/2013/10/graph-network.png)
 
 
 <a name="console" />
@@ -328,7 +328,7 @@ Vous pouvez commencer à faire vivre votre monitoring en prenant la main sur vot
 * [Zabbix communauté](http://www.monitoring-fr.org/solutions/zabbix/)
 * [Zabbix documentation Ubuntu documentation](https://doc.ubuntu-fr.org/zabbix)
 * [Zabbix documentation ](https://www.zabbix.com/documentation/1.8/fr/manual/processes)
-* [Zabbix documentation ](http://tecadmin.net/add-host-zabbix-server-monitor/)
+* [Zabbix blog ](http://tecadmin.net/add-host-zabbix-server-monitor/)
 
 -----
 Have fun. Hack in peace.

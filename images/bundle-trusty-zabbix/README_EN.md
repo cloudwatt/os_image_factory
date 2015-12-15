@@ -249,10 +249,8 @@ This will allow the Zabbix server to connect to retrieve the metric of the machi
 
 This playbook  will do all the installation and setup on the Ghost server to integrate monitoring Zabbix.
 
-For now, our monitoring server and client are configured. We need to access the Zabbix Web UI using the IP address of our server http://X.X.X.X
+Now, our monitoring server and client are configured. We need to access the Zabbix Web UI using the IP address of our server http://X.X.X.X
 
-
-Le playbook en question va faire toutes les opérations d'installation et de configuration sur le serveur Ghost pour l'intégrer au serveur     Zabbix.
 For your host (server Ghost here), can be monitoring by the Zabbix server, you must do the following operations:
 
     * Click on Configuration Menu
@@ -260,7 +258,7 @@ For your host (server Ghost here), can be monitoring by the Zabbix server, you m
     * Click on Create Host button at right side
 
 
-  ![Bigger productisur ](http://tecadmin.net/add-host-zabbix-server-monitor/#)
+  ![Bigger production](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-1.png)
 
   Now fill the following details of remote host and go to Templates tab.
 
@@ -286,7 +284,6 @@ For your host (server Ghost here), can be monitoring by the Zabbix server, you m
     Congratulation! You can view the metric of your zabbix agents monitor by Zabbix-server.
 
   ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/graph-network.png)
-
 
 
 <a name="console" />
@@ -341,7 +338,7 @@ You can start to live your monitoring taking hold of your server.
 * [Zabbix tutorial](http://sensors.egnite.de/en/climate-monitoring-querx-th-zabbix/3/)
 * [Zabbix communauté](http://www.monitoring-fr.org/solutions/zabbix/)
 * [Zabbix documentation Ubuntu documentation](https://doc.ubuntu-fr.org/zabbix)
-* [Zabbix documentation ](https://www.zabbix.com/documentation/1.8/fr/manual/processes)
+* [Zabbix blog ](https://www.zabbix.com/documentation/1.8/fr/manual/processes)
 
 -----
 Have fun. Hack in peace.
