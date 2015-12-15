@@ -140,8 +140,8 @@
       with_items:
         - ntp
         - zabbix-server
-        - zabbix-agent
-        
+      #  - zabbix-agent
+
 
     - name: playbook for enabling slave
       get_url:

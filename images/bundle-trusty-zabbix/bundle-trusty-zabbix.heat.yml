@@ -90,4 +90,4 @@ outputs:
       str_replace:
         template: http://$floating_ip
         params:
-          $FLOATING_IP$: { get_attr: [floating_ip, floating_ip_address] }
+          $floating_ip: { get_attr: [floating_ip, floating_ip_address] }
