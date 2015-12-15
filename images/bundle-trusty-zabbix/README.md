@@ -152,34 +152,7 @@ Une fois que l'authentication est faite, vous avez access à l'interface graphiq
 
 ![Bigger production setup](https://cdn-02.memo-linux.com/wp-content/uploads/2015/03/zabbix-08-300x276.png)
 
-Vous pouvez cliquer sur l'onglet 'Host' pour ajouter un hôte à monitorer :
 
-![Bigger production ](http://wiki.monitoring-fr.org/_media/zabbix/zabbix-use_host-1.png?cache=&w=900&h=434)
-
-Dans la fenêtre Configuration/Host groups, il faut cliquer sur « Create Group » pour afficher le formulaire de création d’un groupe. La création d’un groupe d’hôtes ne nécessite que l’attribution d’un nom. Il est éventuellement possible d’ajouter directement des hôtes membres de ce nouveau groupe.  
-
-![Bigger production ](http://wiki.monitoring-fr.org/_media/zabbix/zabbix-use_hostgroup-1.png?cache=&w=900&h=434)
-
-A partir de la page Configuration/Hosts, il est possible de créer un template en s'appuyant sur le filtre d’affichage, situé  sur la droite. Ce module regroupe l’ensemble des templates de Zabbix fournis par défaut.
-
-![Bigger production ](http://wiki.monitoring-fr.org/_media/zabbix/zabbix-use_template-1.png?cache=&w=900&h=552)
-
-La création d’un item se fait dans Configuration/Hosts. Après avoir choisis l’affichage des items, il faut cliquer sur Create Item afin de charger la page de configuration d’un nouvel item :
-
-![Bigger production ](http://wiki.monitoring-fr.org/_media/zabbix/zabbix-use_item-1.png?cache=)
-
-A travers la page Configuration/Hosts, il est possible de créer un trigger qui va permettre de déclencher des évènements en fonction des remontées d’un item.
-
-![Bigger production ](http://wiki.monitoring-fr.org/_media/zabbix/zabbix-use_trigger-1.png?cache=&w=900&h=434)
-
-Le déclenchement d’alertes (ou de notifications) se fait par les actions. Celles-ci surveillent notamment les évènements générés par des triggers auxquels elles sont rattachées, ensuite en fonction de leurs conditions de test, elles génèrent des alertes.
-
-La création d’une action se fait dans Configuration/Actions en cliquant sur Create Action, voici le formulaire de paramétrage :
-
-![Bigger production ](http://wiki.monitoring-fr.org/_media/zabbix/zabbix-use_action-1.png?cache=&w=900&h=434)
-
-
-Bref, vous pouvez visualiser les métriques monitorées par Zabbix-serveur.
 
 ### Pour monitorer plus de  machines
 
@@ -195,12 +168,12 @@ Il faut s'assurer que les machines à monitorer :
 
 Voyons ensemble un exemple d'intégration d'une instance serveur portant le moteur de blog Ghost.
 
-  * Déployez une stack Ghost [comme nous l'avions vu à l'épisode 5](https://dev.cloudwatt.com/fr/blog/5-minutes-stacks-episode-cinq-ghost.html).
+  * Déployez une stack Ghost [comme nous l'avions vu à l'épisode5](https://dev.cloudwatt.com/fr/blog/5-minutes-stacks-episode-cinq-ghost.html).
 
   * Depuis la section [Accès et Sécurité de la console Cloudwatt](https://console.cloudwatt.com/project/access_and_security/), ajoutez 2 règles au groupe de sécurité de la stack Ghost :
       * Règle UDP personnalisée, en Entrée, Port 161
       * Règle UDP personnalisée, en Entrée, Port 123
-      * Règle UDP personnalisée, en Entrée, Port 1051
+      * Règle UDP personnalisée, en Entrée, Port 1050
 
 Cela permettra au serveur Zabbix de se connecter pour récupérer les métriques de la machine. Il faut maintenant créer de la visibilité réseau entre notre stack Zabbix et notre stack Ghost, via la création d'un routeur Neutron :
 
@@ -272,7 +245,37 @@ Cela permettra au serveur Zabbix de se connecter pour récupérer les métriques
   # ansible-playbook /root/slave-monitoring_zabbix.yml
   ```
 
-Le playbook en question va faire toutes les opérations d'installation et de configuration sur le serveur Ghost pour l'intégrer au monitoring de Zabbix.
+Le playbook en question va faire toutes les opérations d'installations et de configurations sur le serveur Ghost pour l'intégrer au serveur     Zabbix.                                                                                                                                      Pour que votre host (serveur Ghost ici), puisse être pris en compte par le serveur Zabbix, il vous faut faire les operations suivantes :
+
+   * Se connecter à l'interface web de Zabbix-serveur
+   * Cliquer sur le menu `configuration`
+   * Cliquer sur le sous menu `Hosts`
+   * Cliquer sur la fenêtre en haut à droit ` Create Host `
+
+ ![Bigger productisur ](http://tecadmin.net/add-host-zabbix-server-monitor/#)
+
+ Depuis l'onglet template, renseigner les champs suivants:
+
+   *  ` Enter Hostname`: Nom d'hôte
+   *  `Visible name`: Nom à l'affichage dans zabbix
+   *  `Group`: Sélectionnez le groupe désiré pour votre hôte
+   *  `Agent interface`: Complétez les informations de l'agent Zabbix tournant sur l'hôte.
+   *  `Status`: Sélectionnez l'état initial
+
+ ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-2.png)
+
+   *  Cliquer sur `add`
+   *  Sélectionner le template souhaité
+   *  Cliquer sur `save `
+
+ ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-3.png)  
+
+
+ ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-4.png)  
+
+   Congratulation! vous pouvez visualiser les métriques des agents monitorés par le serveur Zabbix.
+
+ ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/graph-network.png)
 
 
 <a name="console" />
@@ -296,6 +299,7 @@ La stack va se créer automatiquement (vous pouvez en voir la progression cliqua
 Pour rappel, voici les ports par défaut où répondent les rôles Zabbix-server :
 
     Port d'écoute du trapper : 1051
+    Port d'écoute de l'agent zabbix: 10050
     Port de la base de données lorsque le socket local n'est pas utilisé : 3306
     Interface web de gestion de Zabbix-server : 8O
 
@@ -324,6 +328,7 @@ Vous pouvez commencer à faire vivre votre monitoring en prenant la main sur vot
 * [Zabbix communauté](http://www.monitoring-fr.org/solutions/zabbix/)
 * [Zabbix documentation Ubuntu documentation](https://doc.ubuntu-fr.org/zabbix)
 * [Zabbix documentation ](https://www.zabbix.com/documentation/1.8/fr/manual/processes)
+* [Zabbix documentation ](http://tecadmin.net/add-host-zabbix-server-monitor/)
 
 -----
 Have fun. Hack in peace.
