@@ -25,3 +25,15 @@
     - name: Reconfigure Cozy
       shell:
         dpkg-reconfigure -u -f noninteractive cozy
+
+    - name: Generate Certificat
+      shell:
+        "openssl req -x509 -nodes -newkey rsa:4096 -keyout /etc/cozy/server.key -out /etc/cozy/server.crt -days 3650 -subj \"/CN={{ cozycloud.floating_ip }}\" && touch /etc/cozy/.cw_post_install"
+        creates="/etc/cozy/.cw_post_install"
+      notify: restart nginx
+
+  handlers:
+    - name: restart nginx
+      service:
+        name=nginx
+        state=restarted
