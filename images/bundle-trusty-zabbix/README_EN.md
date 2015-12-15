@@ -160,8 +160,8 @@ Good !!!
 * are visible on the network from the Zabbix-server
 * Have a functional zabbix agent
 * have a functional SNMP daemon
-* allow incoming UDP communications on port 161 (port for exchanging information with SNMP), 123 (NTP server synchronization port) and 1051
-   (Zabbix-server listening port)       
+* allow incoming UDP communications on port 161 (port for exchanging information with SNMP), 123 (NTP server synchronization port),1051
+   (Zabbix-server listening port) and 1050 (Zabbix-agent listening port).      
 
 On the Zabbix-server, you must describe the configuration of file hosts who is in the directory `/etc/zabbix/hosts/localhost.cfg` who describe the configuration of the hosts to monitor.
 
@@ -175,7 +175,7 @@ Let's see an example of integration of a server instance with the Ghost blog eng
     * Rules UDP , Entry, Port 161
     * Rules UDP , Entry, Port 123
     * Rules UDP , Entry, Port 1050
-
+    * Rules TCP , Entry, Port 1050
 
 This will allow the Zabbix server to connect to retrieve the metric of the machine. We must now create the network between our visibility and our stack stack Zabbix Ghost, through the creation of a Neutron router:
 
@@ -253,28 +253,28 @@ Now, our monitoring server and client are configured. We need to access the Zabb
 
 For your host (server Ghost here), can be monitoring by the Zabbix server, you must do the following operations:
 
-    * Click on Configuration Menu
-    * Click on Hosts submenu
-    * Click on Create Host button at right side
+    *   Click on Configuration Menu
+    *   Click on Hosts submenu
+    *   Click on Create Host button at right side
 
 
   ![Bigger production](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-1.png)
 
   Now fill the following details of remote host and go to Templates tab.
 
-    * Enter Hostname: Hostname of Remote system
-    * Visible name: Name to be display in zabbix
-    * Group: Select the desired group for you host
-    * Agent interface: Fill the info of Zabbix agent running on host
-    * Status: Select initial status
+    *   Enter Hostname: Hostname of Remote system
+    *   Visible name: Name to be display in zabbix
+    *   Group: Select the desired group for you host
+    *   Agent interface: Fill the info of Zabbix agent running on host
+    *   Status: Select initial status
 
 
   ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-2.png)
 
 
-    * Click on add link
-    * Select desired Template : Please select carefully, Because it will enabled all checks for the host
-    * Click on save button
+    *   Click on add link
+    *   Select desired Template : Please select carefully, Because it will enabled all checks for the host
+    *   Click on save button
 
   ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-3.png)  
 

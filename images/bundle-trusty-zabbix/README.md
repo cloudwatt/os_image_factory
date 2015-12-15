@@ -161,7 +161,7 @@ Il faut s'assurer que les machines à monitorer :
 * sont visible sur le réseau depuis le serveur Zabbix-serveur
 * ont un agent zabbix fonctionnel
 * ont un daemon SNMP fonctionnel ( pour les hôtes différents des ordinateurs)
-* acceptent les communications UDP entrantes sur les ports 161 (port d'échanges d'informations avec le protocole SNMP) et 123 (port de synchronisation du server NTP)
+* acceptent les communications UDP entrantes sur les ports 161 (port d'échanges d'informations avec le protocole SNMP), 123 (port de synchronisation du server NTP), 1051 ( port d'écoute du serveur Zabbix) et 1051 ( port d'écoute de l'agent Zabbix).
 
 
 ### Exemple de monitoring d'un serveur Ghost
@@ -174,6 +174,7 @@ Voyons ensemble un exemple d'intégration d'une instance serveur portant le mote
       * Règle UDP personnalisée, en Entrée, Port 161
       * Règle UDP personnalisée, en Entrée, Port 123
       * Règle UDP personnalisée, en Entrée, Port 1050
+      * Règle TCP personnalisée, en Entrée, Port 1050
 
 Cela permettra au serveur Zabbix de se connecter pour récupérer les métriques de la machine. Il faut maintenant créer de la visibilité réseau entre notre stack Zabbix et notre stack Ghost, via la création d'un routeur Neutron :
 
