@@ -4,13 +4,12 @@
 
 ![Minimum setup](http://blog.stack.systems/wp-content/uploads/2015/01/5-passos-instalacao-zabbix-2-4-guia-definitivo.png)
 
-Zabbix is free software to monitor the status of various network services, servers and other network equipment; and producing dynamic graphics resource consumption. Zabbix uses MySQL, PostgreSQL or Oracle to store data. According to the importance of the number of machines and data to monitor, the choice of the DBMS greatly affects performance. Its web interface is written in PHP. 
+Zabbix is free software who monitor the network equipment ( servers, router, printer,...). It produce dynamic graphics resource consumption. Zabbix uses MySQL, PostgreSQL or Oracle to store data. If there are many machines to monitor, the choice of the DBMS is very important.His web interface is written in PHP. 
 
 Zabbix-server in a network is as follows:
 
 ![Architecture réseau zabbix](http://image.slidesharecdn.com/zabbixfeaturesin5pictures-03-150131052309-conversion-gate02/95/zabbix-monitoring-in-5-pictures-2-638.jpg?cb=1440581062)
 
-We note in this architecture as Zabbix-server can monitor the hosts that are installed zabbix-agent or via SNMP daemon.
 
 ## Preparations
 
@@ -67,9 +66,9 @@ Once this done, the Openstack command line tools can interact with your Cloudwat
 In the `.heat.yml` files (heat templates), you will find a section named `parameters` near the top. The mandatory parameters are the `keypair_name` and the `password` for the zabbix *admin* user.
 
 You can set the `keypair_name`'s `default` value to save yourself time, as shown below.
-Remember that key pairs are created [from the console](https://console.cloudwatt.com/project/access_and_security/?tab=access_security_tabs__keypairs_tab), and only keys created this way can be used.
+Remember that key pairs are created [from the  console](https://console.cloudwatt.com/project/access_and_security/?tab=access_security_tabs__keypairs_tab), and only keys created this way can be used.
 
-The `password` field provides thttp://wiki.monitoring-fr.org/zabbix/zabbix-work
+The `password` field provides http://wiki.monitoring-fr.org/zabbix/zabbix-work
 By default, the stack network and subnet are generated for the stack, in which the Zabbix server sits alone. This behavior can be changed within the `.heat.yml` as well, if needed.
 
 ~~~ yaml
@@ -143,13 +142,13 @@ For now, our monitoring server and client are configured. We need to access the 
 * login : admin
 * password : zabbix
 
-Remember to change the default password immediately after your authentication.
+Remember to change the default password immediately after authentication.
 
 ![Interface connection zabbix](https://cdn-02.memo-linux.com/wp-content/uploads/2015/03/zabbix-07-300x253.png)
 
 Once authentication is complete you will have access to Zabbix-server.
 
-![Bigger production setup](https://cdn-02.memo-linux.com/wp-content/uploads/2015/03/zabbix-08-300x276.png)
+![Zabbix-server web interface](https://cdn-02.memo-linux.com/wp-content/uploads/2015/03/zabbix-08-300x276.png)
 
 
 Good !!!
