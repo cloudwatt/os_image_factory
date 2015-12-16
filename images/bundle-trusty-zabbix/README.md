@@ -250,13 +250,13 @@ Ce playbook va faire toutes les opérations d'installation et de configuration s
 
  ![Ajouter un host zabbix ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/new_host.png?cache=)
 
- Depuis l'onglet template,faire les operations suivantes:
+ Dans l'onglet template :
  
- *  Depuis le champ **Link new templates**, sélectionner le template souhaité (choisissez comme exemple le **template OS linux**)
+ *  Commencez à remplir le champ **Link new templates** pour obtenir des suggestions des templates de monitoring disponibles (pour notre cas **template OS linux** ira très bien)
  *  Cliquer sur `add`
- *  Cliquer sur `save ` 
+ *  Cliquer sur `save`
 
- ![Lier un template ] (https://watilearnd2day.files.wordpress.com/2015/08/zabbix-configuration9.jpg?w=606&h=410)  
+ ![Lier un template](https://watilearnd2day.files.wordpress.com/2015/08/zabbix-configuration9.jpg?w=606&h=410)  
 
 Bravo ! vous pouvez visualiser les métriques des agents monitorés par le server Zabbix.
 
