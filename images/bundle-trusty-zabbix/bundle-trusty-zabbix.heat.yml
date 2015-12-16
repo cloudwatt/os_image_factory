@@ -6,7 +6,7 @@ description: All-in-one Zabbix stack
 
 parameters:
   keypair_name:
-    default: pierreray
+    default: 
     description: Keypair to inject in instance
     label: SSH Keypair
     type: string
