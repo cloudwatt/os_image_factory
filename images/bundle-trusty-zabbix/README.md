@@ -135,7 +135,7 @@ Exemple:
 
 ```
 $ ./stack-get-url.sh EXP_STACK
-EXP_STACK `floatting IP `
+EXP_STACK `floating IP `
 ```
 
 A ce niveau, vous pouvez vous connecter sur votre instance de serveur Zabbix avec un navigateur web en pointant sur votre floating IP, sur le port 80 (http://xx.xx.xx.xx). Pour s'authentifier sur l'interface web :
