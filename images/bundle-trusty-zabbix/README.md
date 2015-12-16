@@ -124,7 +124,7 @@ $ heat resource-list EXP_STACK
 
 Le script `start-stack.sh` s'occupe de lancer les appels nécessaires sur les API Cloudwatt pour :
 
-* démarrer une instance basée sur Ubuntu Trusty, pré-provisionnée avec la stack Zabbix-server, zabbix-agent.
+* démarrer une instance basée sur Ubuntu Trusty, pré-provisionnée avec la stack Zabbix-server et un zabbix-agent.
 * l'exposer sur Internet via une IP flotante
 
 ### Enjoy
@@ -145,11 +145,9 @@ A ce niveau, vous pouvez vous connecter sur votre instance de serveur Zabbix ave
 
 ![Interface connection zabbix](https://cdn-02.memo-linux.com/wp-content/uploads/2015/03/zabbix-07-300x253.png)
 
-Une fois que l'authentication est faite, vous avez access à l'interface graphique de Zabbix-serveur.
+Une fois que l'authentication est faite, vous avez accès à l'interface graphique de Zabbix-server.
 
 ![Bigger production setup](https://cdn-02.memo-linux.com/wp-content/uploads/2015/03/zabbix-08-300x276.png)
-
-
 
 ### Pour monitorer plus de  machines
 
@@ -157,9 +155,7 @@ Il faut s'assurer que les machines à monitorer :
 
 * sont visibles sur le réseau depuis le serveur Zabbix-server
 * ont un agent Zabbix fonctionnel
-* ont un daemon SNMP fonctionnel 
-* acceptent les communications UDP entrantes sur les ports 161 (port d'échanges d'informations avec le protocole SNMP), 123 (port de synchronisation du server NTP), et 1050 ( port d'écoute des agents Zabbix).
-
+* acceptent les communications UDP et TCP entrantes sur le port 10050, port d'écoute des agents Zabbix par défaut.
 
 ### Exemple de monitoring d'un serveur Ghost
 
@@ -168,10 +164,8 @@ Voyons ensemble un exemple d'intégration d'une instance serveur portant le mote
   * Déployez une stack Ghost [comme nous l'avions vu à l'épisode5](https://dev.cloudwatt.com/fr/blog/5-minutes-stacks-episode-cinq-ghost.html).
 
   * Depuis la section [Accès et Sécurité de la console Cloudwatt](https://console.cloudwatt.com/project/access_and_security/), ajoutez 2 règles au groupe de sécurité de la stack Ghost :
-      * Règle UDP personnalisée, en Entrée, Port 161
-      * Règle UDP personnalisée, en Entrée, Port 123
-      * Règle UDP personnalisée, en Entrée, Port 1050
-      * Règle TCP personnalisée, en Entrée, Port 1050
+      * Règle UDP personnalisée, en Entrée, Port 10050
+      * Règle TCP personnalisée, en Entrée, Port 10050
 
 Cela permettra au serveur Zabbix de se connecter pour récupérer les métriques de la machine. Il faut maintenant créer de la visibilité réseau entre notre stack Zabbix et notre stack Ghost, via la création d'un routeur Neutron :
 
@@ -218,8 +212,7 @@ Cela permettra au serveur Zabbix de se connecter pour récupérer les métriques
 
     ```
 
-  Quelques minutes plus tard, le serveur Zabbix et le serveur Ghost pourront se contacter directement. Afin de vous fournir une   "documentation exécutable"
-  de l'intégration d'un serveur Ubuntu, nous utiliserons Ansible pour la suite.
+Quelques minutes plus tard, le serveur Zabbix et le serveur Ghost pourront se contacter directement. Afin de vous fournir une "documentation exécutable"  de l'intégration d'un serveur Ubuntu, nous utiliserons Ansible pour la suite.
 
   5. Assurez vous de pouvoir vous connecter :
       * en SSH
@@ -238,17 +231,18 @@ Cela permettra au serveur Zabbix de se connecter pour récupérer les métriques
   [...]
   ```
 
-  7. En root sur le serveur Zabbix, lancez le playbook `slave-monitoring_zabbix.yml` :
+  7. En root sur le serveur Zabbix, lancez le playbook `slave-monitoring_zabbix.yml` que nous avons déposé dans l'image serveur pour vous faciliter la vie :
+  
   ```
   # ansible-playbook /root/slave-monitoring_zabbix.yml
   ```
 
-Le playbook en question va faire toutes les opérations d'installations et de configurations sur le serveur Ghost pour l'intégrer au serveur     Zabbix.                                                                                             Pour que votre host (serveur Ghost ici), puisse être pris en compte par le server Zabbix, il vous faut faire les operations suivantes :
+Ce playbook va faire toutes les opérations d'installation et de configuration sur le serveur Ghost qu'il puisse être monitoré par le serveur Zabbix. Pour démarrer le monitoring, il vous faut faire les opérations suivantes :
 
-   * Se connecter à l'interface web de Zabbix-serveur
-   * Cliquer sur le menu `configuration`
+   * Se connecter à l'interface web de Zabbix-server
+   * Cliquer sur le menu `Configuration`
    * Cliquer sur le sous menu `Hosts`
-   * Cliquer sur la fenêtre en haut à droit ` Create Host `
+   * Cliquer sur la fenêtre en haut à droit `Create Host `
 
  ![Bigger production ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-1.png)
 
@@ -268,13 +262,11 @@ Le playbook en question va faire toutes les opérations d'installations et de co
 
  ![Bigger production ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-3.png)  
 
-
  ![Bigger production ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-4.png)  
 
-Bravo! vous pouvez visualiser les métriques des agents monitorés par le server Zabbix.
+Bravo ! vous pouvez visualiser les métriques des agents monitorés par le server Zabbix.
 
  ![Bigger production ](http://tecadmin.net/wp-content/uploads/2013/10/graph-network.png)
-
 
 <a name="console" />
 
@@ -294,14 +286,6 @@ Et bien si ! En utilisant la console, vous pouvez déployer un serveur Zabbix :
 
 La stack va se créer automatiquement (vous pouvez en voir la progression cliquant sur son nom). Quand tous les modules deviendront « verts », la création sera terminée. Vous pourrez alors aller dans le menu « Instances » pour découvrir l’IP flottante qui a été générée automatiquement. Ne vous reste plus qu’à lancer votre IP dans votre navigateur.
 
-Pour rappel, voici les ports par défaut où répondent les rôles Zabbix-server :
-
-    Port d'écoute du trapper Zabbix: 1051
-    Port d'écoute de l'agent zabbix: 10050
-    Port de la base de données lorsque le socket local n'est pas utilisé : 3306
-    Interface web de gestion de Zabbix-server : 8O
-
-
 ## So watt ?
 
 Ce tutoriel a pour but d'accélerer votre démarrage. A ce stade vous êtes maître(sse) à bord.
@@ -314,9 +298,7 @@ Vous pouvez commencer à faire vivre votre monitoring en prenant la main sur vot
 * `/etc/zabbix/zabbix_server.conf`: le répertoire contenant le fichier de configuration permettant à Zabbix-server de se connecter à la base de données
 * `/usr/share/zabbix-server-mysql/`: le répertoire contenant les fichiers de la base de donnée de zabbix-server-mysql
 * `/var/log/zabbix-server/zabbix_server.log`: le répertoire contenant les log.
-* `/etc/apache2/sites-available/`: le repertoire contenant le fichier de configuration de l’interface web de gestion de Zabbix.
-* ` /etc/php5/apache2/php.ini`: le repertoire contenant le fichier de configuration de php (php.ini) pour les pré-requis de l'installation de Zabbix
-* `/etc/zabbix/zabbix.conf.php`: le repertoire contenant  le fichier de configuration de l'interface Zabbix
+* `/etc/zabbix/zabbix.conf.php`: le répertoire contenant  le fichier de configuration de l'interface Zabbix
 
 #### Autres sources pouvant vous interesser:
 
@@ -324,9 +306,6 @@ Vous pouvez commencer à faire vivre votre monitoring en prenant la main sur vot
 * [Zabbix Solutions - Index](http://wiki.monitoring-fr.org/zabbix/zabbix-use)
 * [Zabbix tutorial](http://sensors.egnite.de/en/climate-monitoring-querx-th-zabbix/3/)
 * [Zabbix communauté](http://www.monitoring-fr.org/solutions/zabbix/)
-* [Zabbix documentation Ubuntu documentation](https://doc.ubuntu-fr.org/zabbix)
-* [Zabbix documentation ](https://www.zabbix.com/documentation/1.8/fr/manual/processes)
-* [Zabbix blog ](http://tecadmin.net/add-host-zabbix-server-monitor/)
-
------
-Have fun. Hack in peace.
+* [Zabbix documentation Ubuntu](https://doc.ubuntu-fr.org/zabbix)
+* [Zabbix documentation](https://www.zabbix.com/documentation/1.8/fr/manual/processes)
+* [Zabbix blog](http://tecadmin.net/add-host-zabbix-server-monitor/)
