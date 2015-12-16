@@ -254,7 +254,7 @@ Le playbook en question va faire toutes les opérations d'installations et de co
 
  Depuis l'onglet template, renseigner les champs suivants:
 
-   *  ` Enter Hostname`: Nom d'hôte
+   *  `Enter Hostname`: Nom d'hôte
    *  `Visible name`: Nom à l'affichage dans zabbix
    *  `Group`: Sélectionnez le groupe désiré pour votre hôte
    *  `Agent interface`: Complétez les informations de l'agent Zabbix tournant sur l'hôte.
