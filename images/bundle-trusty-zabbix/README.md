@@ -243,14 +243,14 @@ Ce playbook va faire toutes les opérations d'installation et de configuration s
 
    * Se connecter à l'interface web de Zabbix-server
    * Cliquer sur le menu `Configuration`
-   * Cliquer sur le sous menu `Hosts`
+   * Cliquer sur le sous menu `Host`
    * Cliquer sur la fenêtre en haut à droit `Create Host `
 
  ![Bigger production ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/new_host.png?cache=)
 
  Depuis l'onglet template, renseigner les champs suivants:
 
-   *  `Enter Hostname`: Nom d'hôte
+   *`Enter Hostname`: Nom d'hôte
    *  `Visible name`: Nom à l'affichage dans zabbix
    *  `Group`: Sélectionnez le groupe désiré pour votre hôte
    *  `Agent interface`: Complétez les informations de l'agent Zabbix tournant sur l'hôte.
