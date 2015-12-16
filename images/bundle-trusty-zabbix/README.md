@@ -140,8 +140,8 @@ EXP_STACK `floating IP `
 
 A ce niveau, vous pouvez vous connecter sur votre instance de serveur Zabbix avec un navigateur web en pointant sur votre floating IP, sur le port 80 (http://xx.xx.xx.xx). Pour s'authentifier sur l'interface web :
 
-* login : admin
-* mot de passe : zabbix
+  * login : admin
+  * mot de passe : zabbix
 
 **Pensez à changer ce mot de passe par défaut immédiatement après votre authentification.**
 
@@ -155,9 +155,9 @@ Une fois que l'authentification est faite, vous avez accès à l'interface graph
 
 Il faut s'assurer que les machines à monitorer :
 
-* sont visibles sur le réseau depuis le serveur Zabbix-server
-* ont un agent Zabbix fonctionnel
-* acceptent les communications UDP et TCP entrantes sur le port 10050, port d'écoute des agents Zabbix par défaut.
+  * sont visibles sur le réseau depuis le serveur Zabbix-server
+  * ont un agent Zabbix fonctionnel
+  * acceptent les communications UDP et TCP entrantes sur le port 10050, port d'écoute des agents Zabbix par défaut.
 
 ### Exemple de monitoring d'un serveur Ghost
 
@@ -166,8 +166,8 @@ Voyons ensemble un exemple d'intégration d'une instance serveur portant le mote
   * Déployez une stack Ghost [comme nous l'avions vu à l'épisode5](https://dev.cloudwatt.com/fr/blog/5-minutes-stacks-episode-cinq-ghost.html).
 
   * Depuis la section [Accès et Sécurité de la console Cloudwatt](https://console.cloudwatt.com/project/access_and_security/), ajoutez 2 règles au groupe de sécurité de la stack Ghost :
-      * Règle UDP personnalisée, en Entrée, Port 10050
-      * Règle TCP personnalisée, en Entrée, Port 10050
+  * Règle UDP personnalisée, en Entrée, Port 10050
+  * Règle TCP personnalisée, en Entrée, Port 10050
 
 Cela permettra au serveur Zabbix de se connecter pour récupérer les métriques de la machine. Il faut maintenant créer de la visibilité réseau entre notre stack Zabbix et notre stack Ghost, via la création d'un routeur Neutron :
 
@@ -217,10 +217,10 @@ Cela permettra au serveur Zabbix de se connecter pour récupérer les métriques
 Quelques minutes plus tard, le serveur Zabbix et le serveur Ghost pourront se contacter directement. Afin de vous fournir une "documentation exécutable"  de l'intégration d'un serveur Ubuntu, nous utiliserons Ansible pour la suite.
 
   5. Assurez vous de pouvoir vous connecter :
-      * en SSH
-      * en utilisateur `cloud`
-      * sur le serveur Ghost
-      * depuis le serveur Zabbix
+  * en SSH
+  * en utilisateur `cloud`
+  * sur le serveur Ghost
+  * depuis le serveur Zabbix
 
   6. Sur le serveur Zabbix, ajoutez les informations de connexion dans l'inventaire `/etc/ansible/hosts` :
 
@@ -241,27 +241,18 @@ Quelques minutes plus tard, le serveur Zabbix et le serveur Ghost pourront se co
 
 Ce playbook va faire toutes les opérations d'installation et de configuration sur le serveur Ghost qu'il puisse être monitoré par le serveur Zabbix. Pour démarrer le monitoring, il vous faut faire les opérations suivantes :
 
-   * Se connecter à l'interface web de Zabbix-server
-   * Cliquer sur le menu `Configuration`
-   * Cliquer sur le sous menu `Host`
-   * Cliquer sur la fenêtre en haut à droit `Create Host `
+ * Se connecter à l'interface web de Zabbix-server
+ * Cliquer sur le menu `Configuration`
+ * Cliquer sur le sous menu `Host`
+ * Cliquer sur la fenêtre en haut à droit `Create Host `
 
  ![Ajouter un host zabbix ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/new_host.png?cache=)
 
  Depuis l'onglet template, renseigner les champs suivants:
  
-   *  `Enter Hostname`: Nom d'hôte
-   *  `Visible name`: Nom à l'affichage dans zabbix
-   *  `Group`: Sélectionnez le groupe désiré pour votre hôte
-   *  `Agent interface`: Complétez les informations de l'agent Zabbix tournant sur l'hôte.
-   *  `Status`: Sélectionnez l'état initial
-
- ![Configurer un template ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/1.9.7_new_template.png?cache=&w=748&h=608&tok=bed377)
- 
-
-   *  Cliquer sur `add`
-   *  Sélectionner le template souhaité
-   *  Cliquer sur `save `
+ *  Cliquer sur `add`
+ *  Sélectionner le template souhaité
+ *  Cliquer sur `save `
 
  ![Lier un template ] (https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/1.9.7_link_template.png?cache=)  
 
