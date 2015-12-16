@@ -251,7 +251,7 @@ Ce playbook va faire toutes les opérations d'installation et de configuration s
  Depuis l'onglet template, renseigner les champs suivants:
  
  *  Cliquer sur `add`
- *  Sélectionner le template souhaité (choisissez comme exemple le template OS linux)
+ *  Sélectionner le template souhaité (choisissez comme exemple le **template OS linux**)
  *  Cliquer sur `save `
 
  ![Lier un template ] (https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/1.9.7_link_template.png?cache=)  
