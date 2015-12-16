@@ -262,7 +262,7 @@ For your host (server Ghost here), can be monitoring by the Zabbix server, you m
 
   Now fill the following details of remote host and go to Templates tab.
 
-  *   Click on add link (chose for exemple template OS linux) 
+  *   Click on add link (chose for exemple **template OS linux**) 
   *   Select desired Template : Please select carefully, Because it will enabled all checks for the host
   *   Click on save button
 
