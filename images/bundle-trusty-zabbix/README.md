@@ -262,7 +262,7 @@ Ce playbook va faire toutes les opérations d'installation et de configuration s
    *  Sélectionner le template souhaité
    *  Cliquer sur `save `
 
- ![Lier un template ](https://www.zabbix.com/documentation/2.2/_detail/manual/quickstart/1.9.7_link_template.png?id=manual%3Aquickstart%3Atemplate)  
+ ![Lier un template ] (https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/1.9.7_link_template.png?cache=)  
 
 Bravo ! vous pouvez visualiser les métriques des agents monitorés par le server Zabbix.
 
