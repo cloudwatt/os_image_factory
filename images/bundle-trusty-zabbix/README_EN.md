@@ -266,7 +266,7 @@ For your host (server Ghost here), can be monitoring by the Zabbix server, you m
   *   Select desired Template : Please select carefully, Because it will enabled all checks for the host
   *   Click on save button
 
-  ![Lier un template ] (https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/1.9.7_link_template.png?cache=) 
+  ![Lier un template ] (https://watilearnd2day.files.wordpress.com/2015/08/zabbix-configuration9.jpg?w=606&h=410) 
 
 
   Congratulation! You can view the metric of your zabbix agents monitor by Zabbix-server.
