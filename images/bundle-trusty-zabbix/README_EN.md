@@ -10,7 +10,7 @@ Zabbix-server in a network is as follows:
 
 ![Architecture réseau zabbix](http://image.slidesharecdn.com/zabbixfeaturesin5pictures-03-150131052309-conversion-gate02/95/zabbix-monitoring-in-5-pictures-2-638.jpg?cb=1440581062)
 
-We note in this network architecture that Zabbix server can monitor the hosts on which are installed zabbix-agent or SNMP daemon (the zabbix-server daemon can be installed on servers, computers, and the SNMP daemon can be installed on equipment such as routers, printers ...).
+We note in this architecture as Zabbix-server can monitor the hosts that are installed zabbix-agent or via SNMP daemon.
 
 ## Preparations
 
