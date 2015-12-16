@@ -257,13 +257,14 @@ For your host (server Ghost here), can be monitoring by the Zabbix server, you m
   *   Click on Hosts submenu
   *   Click on Create Host button at right side
 
+Fill the different fields with the name of the host to be monitored and IP address
 
   ![Ajouter un host zabbix ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/new_host.png?cache=)
 
   Now fill the following details of remote host and go to Templates tab.
 
-  *   Click on add link (chose for exemple **template OS linux**) 
-  *   Select desired Template : Please select carefully, Because it will enabled all checks for the host
+  *   Since the new Link templates, select the desired template (choose as an example **template OS linux**)
+  *   Click on add link 
   *   Click on save button
 
   ![Lier un template ] (https://watilearnd2day.files.wordpress.com/2015/08/zabbix-configuration9.jpg?w=606&h=410) 
