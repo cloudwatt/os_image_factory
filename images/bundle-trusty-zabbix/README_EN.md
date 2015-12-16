@@ -174,8 +174,8 @@ Let's see an example of integration of a server instance with the Ghost blog eng
   add two rules to the security group of the stack Ghost :
 
 
-    * Rules UDP , Entry, Port 10050
-    * Rules TCP , Entry, Port 10050
+  * Rules UDP , Entry, Port 10050
+  * Rules TCP , Entry, Port 10050
 
 This will allow the Zabbix server to connect to retrieve the metric of the machine. We must now create the network between our visibility and our stack stack Zabbix Ghost, through the creation of a Neutron router:
 
@@ -253,33 +253,33 @@ Now, our monitoring server and client are configured. We need to access the Zabb
 
 For your host (server Ghost here), can be monitoring by the Zabbix server, you must do the following operations:
 
-      *   Click on Configuration Menu
-      *   Click on Hosts submenu
-      *   Click on Create Host button at right side
+  *   Click on Configuration Menu
+  *   Click on Hosts submenu
+  *   Click on Create Host button at right side
 
 
   ![Ajouter un host zabbix ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/new_host.png?cache=)
 
   Now fill the following details of remote host and go to Templates tab.
 
-      *   Enter Hostname: Hostname of Remote system
-      *   Visible name: Name to be display in zabbix
-      *   Group: Select the desired group for you host
-      *   Agent interface: Fill the info of Zabbix agent running on host
-      *   Status: Select initial status
+  *   Enter Hostname: Hostname of Remote system
+  *   Visible name: Name to be display in zabbix
+  *   Group: Select the desired group for you host
+  *   Agent interface: Fill the info of Zabbix agent running on host
+  *   Status: Select initial status
 
 
   ![Configurer un template ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/1.9.7_new_template.png?cache=&w=748&h=608&tok=bed377)
 
 
-      *   Click on add link
-      *   Select desired Template : Please select carefully, Because it will enabled all checks for the host
-      *   Click on save button
+  *   Click on add link
+  *   Select desired Template : Please select carefully, Because it will enabled all checks for the host
+  *   Click on save button
 
   ![Lier un template ] (https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/1.9.7_link_template.png?cache=) 
 
 
-      Congratulation! You can view the metric of your zabbix agents monitor by Zabbix-server.
+  Congratulation! You can view the metric of your zabbix agents monitor by Zabbix-server.
 
  ![Visualiser les métriques ](http://glpi.objetdirect.com/wp-content/uploads/2014/01/zabbix_webgraph.png)
 
