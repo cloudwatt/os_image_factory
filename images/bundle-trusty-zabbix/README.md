@@ -246,27 +246,27 @@ Ce playbook va faire toutes les opérations d'installation et de configuration s
    * Cliquer sur le sous menu `Host`
    * Cliquer sur la fenêtre en haut à droit `Create Host `
 
- ![Bigger production ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/new_host.png?cache=)
+ ![Ajouter un host zabbix ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/new_host.png?cache=)
 
  Depuis l'onglet template, renseigner les champs suivants:
 
-   *`Enter Hostname`: Nom d'hôte
+   *  `Enter Hostname`: Nom d'hôte
    *  `Visible name`: Nom à l'affichage dans zabbix
    *  `Group`: Sélectionnez le groupe désiré pour votre hôte
    *  `Agent interface`: Complétez les informations de l'agent Zabbix tournant sur l'hôte.
    *  `Status`: Sélectionnez l'état initial
 
- ![Bigger production ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/1.9.7_new_template.png?cache=&w=748&h=608&tok=bed377)
+ ![Configurer un template ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/1.9.7_new_template.png?cache=&w=748&h=608&tok=bed377)
 
    *  Cliquer sur `add`
    *  Sélectionner le template souhaité
    *  Cliquer sur `save `
 
- ![Bigger production ](https://www.zabbix.com/documentation/2.2/_detail/manual/quickstart/1.9.7_link_template.png?id=manual%3Aquickstart%3Atemplate)  
+ ![Lier un template ](https://www.zabbix.com/documentation/2.2/_detail/manual/quickstart/1.9.7_link_template.png?id=manual%3Aquickstart%3Atemplate)  
 
 Bravo ! vous pouvez visualiser les métriques des agents monitorés par le server Zabbix.
 
- ![Bigger production ](http://glpi.objetdirect.com/wp-content/uploads/2014/01/zabbix_webgraph.png)
+ ![Visualiser les métriques ](http://glpi.objetdirect.com/wp-content/uploads/2014/01/zabbix_webgraph.png)
 
 <a name="console" />
 
