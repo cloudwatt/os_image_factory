@@ -4,19 +4,19 @@
 
 ![Minimum setup](http://blog.stack.systems/wp-content/uploads/2015/01/5-passos-instalacao-zabbix-2-4-guia-definitivo.png)
 
-Zabbix est un logiciel libre permettant de surveiller l'état de divers services réseau, serveurs et autres matériels réseau; et produisant des graphiques dynamiques de consommation des ressources. Zabbix utilise MySQL, PostgreSQL ou Oracle pour stocker les données. Selon l'importance du nombre de machines et de données à surveiller, le choix du SGBD influe grandement sur les performances. Son interface web est écrite en PHP et fourni un vision temps réel sur les métriques collectées.
+Zabbix est un logiciel libre permettant de surveiller l'état de divers services réseau, serveurs et autres matériels réseau; et produisant des graphiques dynamiques de consommation des ressources. Zabbix utilise MySQL, PostgreSQL ou Oracle pour stocker les données. Selon l'importance du nombre de machines et de données à surveiller, le choix du SGBD influe grandement sur les performances. Son interface web est écrite en PHP et fourni une vision temps réel sur les métriques collectées.
 
-Zabbix-server dans un réseau se présente comme suit:
+Zabbix-server dans un réseau se présente comme suit :
 
 ![Architecture réseau zabbix](http://image.slidesharecdn.com/zabbixfeaturesin5pictures-03-150131052309-conversion-gate02/95/zabbix-monitoring-in-5-pictures-2-638.jpg?cb=1440581062)
 
-On remarque dans cette architecture résau que le serveur Zabbix-serveur peut monitorer les hotes sur lesquels sont installés le daemon zabbix-agents ou SNMP ( le daemon zabbix-server peut être installé sur les serveurs, les ordinateurs; et le daemon SNMP peut être installé sur les equipements tel que les routeurs, les imprimantes... ).
+On remarque dans cette architecture que le serveur Zabbix-server peut monitorer les hôtes sur lesquels sont installés le daemon zabbix-agents ou via SNMP.
 
 ### Les versions
 
 * Ubuntu 14.04
 * Zabbix 2.2
-* Mysql  5.5
+* Mysql 5.5
 
 ### Les pré-requis pour déployer cette stack
 
@@ -28,8 +28,7 @@ On remarque dans cette architecture résau que le serveur Zabbix-serveur peut mo
 
 ### Taille de l'instance
 
-Par défaut, le script propose un déploiement sur une instance de type "Small" (s1.cw.small-1) en tarification à l'usage (les prix à l'heure et au mois sont disponibles sur la [page Tarifs](https://www.cloudwatt.com/fr/produits/tarifs.html) du site de Cloudwatt). Bien sûr, vous pouvez ajuster les paramètres
-de la stack, et en particulier sa taille par défaut.
+Par défaut, le script propose un déploiement sur une instance de type "Small" (s1.cw.small-1) en tarification à l'usage (les prix à l'heure et au mois sont disponibles sur la [page Tarifs](https://www.cloudwatt.com/fr/produits/tarifs.html) du site de Cloudwatt). Bien sûr, vous pouvez ajuster les paramètres de la stack, et en particulier sa taille par défaut.
 
 ### Au fait...
 
@@ -62,9 +61,7 @@ Une fois ceci fait, les outils ligne de commande OpenStack peuvent interagir ave
 
 ### Ajuster les paramètres
 
-Dans le fichier `bundle-trusty-zabbix.heat.yml` vous trouverez en haut une section `parameters`. Le seul paramètre obligatoire à ajuster
-est celui nommé `keypair_name` dont la valeur `default` doit contenir le nom d'une paire de clés valide dans votre compte utilisateur.
-C'est dans ce même fichier que vous pouvez ajuster la taille de l'instance par le paramètre `flavor`.
+Dans le fichier `bundle-trusty-zabbix.heat.yml` vous trouverez en haut une section `parameters`. Le seul paramètre obligatoire à ajuster est celui nommé `keypair_name` dont la valeur `default` doit contenir le nom d'une paire de clés valide dans votre compte utilisateur. C'est dans ce même fichier que vous pouvez ajuster la taille de l'instance par le paramètre `flavor`.
 
 ~~~ yaml
 heat_template_version: 2013-05-23
@@ -121,13 +118,13 @@ $ heat resource-list EXP_STACK
 | network          | 7e142d1b-f660-498d-961a-b03d0aee5cff                | OS::Neutron::Net                | CREATE_COMPLETE | 2015-11-25T11:03:56Z |
 | subnet           | 442b31bf-0d3e-406b-8d5f-7b1b6181a381                | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-25T11:03:57Z |
 | server           | f5b22d22-1cfe-41bb-9e30-4d089285e5e5                | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-25T11:04:00Z |
-| floating_ip_link | 44dd841f-8570-4f02-a8cc-f21a125cc8aa-`floatting IP` | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-25T11:04:30Z |
+| floating_ip_link | 44dd841f-8570-4f02-a8cc-f21a125cc8aa-`floating IP`  | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-25T11:04:30Z |
 +------------------+-----------------------------------------------------+---------------------------------+-----------------+----------------------
 ```
 
 Le script `start-stack.sh` s'occupe de lancer les appels nécessaires sur les API Cloudwatt pour :
 
-* démarrer une instance basée sur Debian Jessie, pré-provisionnée avec la stack Zabbix-serveur, zabbix-agent,lamp,
+* démarrer une instance basée sur Ubuntu Trusty, pré-provisionnée avec la stack Zabbix-server, zabbix-agent,lamp,
 * l'exposer sur Internet via une IP flottante
 
 ### Enjoy
