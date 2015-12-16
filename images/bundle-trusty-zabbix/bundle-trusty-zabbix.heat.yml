@@ -6,7 +6,7 @@ description: All-in-one Zabbix stack
 
 parameters:
   keypair_name:
-    default: 
+    default:
     description: Keypair to inject in instance
     label: SSH Keypair
     type: string
@@ -55,8 +55,9 @@ resources:
         - { direction: ingress, protocol: TCP, port_range_min: 80, port_range_max: 80 }
         - { direction: ingress, protocol: UDP, port_range_min: 161, port_range_max: 161 }
         - { direction: ingress, protocol: UDP, port_range_min: 123, port_range_max: 123 }
-        - { direction: ingress, protocol: UDP, port_range_min: 1050, port_range_max: 1050 }
-        - { direction: ingress, protocol: UDP, port_range_min: 1051, port_range_max: 1051 }
+        - { direction: ingress, protocol: UDP, port_range_min: 10050, port_range_max: 10050 }
+        - { direction: ingress, protocol: UDP, port_range_min: 10051, port_range_max: 10051 }
+        - { direction: ingress, protocol: TCP, port_range_min: 10050, port_range_max: 10050 }
         - { direction: ingress, protocol: ICMP }
         - { direction: egress, protocol: ICMP }
         - { direction: egress, protocol: TCP }
