@@ -249,6 +249,7 @@ Ce playbook va faire toutes les opérations d'installation et de configuration s
  ![Ajouter un host zabbix ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/new_host.png?cache=)
 
  Depuis l'onglet template, renseigner les champs suivants:
+ 
 
    *  `Enter Hostname`: Nom d'hôte
    *  `Visible name`: Nom à l'affichage dans zabbix
@@ -257,6 +258,7 @@ Ce playbook va faire toutes les opérations d'installation et de configuration s
    *  `Status`: Sélectionnez l'état initial
 
  ![Configurer un template ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/1.9.7_new_template.png?cache=&w=748&h=608&tok=bed377)
+ 
 
    *  Cliquer sur `add`
    *  Sélectionner le template souhaité
