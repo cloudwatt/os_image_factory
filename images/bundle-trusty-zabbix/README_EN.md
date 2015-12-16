@@ -4,7 +4,7 @@
 
 ![Minimum setup](http://blog.stack.systems/wp-content/uploads/2015/01/5-passos-instalacao-zabbix-2-4-guia-definitivo.png)
 
-Zabbix is free software to monitor the status of various network services, servers and other network equipment; and producing dynamic graphics resource consumption. Zabbix uses MySQL, PostgreSQL or Oracle to store data. According to the importance of the number of machines and data to monitor, the choice of the DBMS greatly affects performance. Its web interface is written in PHP. It acts directly on the information stored in the database. Each information necessary to process server being refreshed automatically, there is no action to perform on the bit to indicate that there has been an update.
+Zabbix is free software to monitor the status of various network services, servers and other network equipment; and producing dynamic graphics resource consumption. Zabbix uses MySQL, PostgreSQL or Oracle to store data. According to the importance of the number of machines and data to monitor, the choice of the DBMS greatly affects performance. Its web interface is written in PHP. 
 
 Zabbix-server in a network is as follows:
 
@@ -140,8 +140,10 @@ $ ./stack-get-url.sh `name_of_my_stack`
 As shown above, it will parse the assigned floating-IP of your stack into a URL link, with the right port included. You can then click or paste this into your browser of choice and bask in the glory of a fresh Zabbix instance.
 For now, our monitoring server and client are configured. We need to access the Zabbix interface using the IP address of our server http://X.X.X.X
 
-* login : Admin
-* mot de passe : zabbix
+* login : admin
+* password : zabbix
+
+Remember to change the default password immediately after your authentication.
 
 ![Interface connection zabbix](https://cdn-02.memo-linux.com/wp-content/uploads/2015/03/zabbix-07-300x253.png)
 
@@ -159,11 +161,8 @@ Good !!!
 
 * are visible on the network from the Zabbix-server
 * Have a functional zabbix agent
-* have a functional SNMP daemon
-* allow incoming UDP communications on port 161 (port for exchanging information with SNMP), 123 (NTP server synchronization port),1051
-   (Zabbix-server listening port) and 1050 (Zabbix-agent listening port).      
+* accept incoming TCP and UDP communications on the 10050 port, listening port of Zabbix agents by default.      
 
-On the Zabbix-server, you must describe the configuration of file hosts who is in the directory `/etc/zabbix/hosts/localhost.cfg` who describe the configuration of the hosts to monitor.
 
 ### Example of monitoring a server Ghost
 
@@ -172,10 +171,9 @@ Let's see an example of integration of a server instance with the Ghost blog eng
   * deploy a stack Ghost [as we saw in episode 5](https://dev.cloudwatt.com/fr/blog/5-minutes-stacks-episode-cinq-ghost.html).
   * for your section [Access and Security Cloudwatt console](https://console.cloudwatt.com/project/access_and_security/),   
     add two rules to the security group of the stack Ghost :
-    * Rules UDP , Entry, Port 161
-    * Rules UDP , Entry, Port 123
-    * Rules UDP , Entry, Port 1050
-    * Rules TCP , Entry, Port 1050
+    
+    * Rules UDP , Entry, Port 10050
+    * Rules TCP , Entry, Port 10050
 
 This will allow the Zabbix server to connect to retrieve the metric of the machine. We must now create the network between our visibility and our stack stack Zabbix Ghost, through the creation of a Neutron router:
 
@@ -258,7 +256,7 @@ For your host (server Ghost here), can be monitoring by the Zabbix server, you m
     *   Click on Create Host button at right side
 
 
-  ![Bigger production](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-1.png)
+  ![Ajouter un host zabbix ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/new_host.png?cache=)
 
   Now fill the following details of remote host and go to Templates tab.
 
@@ -269,21 +267,19 @@ For your host (server Ghost here), can be monitoring by the Zabbix server, you m
     *   Status: Select initial status
 
 
-  ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-2.png)
+  ![Configurer un template ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/1.9.7_new_template.png?cache=&w=748&h=608&tok=bed377)
 
 
     *   Click on add link
     *   Select desired Template : Please select carefully, Because it will enabled all checks for the host
     *   Click on save button
 
-  ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-3.png)  
+  ![Lier un template ] (https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/1.9.7_link_template.png?cache=) 
 
-
-  ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-4.png)  
 
     Congratulation! You can view the metric of your zabbix agents monitor by Zabbix-server.
 
-  ![Bigger productisur ](http://tecadmin.net/wp-content/uploads/2013/10/graph-network.png)
+   ![Visualiser les métriques ](http://glpi.objetdirect.com/wp-content/uploads/2014/01/zabbix_webgraph.png)
 
 
 <a name="console" />
@@ -309,12 +305,6 @@ To create our Zabbix stack from the console:
 
 The stack will be automatically generated (you can see its progress by clicking on its name). When all modules become green, the creation will be complete. You can then go to the "Instances" menu to find the floating-IP, or simply refresh the current page and check the Overview tab for a handy link.
 
-Remember that the differents ports where Zabbix-server listening:
-
-Port Listener trap: 1051
-Port of the database when the local socket is not in use: 3306
-Zabbix-server management web interface: 80
-
 ## So watt?
 
 This tutorial aims to improve your startup. At this stage you are master on board.
@@ -327,18 +317,10 @@ You can start to live your monitoring taking hold of your server.
 * `/etc/zabbix/zabbix_server.conf`: Containing directory tea tea zabbix-server configuration file
 * `/usr/share/zabbix-server-mysql/`: the directory containing the files in the database zabbix-server-mysql
 * `/var/log/zabbix-server/zabbix_server.log`: the directory containing the log.
-* `/etc/apache2/sites-available/`: the directory containing the configuration file of Zabbix management web interface.
-* ` /etc/php5/apache2/php.ini`: the directory containing the PHP configuration file (php.ini) prerequisites for installing Zabbix
 * `/etc/zabbix/zabbix.conf.php`: the directory containing the interface configuration file Zabbix
 
 #### Other resources you could be interested in:
 
 * [Zabbix-monitoring Homepage](http://www.zabbix.com/)
-* [Zabbix Solutions - Index](http://wiki.monitoring-fr.org/zabbix/zabbix-use)
-* [Zabbix tutorial](http://sensors.egnite.de/en/climate-monitoring-querx-th-zabbix/3/)
-* [Zabbix communauté](http://www.monitoring-fr.org/solutions/zabbix/)
-* [Zabbix documentation Ubuntu documentation](https://doc.ubuntu-fr.org/zabbix)
-* [Zabbix blog ](https://www.zabbix.com/documentation/1.8/fr/manual/processes)
+* [Zabbix documentation](https://www.zabbix.com/documentation/2.2/start)
 
------
-Have fun. Hack in peace.
