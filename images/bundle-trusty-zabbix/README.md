@@ -246,7 +246,7 @@ Ce playbook va faire toutes les opérations d'installation et de configuration s
    * Cliquer sur le sous menu `Hosts`
    * Cliquer sur la fenêtre en haut à droit `Create Host `
 
- ![Bigger production ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-1.png)
+ ![Bigger production ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/new_host.png?cache=)
 
  Depuis l'onglet template, renseigner les champs suivants:
 
@@ -256,19 +256,17 @@ Ce playbook va faire toutes les opérations d'installation et de configuration s
    *  `Agent interface`: Complétez les informations de l'agent Zabbix tournant sur l'hôte.
    *  `Status`: Sélectionnez l'état initial
 
- ![Bigger production ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-2.png)
+ ![Bigger production ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/1.9.7_new_template.png?cache=&w=748&h=608&tok=bed377)
 
    *  Cliquer sur `add`
    *  Sélectionner le template souhaité
    *  Cliquer sur `save `
 
- ![Bigger production ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-3.png)  
-
- ![Bigger production ](http://tecadmin.net/wp-content/uploads/2013/10/add-zabbix-host-4.png)  
+ ![Bigger production ](https://www.zabbix.com/documentation/2.2/_detail/manual/quickstart/1.9.7_link_template.png?id=manual%3Aquickstart%3Atemplate)  
 
 Bravo ! vous pouvez visualiser les métriques des agents monitorés par le server Zabbix.
 
- ![Bigger production ](http://tecadmin.net/wp-content/uploads/2013/10/graph-network.png)
+ ![Bigger production ](http://glpi.objetdirect.com/wp-content/uploads/2014/01/zabbix_webgraph.png)
 
 <a name="console" />
 
