@@ -4,7 +4,7 @@
 
 ![Minimum setup](http://blog.stack.systems/wp-content/uploads/2015/01/5-passos-instalacao-zabbix-2-4-guia-definitivo.png)
 
-ZABBIX est un logiciel libre permettant de surveiller l'état de divers services réseau, serveurs et autres matériels réseau; et produisant des graphiques dynamiques de consommation des ressources. ZABBIX utilise MySQL, PostgreSQL ou Oracle pour stocker les données. Selon l'importance du nombre de machines et de données à surveiller, le choix du SGBD influe grandement sur les performances. Son interface web est écrite en PHP. Elle agit directement sur les informations stockées dans la base de données. Chaque information nécessaire au serveur de traitement étant réactualisée automatiquement, il n'y a pas d'action à effectuer sur le binaire pour lui indiquer qu'il y a eu une mise à jour.
+Zabbix est un logiciel libre permettant de surveiller l'état de divers services réseau, serveurs et autres matériels réseau; et produisant des graphiques dynamiques de consommation des ressources. Zabbix utilise MySQL, PostgreSQL ou Oracle pour stocker les données. Selon l'importance du nombre de machines et de données à surveiller, le choix du SGBD influe grandement sur les performances. Son interface web est écrite en PHP et fourni un vision temps réel sur les métriques collectées.
 
 Zabbix-server dans un réseau se présente comme suit:
 
