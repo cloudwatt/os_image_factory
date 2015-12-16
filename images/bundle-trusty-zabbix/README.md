@@ -244,15 +244,16 @@ Ce playbook va faire toutes les opérations d'installation et de configuration s
  * Se connecter à l'interface web de Zabbix-server
  * Cliquer sur le menu `Configuration`
  * Cliquer sur le sous menu `Hosts`
- * Cliquer sur la fenêtre en haut à droite `Create Hosts `
+ * Cliquer sur le bouton  en haut à droite `Create Hosts. `
+ Renseigner les differents champs en indiquant le nom du host à monitorer et son adresse IP  
 
  ![Ajouter un host zabbix ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/new_host.png?cache=)
 
- Depuis l'onglet template, renseigner les champs suivants:
+ Depuis l'onglet template,faire les operations suivantes:
  
+ *  Depuis le champ **Link new templates**, sélectionner le template souhaité (choisissez comme exemple le **template OS linux**)
  *  Cliquer sur `add`
- *  Sélectionner le template souhaité (choisissez comme exemple le **template OS linux**)
- *  Cliquer sur `save `
+ *  Cliquer sur `save ` 
 
  ![Lier un template ] (https://watilearnd2day.files.wordpress.com/2015/08/zabbix-configuration9.jpg?w=606&h=410)  
 
