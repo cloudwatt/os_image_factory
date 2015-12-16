@@ -262,17 +262,7 @@ For your host (server Ghost here), can be monitoring by the Zabbix server, you m
 
   Now fill the following details of remote host and go to Templates tab.
 
-  *   Enter Hostname: Hostname of Remote system
-  *   Visible name: Name to be display in zabbix
-  *   Group: Select the desired group for you host
-  *   Agent interface: Fill the info of Zabbix agent running on host
-  *   Status: Select initial status
-
-
-  ![Configurer un template ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/1.9.7_new_template.png?cache=&w=748&h=608&tok=bed377)
-
-
-  *   Click on add link
+  *   Click on add link (chose for exemple template OS linux) 
   *   Select desired Template : Please select carefully, Because it will enabled all checks for the host
   *   Click on save button
 
