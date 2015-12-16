@@ -250,7 +250,6 @@ Ce playbook va faire toutes les opérations d'installation et de configuration s
 
  Depuis l'onglet template, renseigner les champs suivants:
  
-
    *  `Enter Hostname`: Nom d'hôte
    *  `Visible name`: Nom à l'affichage dans zabbix
    *  `Group`: Sélectionnez le groupe désiré pour votre hôte
