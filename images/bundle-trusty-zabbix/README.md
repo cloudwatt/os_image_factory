@@ -244,7 +244,8 @@ Ce playbook va faire toutes les opérations d'installation et de configuration s
  * Se connecter à l'interface web de Zabbix-server
  * Cliquer sur le menu `Configuration`
  * Cliquer sur le sous menu `Hosts`
- * Cliquer sur le bouton  en haut à droite `Create Hosts. `
+ * Cliquer sur le bouton  en haut à droite `Create Hosts. 
+ 
  Renseigner les differents champs en indiquant le nom du host à monitorer et son adresse IP  
 
  ![Ajouter un host zabbix ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/new_host.png?cache=)
