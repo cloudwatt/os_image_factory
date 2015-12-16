@@ -302,12 +302,7 @@ Vous pouvez commencer à faire vivre votre monitoring en prenant la main sur vot
 * `/var/log/zabbix-server/zabbix_server.log`: le répertoire contenant les log.
 * `/etc/zabbix/zabbix.conf.php`: le répertoire contenant  le fichier de configuration de l'interface Zabbix
 
-#### Autres sources pouvant vous interesser:
+#### Autres sources pouvant vous intéresser:
 
 * [Zabbix-monitoring Homepage](http://www.zabbix.com/)
-* [Zabbix Solutions - Index](http://wiki.monitoring-fr.org/zabbix/zabbix-use)
-* [Zabbix tutorial](http://sensors.egnite.de/en/climate-monitoring-querx-th-zabbix/3/)
-* [Zabbix communauté](http://www.monitoring-fr.org/solutions/zabbix/)
-* [Zabbix documentation Ubuntu](https://doc.ubuntu-fr.org/zabbix)
-* [Zabbix documentation](https://www.zabbix.com/documentation/1.8/fr/manual/processes)
-* [Zabbix blog](http://tecadmin.net/add-host-zabbix-server-monitor/)
+* [Zabbix documentation](https://www.zabbix.com/documentation/2.2/start)
