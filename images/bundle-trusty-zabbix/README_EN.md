@@ -258,7 +258,7 @@ For your host (server Ghost here), can be monitoring by the Zabbix server, you m
 
 Fill the different fields with the name of the host to be monitored and IP address
 
-  ![Ajouter un host zabbix ](https://www.zabbix.com/documentation/2.2/_media/manual/quickstart/new_host.png?cache=)
+  ![Ajouter un host zabbix ](http://www.daxiongmao.eu/wiki/images/thumb/f/fe/Add-zabbix-host-1.png/1024px-Add-zabbix-host-1.png)
 
   Now fill the following details of remote host and go to Templates tab.
 
