@@ -161,7 +161,7 @@ Good !!!
 
 * are visible on the network from the Zabbix-server
 * Have a functional zabbix agent
-* accept incoming TCP and UDP communications on the 10050 port, listening port of Zabbix agents by default.      
+* accept incoming TCP and UDP communications on the 10050 port (listening port of Zabbix agents by default).      
 
 
 ### Example of monitoring a server Ghost
