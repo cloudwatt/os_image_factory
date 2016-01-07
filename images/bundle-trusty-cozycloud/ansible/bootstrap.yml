@@ -71,6 +71,7 @@
         - ca-certificates
         - apt-transport-https
         - cozy
+        - git
 
 
 

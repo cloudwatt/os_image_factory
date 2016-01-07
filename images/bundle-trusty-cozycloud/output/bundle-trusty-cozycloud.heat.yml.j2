@@ -78,13 +78,18 @@ resources:
             #!/bin/bash
             echo "$floating_ip$" >> /etc/stack_floating_ip
             mkdir /etc/ansible
+            echo -e "---\ncozy_domain: $default_domain$" >> /etc/ansible/cozy-vars.yml
             echo "[local]" >> /etc/ansible/hosts
             echo "127.0.0.1 ansible_connection=local" >> /etc/ansible/hosts
             ansible-playbook /root/cozy-install/cozy-install.yml
 
 
+
           params:
             $floating_ip$: { get_attr: [floating_ip, floating_ip_address] }
+            $default_domain$: { "Fn::Join" : ["", ['ip-',
+            { "Fn::Replace": [ {'.': '-'}, { get_attr: [floating_ip, floating_ip_address] } ] },
+            '.rev.cloudwatt.com']]}
 
 
 
