@@ -8,9 +8,8 @@
       email: "cozy@cloudwatt.com"
 
 
-
   tasks:
-    - name: Debconf cozy #fichier de reponse#
+    - name: Debconf cozy
       debconf:
         name="{{ item.name }}"
         question="{{ item.question }}"
@@ -30,9 +29,9 @@
         dpkg-reconfigure -u -f noninteractive cozy
 
     - name: Let's encrypt install
-      shell:
-        git clone https://github.com/letsencrypt/letsencrypt /root/letsencrypt
-
+      git:
+        repo=https://github.com/letsencrypt/letsencrypt
+        dest=/root/letsencrypt
 
     - name: Backup CRT cozy
       shell: |
@@ -52,9 +51,13 @@
         /root/letsencrypt/letsencrypt-auto certonly --standalone --agree-tos --email {{ cozycloud.email }} -d {{ cozy_domain }} --standalone-supported-challenges tls-sni-01
 
     - name: Copy crt to cozy
-      shell: |
-        ln -s /etc/letsencrypt/live/{{ cozy_domain }}/privkey.pem /etc/cozy/server.key
-        ln -s /etc/letsencrypt/live/{{ cozy_domain }}/fullchain.pem /etc/cozy/server.crt
+      file:
+        src={{ item.src }}
+        dest={{ item.dest }}
+        state=link
+      with_items:
+        - {src: "/etc/letsencrypt/live/{{ cozy_domain }}/privkey.pem", dest: "/etc/cozy/server.key" }
+        - {src: "/etc/letsencrypt/live/{{ cozy_domain }}/fullchain.pem", dest: "/etc/cozy/server.crt" }
       notify: restart nginx
 
     - name: Cron renew crt
