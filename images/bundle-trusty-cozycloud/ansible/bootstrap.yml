@@ -50,11 +50,11 @@
 
     - name: Injection renew_cert.sh
       copy:
-      src=Debconf-cozyinstall/renew_cert.sh
-      dest=/root/renew_cert.sh
-      owner=root
-      group=root
-      mode=700
+        src=Debconf-cozyinstall/renew_cert.sh
+        dest=/root/renew_cert.sh
+        owner=root
+        group=root
+        mode=700
 
     - name: Debconf cozy #fichier de reponse#
       debconf:
