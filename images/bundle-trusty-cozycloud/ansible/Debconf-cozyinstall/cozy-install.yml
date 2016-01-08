@@ -5,6 +5,9 @@
   vars:
     cozycloud:
       floating_ip: "{{ lookup('file', '/etc/stack_floating_ip') }}"
+      email: "cozy@cloudwatt.com"
+
+
 
   tasks:
     - name: Debconf cozy #fichier de reponse#
@@ -26,34 +29,30 @@
       shell:
         dpkg-reconfigure -u -f noninteractive cozy
 
-    - name: Generate Certificat
-      shell:
-        "openssl req -x509 -nodes -newkey rsa:4096 -keyout /etc/cozy/server.key -out /etc/cozy/server.crt -days 3650 -subj \"/CN={{ cozycloud.floating_ip }}\" && touch /etc/cozy/.cw_post_install"
-        creates="/etc/cozy/.cw_post_install"
-      notify: restart nginx
-
     - name: Let's encrypt install
       shell:
         git clone https://github.com/letsencrypt/letsencrypt /root/letsencrypt
-      notify: stop nginx
+
 
     - name: Backup CRT cozy
-      shell:
+      shell: |
         mv /etc/cozy/server.key /etc/cozy/server.key.backup
         mv /etc/cozy/server.crt /etc/cozy/server.crt.backup
 
     - name: Include Vars FQDN
       include_vars: /etc/ansible/cozy-vars.yml
 
+    - name: stop nginx
+      service:
+        name=nginx
+        state=stopped
+
     - name: Generate let's encrypt certificate
       shell: |
-        /root/letsencrypt/letsencrypt-auto certonly
-         --standalone --agree-tos
-         --email cozy@cloudwatt.com -d {{ cozy_domain }}
-         --standalone-supported-challenges tls-sni-01
+        /root/letsencrypt/letsencrypt-auto certonly --standalone --agree-tos --email {{ cozycloud.email }} -d {{ cozy_domain } --standalone-supported-challenges tls-sni-01
 
     - name: Copy crt to cozy
-      shell:
+      shell: |
         ln -s /etc/letsencrypt/live/{{ cozy_domain }}/privkey.pem /etc/cozy/server.key
         ln -s /etc/letsencrypt/live/{{ cozy_domain }}/fullchain.pem /etc/cozy/server.crt
       notify: restart nginx
@@ -64,7 +63,3 @@
         name=nginx
         state=restarted
 
-    - name: stop nginx
-      service:
-        name=nginx
-        state=stop
