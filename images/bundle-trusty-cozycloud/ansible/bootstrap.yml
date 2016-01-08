@@ -48,6 +48,14 @@
         group=root
         mode=0600
 
+    - name: Injection renew_cert.sh
+      copy:
+      src=Debconf-cozyinstall/renew_cert.sh
+      dest=/root/renew_cert.sh
+      owner=root
+      group=root
+      mode=700
+
     - name: Debconf cozy #fichier de reponse#
       debconf:
         name="{{ item.name }}"
@@ -71,4 +79,3 @@
         - ca-certificates
         - apt-transport-https
         - cozy
-        - git

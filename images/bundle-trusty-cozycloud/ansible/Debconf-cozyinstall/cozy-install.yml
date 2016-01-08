@@ -49,13 +49,19 @@
 
     - name: Generate let's encrypt certificate
       shell: |
-        /root/letsencrypt/letsencrypt-auto certonly --standalone --agree-tos --email {{ cozycloud.email }} -d {{ cozy_domain } --standalone-supported-challenges tls-sni-01
+        /root/letsencrypt/letsencrypt-auto certonly --standalone --agree-tos --email {{ cozycloud.email }} -d {{ cozy_domain }} --standalone-supported-challenges tls-sni-01
 
     - name: Copy crt to cozy
       shell: |
         ln -s /etc/letsencrypt/live/{{ cozy_domain }}/privkey.pem /etc/cozy/server.key
         ln -s /etc/letsencrypt/live/{{ cozy_domain }}/fullchain.pem /etc/cozy/server.crt
       notify: restart nginx
+
+    - name: Cron renew crt
+      cron:
+        name="renew crt cozy"
+        special_time=monthly
+        job="/root/renew_cert.sh"
 
   handlers:
     - name: restart nginx
