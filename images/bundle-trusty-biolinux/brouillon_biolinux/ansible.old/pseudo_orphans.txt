@@ -1,0 +1,28 @@
+# The following packages should be upgraded to the latest version in the archive,
+# even if the version indicates this is a downgrade, because the version numbering
+# is messed up.  I got this list by pinning all remote package versions
+# (Pin: origin ?*) at 1001 and running "apt-get upgrade" to see what was listed
+# on a test machine.
+#
+# A similar but more selective approach should be applied to just these
+# packages.
+#
+# blimps-utils
+libapache-mime4j-java
+# libblimps3
+# libblimps3-dev
+libcofoja-java
+libcolt-java
+libcommons-math3-java
+libjbzip2-java
+librdp-taxonomy-tree-java
+libsnappy-java
+mummer
+ncbi-blast+
+ncbi-blast+-legacy
+# python-paramiko
+python-qcli
+r-cran-leaps
+r-cran-stringr
+r-cran-survival
+r-cran-tcltk2

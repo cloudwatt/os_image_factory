@@ -1,0 +1,135 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+- hosts: all
+  become: yes
+#  become_user: cloud
+  tasks:
+    - name: copy file1
+      copy: src=locale  dest=/etc/default/locale owner=root group=root mode=0644
+
+    - name: copy file2
+      copy: src=locale  dest=/root/  owner=root group=root mode=0644
+
+    - name: install packages
+      apt: pkg={{ item }} force=yes
+      with_items:
+        - language-pack-fr
+#        - debian-archive-keyring
+
+#    - name: reconfigure locales
+#      shell: dpkg-reconfigure locales
+#      sudo: true
+
+    - name: copy sources.list
+      template: src=sources.list  dest=/etc/apt/sources.list owner=root group=root mode=0644
+
+    - name: copy cloud.cfg file
+      template: src=cloud.cfg   dest=/etc/cloud/cloud.cfg  owner=root group=root mode=0644
+
+    - name: copy config.dat
+      template: src=config.dat  dest=/var/cache/debconf/config.dat owner=root group=root mode=0777
+
+    - name: enable universe and multiverse repository
+      shell: add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) main universe restricted multiverse"
+
+    - apt: update_cache=true upgrade=full
+
+    - name: Creates directory
+      file: path=/var/biolinux state=directory mode=0777
+
+    - name: Creates directory
+      file: path=/var/bio state=directory mode=0777
+
+#    - name: copy sources.list.clean
+#      copy: src=sources.list.clean dest=/var/bio/sources.list.clean owner=root group=root mode=0777
+
+    - name: copy pseudo_orphans.txt
+      copy: src=pseudo_orphans.txt dest=/var/bio/pseudo_orphans.txt owner=root group=root mode=0777
+
+    - name: copy pseudo_orphans.pin
+      copy: src=pseudo_orphans.pin dest=/var/bio/pseudo_orphans.pin owner=root group=root mode=0777
+
+    - name: copy pick_cran_mirror.py
+      copy: src=pick_cran_mirror.py dest=/var/bio/pick_cran_mirror.py owner=root group=root mode=0777
+
+    - name: copy message1.txt
+      copy: src=message1.txt dest=/var/bio/message1.txt owner=root group=root mode=0777
+
+    - name: copy upgrade8.sh
+      copy: src=upgrade8.sh  dest=/var/biolinux/upgrade8.sh owner=root group=root mode=0777
+
+    - name: copy bl_install_master_list.sh
+      copy: src=bl_install_master_list.sh dest=/var/bio/bl_install_master_list.sh owner=root group=root mode=0777
+
+    - name: copy  bio-linux-keyring.deb
+      copy: src=bio-linux-keyring.deb dest=/var/bio/ bio-linux-keyring.deb owner=root group=root mode=0777
+
+    - name: copy upgrade8.sh
+      copy: src=upgrade8.sh  dest=/var/biolinux/upgrade8.sh owner=root group=root mode=0777
+
+    - name: Download biolinux script
+      get_url:
+        url=http://nebc.nerc.ac.uk/downloads/bl8_only/unattended_upgrade.sh
+        dest='/var/biolinux/'
+        mode=0777
+
+    - name: Download biolinux package
+      get_url:
+        url=http://nebc.nerc.ac.uk/downloads/bl8_only/tophat_2.0.13-0biolinux1_amd64.deb
+        dest='/var/biolinux/'
+        mode=0777
+
+    - name: Download biolinux file newlens.jpg
+      get_url:
+        url=http://nebc.nerc.ac.uk/downloads/bl8_only/newlens.jpg
+        dest='/var/biolinux/'
+        mode=0777
+
+    - name: Download biolinux master package list
+      get_url:
+        url=http://nebc.nerc.ac.uk/downloads/bl8_only/bl_master_package_list.txt
+        dest='/var/biolinux/'
+        mode=0777
+
+    - name: Download biolinux unattended_upgrade.sh package
+      get_url:
+        url=http://nebc.nerc.ac.uk/downloads/bl8_only/setesx.sh
+        dest='/var/biolinux/'
+        mode=0777
+
+    - name: Download biolinux biomenu.png file
+      get_url:
+        url=http://nebc.nerc.ac.uk/downloads/bl8_only/biomenu.png
+        dest='/var/biolinux/'
+        mode=0777
+
+#    - name: create user and group
+#      user: name=cloud  group=arb shell=/bin/bash  append=yes
+
+#    - name:
+#      shell: cat /var/cache/debconf/config.dat | \ "DEBIAN_FRONTEND=noninteractive \ DEBCONF_DB_FALLBACK= apt-get upgrade"
+
+#    - name: change in config.dat file
+#      lineinfile:
+#        name=/var/cache/debconf/config.dat
+#          regexp=""
+#          line="DEBIAN_FRONTEND=noninteractive \ DEBCONF_DB_FALLBACK= apt-get upgrade"
+
+#    - name: non interactively
+#      shell: DEBIAN_FRONTEND=noninteractive apt-get install arb-common grub2-common -y
+
+    - name: copy upgrade_to_8
+      copy: src=upgrade_to_8.sh dest=/var/bio/upgrade_to_8.sh
+
+    - name: droit d'execution du script
+      shell: chmod +x /var/bio/upgrade_to_8.sh
+
+#    - name: execute biolinux script
+#      shell: upgrade_to_8.sh >> somelog.txt
+
+    - name: execute biolinux script
+      shell: sudo sh /var/bio/upgrade_to_8.sh

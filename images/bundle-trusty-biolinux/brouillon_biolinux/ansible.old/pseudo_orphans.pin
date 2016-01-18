@@ -1,0 +1,60 @@
+Package: libapache-mime4j-java
+Pin: origin ?*
+Pin-Priority: 1001
+
+Package: libcofoja-java
+Pin: origin ?*
+Pin-Priority: 1001
+
+Package: libcolt-java
+Pin: origin ?*
+Pin-Priority: 1001
+
+Package: libcommons-math3-java
+Pin: origin ?*
+Pin-Priority: 1001
+
+Package: libjbzip2-java
+Pin: origin ?*
+Pin-Priority: 1001
+
+Package: librdp-taxonomy-tree-java
+Pin: origin ?*
+Pin-Priority: 1001
+
+Package: libsnappy-java
+Pin: origin ?*
+Pin-Priority: 1001
+
+Package: mummer
+Pin: origin ?*
+Pin-Priority: 1001
+
+Package: ncbi-blast+
+Pin: origin ?*
+Pin-Priority: 1001
+
+Package: ncbi-blast+-legacy
+Pin: origin ?*
+Pin-Priority: 1001
+
+Package: python-qcli
+Pin: origin ?*
+Pin-Priority: 1001
+
+Package: r-cran-leaps
+Pin: origin ?*
+Pin-Priority: 1001
+
+Package: r-cran-stringr
+Pin: origin ?*
+Pin-Priority: 1001
+
+Package: r-cran-survival
+Pin: origin ?*
+Pin-Priority: 1001
+
+Package: r-cran-tcltk2
+Pin: origin ?*
+Pin-Priority: 1001
+

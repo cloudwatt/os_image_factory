@@ -1,0 +1,36 @@
+=== Installing Bio-Linux 8 ===
+
+This script will install Bio-Linux 8 onto your machine.  Please read these
+notes carefully before you proceed.
+
+* The process may take several hours.  You will not be able to use your machine
+  during the upgrade and you should not try to power it off.
+
+* You should back up all your data.  There is always a slim chance that
+  a big upgrade like this will render your machine unbootable and that it will
+  need to be installed from scratch if the recovery DVD can't fix it.
+
+* Have a working Bio-Linux 8 DVD or USB stick to hand just in case, as
+  this can help you to recover if problems occur (as noted above).
+
+* This script is designed to be idempotent, in other words you can run it
+  several times in a row and once the upgrade is done it will not change
+  anything.  If your machine has been partially updated you can and should run
+  this script again and again until the process is fully completed and the
+  script declares that it has finished.
+
+* If you have installed packages from an external PPA you may get an error
+  saying the upgrade cannot be calculated.  In particular the Cinnamon desktop
+  causes this.  You will need to remove the packages and put them back after
+  the upgrade.
+
+=== What the installer will do ===
+
+1 - Perform some basic sanity checks and save your APT configuration.
+2 - Ensure that your base system is upgraded to Ubuntu 14.04.
+2a- ** reboot, prompting you to run the script again **
+3 - Configure APT to see all Bio-Linux software repositories.
+4 - Ensure all Bio-Linux packages are installed and up-to-date.
+5 - Install x2go and remove FreeNX.  If you previously used NX Client
+    you now need to use x2go client -
+       http://wiki.x2go.org/doku.php/download:start
