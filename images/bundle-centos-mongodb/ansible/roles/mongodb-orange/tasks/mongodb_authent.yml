@@ -1,0 +1,26 @@
+---
+
+- name: mongodb authent - siteUserAdmin - create a userAdminAnyDatabase users
+  mongodb_authent:
+    login_user: "{{ mongodb_siteUserAdmin_name }}"
+    login_password: "{{ mongodb_siteUserAdmin_password }}"
+    login_port: "{{ monconf_port }}"
+    database: "admin"
+    name: "{{ mongodb_siteUserAdmin_name }}"
+    password: "{{ mongodb_siteUserAdmin_password }}"
+    roles: "userAdminAnyDatabase"
+    state: admin
+    update_password: on_create
+
+- name: mongodb authent - root - create a root users
+  mongodb_authent:
+    login_user: "{{ mongodb_siteUserAdmin_name }}"
+    login_password: "{{ mongodb_siteUserAdmin_password }}"
+    login_port: "{{ monconf_port }}"
+    database: "admin"
+    name: "{{ mongodb_siteRootAdmin_name }}"
+    password: "{{ mongodb_siteRootAdmin_password }}"
+    roles: "root"
+    state: admin
+    update_password: on_create
+

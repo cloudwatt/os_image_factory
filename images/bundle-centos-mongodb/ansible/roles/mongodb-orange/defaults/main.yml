@@ -1,0 +1,129 @@
+# The global variable file mongodb installation
+
+# Mongodb version
+mongodb_version: 3.0.6
+mongodb_product_name: mongodb-orange-products
+mongodb_user: mongodb
+mongodb_group: mongodb
+
+# the default value for the site (you can overload the host machine with site=xxx):
+site: all
+
+# The default system user to deploy the playbook
+system_user: centos
+
+# The interface where the mongodb process should listen on.
+#iface: '{{ ansible_default_ipv4.interface }}'
+iface: eth0
+
+# enable the hosts file setting (check the roles/mongod_requirement/vars/main.yml)
+system_hosts: enabled
+system_hosts_extra:
+
+# enable the ntp setting (check the roles/mongod_requirement/vars/main.yml)
+system_ntp: enabled
+system_ntp_extra:
+  - "server ntp-g5-1.si.francetelecom.fr"
+  - "server ntp-g5-2.si.francetelecom.fr"
+  - "server ntp-g5-3.si.francetelecom.fr"
+system_ntp_extra_comment:
+  - "server 0.rhel.pool.ntp.org"
+  - "server 1.rhel.pool.ntp.org"
+  - "server 2.rhel.pool.ntp.org"
+  - "server 3.rhel.pool.ntp.org"
+  - "server 0.centos.pool.ntp.org"
+  - "server 1.centos.pool.ntp.org"
+  - "server 2.centos.pool.ntp.org"
+  - "server 3.centos.pool.ntp.org"
+
+# enable a mount point creation on each mongod hosts
+system_mount: enabled
+mondata_path: /mondata
+mondata_pv: /dev/vdb
+mondata_vg: datavg
+mondata_lv: mondata_lv
+mondata_dev: /dev/datavg/mondata_lv
+mondata_size: "100%FREE"
+mondata_fstype: ext4
+mondata_fsopts: noatime
+
+# Repo used to install mongodb and the tools around mongodb
+# the name of the repo is mandatory to install the product (yum --enablerepo=xxx)
+repo_mongo_name: mongodb-orange-product
+repo_extra_name: epel-orange
+
+# if repo_mongo is not enabled, the repo will not be installed by the role
+repo_mongo: enabled
+repo_mongo_file: "/etc/yum.repos.d/{{ repo_mongo_name }}.repo"
+repo_mongo_content: |
+  [{{ repo_mongo_name }}]
+  name={{ repo_mongo_name }}
+  baseurl="http://repoyum-central.itn.ftgroup/yum/repos/orange/product/nosql/el6/"
+  enabled=0
+  gpgcheck=0
+
+# if repo_epel is not enabled, the repo will not be installed by the role
+repo_extra: enabled
+repo_extra_file: "/etc/yum.repos.d/{{ repo_extra_name }}.repo"
+repo_extra_content: |
+  [{{ repo_extra_name }}-ntp]
+  name=NTP REPO
+  baseurl="http://repoyum-proto.si.francetelecom.fr/yum/repos/asis/centos/6/os/"
+  enabled=0
+  gpgcheck=0
+  [{{ repo_extra_name }}-lvm]
+  name=LVM REPO
+  baseurl="http://repoyum-proto.si.francetelecom.fr/yum/repos/asis/centos/6/os/"
+  enabled=0
+  gpgcheck=0
+  [{{ repo_extra_name }}-logrotate]
+  name=LOGROTATE REPO
+  baseurl="http://repoyum-proto.si.francetelecom.fr/yum/repos/asis/centos/6/os/"
+  enabled=0
+  gpgcheck=0
+  [{{ repo_extra_name }}-setuptools]
+  name=SETUPTOOLS REPO
+  baseurl="http://repoyum-proto.si.francetelecom.fr/yum/repos/asis/centos/6/os/"
+  enabled=0
+  gpgcheck=0
+
+
+mongodb_pymongo_version: 3.1.1
+mongodb_pymongo_path: /tmp
+mongodb_pymongo_name: "pymongo-{{ mongodb_pymongo_version }}-py2.6-linux-x86_64.egg"
+
+# Mongodb logrotate
+mongodb_logrotate: enabled
+
+# Configuration parameters
+monconf_version: 1.0.0
+monconf_backupPath: "{{ mondata_path }}/backup"
+monconf_logPath: "{{ mondata_path }}/log"
+monconf_systemLogpath: "{{ monconf_logPath }}/mongod.log"
+monconf_dbPath: "{{ mondata_path }}/data"
+monconf_cfgPath: "{{ mondata_path }}/cfg"
+monconf_cfgFilePath: "{{ monconf_cfgPath }}/mongod.conf"
+monconf_pidFilePath: "{{ mondata_path }}/run/mongod.pid"
+monconf_pathPrefix: "{{ mondata_path }}/run"
+monconf_port: 27017
+monconf_journalenabled: "true"
+# mongodb storage engine part
+monconf_engine: wiredTiger
+monconf_mmapv1smallFiles: "true"
+monconf_wiredTigercacheSizeGB: 1
+monconf_slowOpThresholdMs: 100
+# mongodb replication part
+monconf_replication: enabled
+monconf_replSetName: replication
+monconf_oplogSizeMB: 20
+# mongodb Auth part
+monconf_authorization: disabled
+monconf_keyFile: "{{ monconf_cfgPath }}/mongodb-keyfile"
+mongodb_siteUserAdmin_name: siteUserAdmin
+mongodb_siteUserAdmin_password: siteUserAdmin
+mongodb_siteRootAdmin_name: siteRootAdmin
+mongodb_siteRootAdmin_password: siteRootAdmin
+
+# Do not modify !
+playbook_comment: "#mongodb-orange-playbook comment#"
+

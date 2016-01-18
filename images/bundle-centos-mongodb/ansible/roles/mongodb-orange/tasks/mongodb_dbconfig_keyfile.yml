@@ -1,0 +1,18 @@
+---
+
+- name: mongodb Config - Check if the keyFile is needed
+  stat: path={{ monconf_keyFile }}
+  register: keyfile
+  when: inventory_hostname == mongodb_operator
+
+- name: mongodb Config - Fetch the keyFile from the {{ mongodb_operator }}
+  fetch: src={{ monconf_keyFile }} dest=files/mongodb-keyfile_{{ monconf_replSetName|default('standalone')}}_{{ ansible_hostname }} flat=yes
+  when: inventory_hostname == mongodb_operator and keyfile.stat.exists
+
+- name: mongodb Config - Create the keyFile on local
+  local_action: shell openssl rand -base64 741 > files/mongodb-keyfile_{{ monconf_replSetName|default('standalone')}}_{{ ansible_hostname }}
+  when: inventory_hostname == mongodb_operator and not keyfile.stat.exists
+
+- name: mongodb Config - Deploy the keyFile
+  copy: src=files/mongodb-keyfile_{{ monconf_replSetName|default('standalone')}}_{{ mongodb_operator }} dest={{ monconf_keyFile }} owner={{ mongodb_user }} group={{ mongodb_group }} mode=0600
+

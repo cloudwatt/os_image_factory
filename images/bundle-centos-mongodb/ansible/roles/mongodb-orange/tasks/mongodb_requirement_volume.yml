@@ -1,0 +1,21 @@
+---
+
+- name: mongodb Requirement - VOLUME MANAGEMENT - Create the mondata dir
+  file: path={{ mondata_path }} state=directory mode=0750
+
+- name: mongodb Requirement - VOLUME MANAGEMENT - Create the VG from the physical volume
+  lvg:  vg={{ mondata_vg }} pvs={{ mondata_pv }}
+  when: mondata_vg is defined and mondata_vg and mondata_pv is defined and mondata_pv
+
+- name: mongodb Requirement - VOLUME MANAGEMENT - Create the LV mondata from the VG
+  lvol: vg={{ mondata_vg }} lv={{ mondata_lv }} size={{ mondata_size }}
+  when: mondata_vg is defined and mondata_vg and mondata_lv is defined and mondata_lv and mondata_size is defined and mondata_size
+
+- name: mongodb Requirement - VOLUME MANAGEMENT - Makes file system on block device {{ mondata_dev }}
+  filesystem: fstype={{ mondata_fstype }} dev={{ mondata_dev }}
+  when: mondata_fstype is defined and mondata_fstype and mondata_dev is defined and mondata_dev
+
+- name: mongodb Requirement - VOLUME MANAGEMENT - Mount the mondata volume
+  mount: name={{ mondata_path }} src={{ mondata_dev }} fstype={{ mondata_fstype }} opts={{ mondata_fsopts }} state=mounted
+  when: mondata_path is defined and mondata_path and mondata_dev is defined and mondata_dev and mondata_fstype is defined and mondata_fstype and mondata_fsopts is defined and mondata_fsopts
+

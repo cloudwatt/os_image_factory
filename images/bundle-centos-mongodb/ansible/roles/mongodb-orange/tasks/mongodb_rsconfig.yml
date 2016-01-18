@@ -1,0 +1,35 @@
+---
+
+- name: mongodb Replica Set - RSCONFIG - Retrieve the primary
+  mongodb_rs_get_primary: {
+                          login_host: "{{ mongodb_operator }}",
+                          login_port: "{{ monconf_port }}",
+                          login_user: "{{ mongodb_siteRootAdmin_name|default(None) }}",
+                          login_password: "{{ mongodb_siteRootAdmin_password|default(None) }}",
+                          replica_set: "{{ monconf_replSetName }}",
+                          }
+  when: monconf_replication=="enabled"
+  register: rs_primary
+  delegate_to: "{{ mongodb_operator }}"
+  remote_user: "{{ system_user }}"
+
+- name: mongodb Replica Set - RSCONFIG - Configure the replica set
+  mongodb_rs: {
+              login_host: "{{ rs_primary.host }}",
+              login_port: "{{ rs_primary.port }}",
+              login_user: "{{ mongodb_siteRootAdmin_name|default(None) }}",
+              login_password: "{{ mongodb_siteRootAdmin_password|default(None) }}",
+              replica_set: "{{ monconf_replSetName }}",
+              member: "{{ inventory_hostname }}",
+              arbiter_only: "{{ hostvars[inventory_hostname]['arbiter_only']|default('no') }}",
+              build_indexes: "{{ hostvars[inventory_hostname]['build_indexes']|default('yes') }}",
+              hidden: "{{ hostvars[inventory_hostname]['hidden']|default('no') }}",
+              priority: "{{ hostvars[inventory_hostname]['priority']|default('1.0') }}",
+              slave_delay: "{{ hostvars[inventory_hostname]['slave_delay']|default('0') }}",
+              votes: "{{ hostvars[inventory_hostname]['votes']|default('1') }}",
+              state: "{{ hostvars[inventory_hostname]['state'] }}"
+              }
+  when: inventory_hostname!=rs_primary.host and monconf_replication=="enabled"
+  delegate_to: "{{ rs_primary.host }}"
+  remote_user: "{{ system_user }}"
+

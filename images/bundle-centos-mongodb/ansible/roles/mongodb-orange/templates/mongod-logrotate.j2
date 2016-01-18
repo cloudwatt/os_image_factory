@@ -1,0 +1,18 @@
+{{ monconf_systemLogpath }} {
+    daily
+    rotate 30
+    compress
+    delaycompress
+    dateext
+    missingok
+    notifempty
+{% if mongodb_version[:1] == "2" %}
+    copytruncate
+{% else %}
+    create 0640 mongodb mongodb
+{% endif %}
+    postrotate
+        /usr/bin/kill -SIGUSR1 $(cat {{ monconf_pidFilePath }} 2> /dev/null) 2> /dev/null || true
+    endscript
+}
+
