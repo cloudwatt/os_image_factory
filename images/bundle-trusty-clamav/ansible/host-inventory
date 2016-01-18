@@ -1,0 +1,2 @@
+[local]
+84.39.36.22  ansible_ssh_user=cloud ansible_ssh_private_key_file=~/.ssh/jukey.pem

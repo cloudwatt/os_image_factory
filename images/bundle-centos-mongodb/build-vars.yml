@@ -1,0 +1,8 @@
+---
+bundle:
+  name: bundle-centos-mongodb
+  img_base: 9209c396-58bd-4305-9f1d-d9a636cc2da2
+  properties:
+    img_os: Centos
+    cw_bundle: MONGODB
+    cw_origin: Cloudwatt
