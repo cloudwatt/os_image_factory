@@ -1,0 +1,36 @@
+---
+
+- name: mongodb Config - Create the mongodb data area dir
+  file: path={{ item.path }} state=directory owner={{ mongodb_user }} group={{ mongodb_group }} mode={{ item.mode }}
+  with_items:
+    - { path: "{{ mondata_path }}", mode: "0750" }
+    - { path: "{{ monconf_backupPath }}", mode: "0750" }
+    - { path: "{{ monconf_backupPath }}/logical", mode: "0750" }
+    - { path: "{{ monconf_backupPath }}/physical", mode: "0750" }
+    - { path: "{{ monconf_cfgPath }}", mode: "0750" }
+    - { path: "{{ monconf_dbPath }}", mode: "0750" }
+    - { path: "{{ monconf_logPath }}", mode: "0755" }
+    - { path: "{{ monconf_pathPrefix }}", mode: "0755" }
+
+- include: mongodb_dbconfig_keyfile.yml
+  when: monconf_authorization=="enabled" and monconf_keyFile is defined and monconf_keyFile and mongodb_operator is defined and mongodb_operator and mongodb_user is defined and mongodb_user and mongodb_group is defined and mongodb_group
+
+- name: mongodb Config - Create the mongodb configuration file
+  template: src=mongod.conf.j2 dest={{ monconf_cfgFilePath }}
+  become_user: "{{ mongodb_user }}"
+  notify:
+    - mongod restart
+    - waiting for mongod to come back
+
+- meta: flush_handlers
+
+- name: mongodb Config - Start the mongod process
+  service: name=mongod state=started enabled=yes
+
+- name: mongodb Config - Check if the mongod process is started
+  wait_for: host="{{ hostvars[inventory_hostname]['ansible_' + iface].ipv4.address }}" state=started port={{ monconf_port }} delay=3 timeout=30 connect_timeout=3
+
+- name: mongodb Config - LOGROTATE - Set up log rotation for mongod
+  template: src=mongod-logrotate.j2 dest=/etc/logrotate.d/mongod
+  when: mongodb_logrotate is defined and mongodb_logrotate=="enabled"
+

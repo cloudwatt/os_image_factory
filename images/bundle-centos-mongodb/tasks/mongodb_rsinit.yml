@@ -1,0 +1,9 @@
+---
+
+- name: mongodb Replica Set - RSINIT - Initialize the replication set
+  mongodb_rs: {
+              login_port: "{{ monconf_port }}",
+              state: "initiated"
+              }
+  when: inventory_hostname==mongodb_operator
+

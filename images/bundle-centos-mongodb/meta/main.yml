@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: Alexis LACROIX
+  company: Orange
+  description: Orange management of a MongoDB replica set
+  min_ansible_version: 1.9.2
+  platforms:
+    - name: RedHat
+      versions:
+      - 6
+  categories:
+    - database
+    - database:nosql
+dependencies: []
+
