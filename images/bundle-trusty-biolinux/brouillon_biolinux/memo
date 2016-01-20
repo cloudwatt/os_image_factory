@@ -1,5 +1,0 @@
-images/build.sh bundle-trusty-zabbix
-
-
-
-packer.latest.log,images/target/bundle-trusty-zabbix/bundle-trusty-zabbix.heat.yml.j2
