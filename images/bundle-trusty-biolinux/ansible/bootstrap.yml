@@ -21,8 +21,8 @@
     - name: copy upgrade_to_8
       copy: src=upgrade8.sh dest=/root/
 
-#    - name: execute upgrade8.sh
-#      shell: sudo -i && sh upgrade8.sh
+    - name: execute upgrade8.sh
+      shell: sudo -i && sh upgrade8.sh
 
-    - name: execute script
-      script: upgrade8.sh --some-arguments 1234
+#    - name: execute script
+ #     script: upgrade8.sh --some-arguments 1234
