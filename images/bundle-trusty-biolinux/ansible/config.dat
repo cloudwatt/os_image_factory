@@ -1,4 +1,4 @@
-DEBIAN_FRONTEND=noninteractive apt-get upgrade
+DEBIAN_FRONTEND=noninteractive apt-get  -y --force-yes
 Name: adduser/homedir-permission
 Template: adduser/homedir-permission
 Value: true
