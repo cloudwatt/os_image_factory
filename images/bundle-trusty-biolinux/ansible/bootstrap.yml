@@ -9,32 +9,6 @@
 
   tasks:
 
-#    - name: template config.dat
-#      template: src=config.dat  dest=/var/cache/debconf/config.dat
-#    - name:
-#      shell: sed "14cma Name: arb/group "
-
-#    - name:
-#      shell: sed -i "14cma \\Name: arb\/group\\Template: arb\/group\\Value:\\Owners: arb-common\\Flags: seen\\Variables:\\  users = cloud (Cloud user)" /var/cache/debconf/config.dat
-
-#    - name:
-#      lineinfile:
-#          dest=/var/cache/debconf/config.dat
-#          regexp='^cloudwatt'
-#          line='
-#               Name: arb/group\nTemplate: arb/group\nValue:\nOwners: arb-common\n  Flags: seen\nVariables:\n  users = cloud (Cloud user)'
-
-  #  - name: insert /var/cache/debconf/config.dat
-  #    blockinfile:
-  #      dest: /var/cache/debconf/config.dat
-  #      block: |
-  #        Name: arb/group
-  #        Template: arb/group
-  #        Value:
-  #        Owners: arb-common
-  #        Flags: seen
-  #        Variables:
-  #            users = cloud (Cloud user)
     - name: install apt-get install apt-utils
       apt: name=apt-utils state=present
 
