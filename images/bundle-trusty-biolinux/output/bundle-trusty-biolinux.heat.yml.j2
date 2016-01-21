@@ -52,10 +52,6 @@ resources:
       rules:
         - { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
         - { direction: ingress, protocol: TCP, port_range_min: 80, port_range_max: 80 }
-        - { direction: ingress, protocol: UDP, port_range_min: 161, port_range_max: 161 }
-        - { direction: ingress, protocol: UDP, port_range_min: 123, port_range_max: 123 }
-        - { direction: ingress, protocol: UDP, port_range_min: 1050, port_range_max: 1050 }
-        - { direction: ingress, protocol: UDP, port_range_min: 1051, port_range_max: 1051 }
         - { direction: ingress, protocol: ICMP }
         - { direction: egress, protocol: ICMP }
         - { direction: egress, protocol: TCP }
@@ -88,6 +84,6 @@ outputs:
     description: 
     value:
       str_replace:
-        template: 
+        template: $floating_ip 
         params:
           $floating_ip: { get_attr: [floating_ip, floating_ip_address] }
