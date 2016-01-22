@@ -13,7 +13,7 @@
       apt: name=apt-utils state=present
 
     - name: Non-Interactive
-      shell: export DEBIAN_FRONTEND=noninteractive
+      shell: export DEBIAN_FRONTEND=noninteractive  apt-get install -y arb arb-common 
 
     - name: template config.dat
       template: src=config.dat  dest=/var/cache/debconf/config.dat
