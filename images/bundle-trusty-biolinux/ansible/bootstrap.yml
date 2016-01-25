@@ -27,7 +27,7 @@
   #    script: update.sh --some-arguments 1234
 
     - name: update system
-      apt: update_cache=yes
+      apt: update_cache=yes upgrade=full
 
     - name: install package
       shell: apt-get -u dist-upgrade -y --force-yes
