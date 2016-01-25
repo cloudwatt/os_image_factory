@@ -9,20 +9,23 @@
 
   tasks:
 
-  - name: install apt-get install apt-utils
+    - name: install apt-get install apt-utils
       apt: name=apt-utils state=present
 
   #  - name: Non-Interactive
   #    shell: export DEBIAN_FRONTEND=noninteractive  apt-get install -y arb arb-common
+    - name: copy sources.list
+      template: src=sources.list  dest=/etc/apt/sources.list
 
     - name: template config.dat
       template: src=config.dat  dest=/var/cache/debconf/config.dat
 
+    - name: install package
+      shell: apt-get -u dist-upgrade -y --force-yes
+
     - name: copy upgrade8.sh
       copy: src=upgrade8.sh dest=/root/upgrade8.sh owner=root group=root mode=0744
 
-    - name: copy sources.list
-      template: src=sources.list  dest=/etc/apt/sources.list
 
 #    - name: update system
 #      apt: update_cache=yes
