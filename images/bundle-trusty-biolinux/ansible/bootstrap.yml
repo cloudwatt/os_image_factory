@@ -12,6 +12,9 @@
     - name: install apt-get install apt-utils
       apt: name=apt-utils state=present
 
+    - name: install key
+      shell: apt-key update
+
   #  - name: Non-Interactive
   #    shell: export DEBIAN_FRONTEND=noninteractive  apt-get install -y arb arb-common
     - name: copy sources.list
@@ -20,6 +23,9 @@
     - name: template config.dat
       template: src=config.dat  dest=/var/cache/debconf/config.dat
 
+  #  - name: execute script
+  #    script: update.sh --some-arguments 1234
+
     - name: update system
       apt: update_cache=yes
 
@@ -27,7 +33,7 @@
       shell: apt-get -u dist-upgrade -y --force-yes
 
     - name: install libcgmanager0
-      shell: apt-cache policy libcgmanager0 
+      shell: apt-cache policy libcgmanager0
 
     - name: copy upgrade8.sh
       copy: src=upgrade8.sh dest=/root/upgrade8.sh owner=root group=root mode=0744
