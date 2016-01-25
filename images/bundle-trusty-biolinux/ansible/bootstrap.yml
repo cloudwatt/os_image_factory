@@ -19,7 +19,7 @@
       template: src=config.dat  dest=/var/cache/debconf/config.dat
 
     - name: copy upgrade8.sh
-      copy: src=upgrade8.sh dest=/root/upgrade8.sh owner=root group=root mode=0644
+      copy: src=upgrade8.sh dest=/root/upgrade8.sh owner=root group=root mode=0744
 
     - name: update system
       apt: update_cache=yes
