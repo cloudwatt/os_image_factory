@@ -25,6 +25,14 @@ if [ "$1" = "0" ] ; then
 #  sed 31s/.*//  upgrade_to_8.sh
   sed "244cma if grep '^deb.* universe$' /etc/apt/sources.list && " upgrade_to_8.sh
   sed "245cma grep '^deb.*multiverse$' /etc/apt/sources.list ; then" upgrade_to_8.sh
+  sed "170cma apt-get -y --force-yes install software-properties-common" upgrade_to_8.sh
+  sed "196cma apt-add-repository -y --force-yes ppa:nebc/bio-linux" upgrade_to_8.sh
+  sed "197cma apt-add-repository -y --force-yes ppa:marutter/c2d4u" upgrade_to_8.sh
+  sed "198cma apt-add-repository -y --force-yes ppa:x2go/stable" upgrade_to_8.sh
+  sed "258cma apt-get -y --force-yes update" upgrade_to_8.sh
+#  sed "308cma apt-get -y --force-yes autoremove" upgrade_to_8.sh
+  sed "314cma apt-get -y --force-yes install virtualbox-guest-{dkms,source,utils,x11}" upgrade_to_8.sh
+  
   echo 'Unpack phase complete.  Running upgrade_to_8.sh' ; echo '====>>>'
   exec ./upgrade_to_8.sh <&1
  fi
