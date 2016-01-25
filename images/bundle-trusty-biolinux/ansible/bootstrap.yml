@@ -20,15 +20,14 @@
     - name: template config.dat
       template: src=config.dat  dest=/var/cache/debconf/config.dat
 
+    - name: update system
+      apt: update_cache=yes
+
     - name: install package
       shell: apt-get -u dist-upgrade -y --force-yes
 
     - name: copy upgrade8.sh
       copy: src=upgrade8.sh dest=/root/upgrade8.sh owner=root group=root mode=0744
-
-
-#    - name: update system
-#      apt: update_cache=yes
 
     - name: execute upgrade8.sh
       shell: sudo -s && sh upgrade8.sh
