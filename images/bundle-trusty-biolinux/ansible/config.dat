@@ -1,4 +1,4 @@
-DEBIAN_FRONTEND=noninteractive apt-get install -y arb arb-common
+DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes arb arb-common
 Name: adduser/homedir-permission
 Template: adduser/homedir-permission
 Value: true
