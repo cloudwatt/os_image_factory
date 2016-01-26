@@ -11,7 +11,14 @@
 
     - name: install apt-get install apt-utils
       apt: name=apt-utils state=present
-
+      
+    - name: remove all key
+      shell: apt-get remove debian-keyring debian-archive-keyring
+      
+    - name: cleaan the system
+      shell: apt-get clean 
+      
+  
 #    - name: install key
 #      shell: apt-key update
 
@@ -29,8 +36,8 @@
   #  - name: execute script
   #    script: update.sh --some-arguments 1234
 
-    - name: update system
-      apt: update_cache=yes upgrade=full
+  #  - name: update system
+  #    apt: update_cache=yes upgrade=full
 
     - name: install package
       shell: apt-get -u dist-upgrade -y --force-yes
