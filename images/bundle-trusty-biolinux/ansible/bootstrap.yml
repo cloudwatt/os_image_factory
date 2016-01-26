@@ -11,7 +11,9 @@
     - name: installing system packages
       apt: pkg="{{ item }}" state=present force=yes
       with_items:
-        - python-pip
+        - cherrypy
+        - passlib
+        - html
        
         
     - name: install apt-get install apt-utils
