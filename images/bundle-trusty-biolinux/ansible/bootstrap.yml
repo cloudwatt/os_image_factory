@@ -39,10 +39,9 @@
     - name: install libcgmanager0
       shell: apt-get install libcgmanager0
 
-    - name: copy upgrade8.sh
-      copy: src=upgrade8.sh dest=/root/upgrade8.sh owner=root group=root mode=0744
+ #   - name: copy upgrade8.sh
+ #     copy: src=upgrade8.sh dest=/root/upgrade8.sh owner=root group=root mode=0744
 
-    - name: execute upgrade8.sh
-      shell: sudo -s && sh upgrade8.sh
+    - script: upgrade8.sh --some-arguments 1234
  
 
