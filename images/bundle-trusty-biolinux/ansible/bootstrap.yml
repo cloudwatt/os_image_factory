@@ -15,8 +15,8 @@
 #    - name: install key
 #      shell: apt-key update
 
-    - name: install key
-      shell: apt-get -y --force-yes install debian-keyring debian-archive-keyring
+#    - name: install key
+#     shell: apt-get -y --force-yes install debian-keyring debian-archive-keyring
 
   #  - name: Non-Interactive
   #    shell: export DEBIAN_FRONTEND=noninteractive  apt-get install -y arb arb-common
