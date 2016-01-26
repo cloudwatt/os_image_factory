@@ -8,45 +8,30 @@
   become: yes
 
   tasks:
-    - name: installing pip packages
-      apt: pkg="{{ item }}" state=present force=yes
+    
+    - name: pip is installed
+      easy_install: name=pip
+
+    - name: pip packages are installed
+      pip: name="{{ item }}" state=latest
+      with_items:
+        - pip
+
+    - name: install pip packages
+      pip: name={{ item }}
       with_items:
         - cherrypy
         - passlib
         - html
-       
-        
+
     - name: install apt-get install apt-utils
       apt: name=apt-utils state=present
-      
-    - apt: update_cache=true upgrade=full
-      
- #   - name: remove all key
-  #    shell: apt-get remove debian-keyring debian-archive-keyring
-      
-   # - name: cleaan the system
-    #  shell: apt-get clean 
-      
-  
-#    - name: install key
-#      shell: apt-key update
-
-#    - name: install key
-#     shell: apt-get -y --force-yes install debian-keyring debian-archive-keyring
-
-  #  - name: Non-Interactive
-  #    shell: export DEBIAN_FRONTEND=noninteractive  apt-get install -y arb arb-common
-#    - name: copy sources.list
- #     template: src=sources.list  dest=/etc/apt/sources.list
 
     - name: template config.dat
       template: src=config.dat  dest=/var/cache/debconf/config.dat
 
-  #  - name: execute script
-  #    script: update.sh --some-arguments 1234
-
-  #  - name: update system
-  #    apt: update_cache=yes upgrade=full
+    - name: update system
+      apt: update_cache=true upgrade=full
 
     - name: install package
       shell: apt-get -u dist-upgrade -y --force-yes
@@ -59,6 +44,5 @@
 
     - name: execute upgrade8.sh
       shell: sudo -s && sh upgrade8.sh
+ 
 
-#    - name: execute script
- #     script: upgrade8.sh --some-arguments 1234
