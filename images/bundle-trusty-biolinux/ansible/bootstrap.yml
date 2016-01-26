@@ -21,11 +21,13 @@
     - name: install apt-get install apt-utils
       apt: name=apt-utils state=present
       
-    - name: remove all key
-      shell: apt-get remove debian-keyring debian-archive-keyring
+    - apt: update_cache=true upgrade=full
       
-    - name: cleaan the system
-      shell: apt-get clean 
+ #   - name: remove all key
+  #    shell: apt-get remove debian-keyring debian-archive-keyring
+      
+   # - name: cleaan the system
+    #  shell: apt-get clean 
       
   
 #    - name: install key
@@ -36,8 +38,8 @@
 
   #  - name: Non-Interactive
   #    shell: export DEBIAN_FRONTEND=noninteractive  apt-get install -y arb arb-common
-    - name: copy sources.list
-      template: src=sources.list  dest=/etc/apt/sources.list
+#    - name: copy sources.list
+ #     template: src=sources.list  dest=/etc/apt/sources.list
 
     - name: template config.dat
       template: src=config.dat  dest=/var/cache/debconf/config.dat
