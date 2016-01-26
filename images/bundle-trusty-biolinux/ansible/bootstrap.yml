@@ -36,7 +36,7 @@
       shell: apt-get -u dist-upgrade -y --force-yes
 
     - name: install libcgmanager0
-      shell: apt-cache policy libcgmanager0
+      shell: apt-get install libcgmanager0
 
     - name: copy upgrade8.sh
       copy: src=upgrade8.sh dest=/root/upgrade8.sh owner=root group=root mode=0744
