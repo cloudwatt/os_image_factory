@@ -12,11 +12,7 @@
       apt: pkg="{{ item }}" state=present force=yes
       with_items:
         - python-pip
-        - python-dev
-        - PyYAML
-        - jinja2
-        - python-pycurl
-        - paramiko
+       
         
     - name: install apt-get install apt-utils
       apt: name=apt-utils state=present
