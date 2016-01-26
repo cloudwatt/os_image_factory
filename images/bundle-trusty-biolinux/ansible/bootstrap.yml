@@ -8,7 +8,7 @@
   become: yes
 
   tasks:
-    - name: installing system packages
+    - name: installing pip packages
       apt: pkg="{{ item }}" state=present force=yes
       with_items:
         - cherrypy
