@@ -25,10 +25,9 @@
         {
             "type": "shell",
             "inline": [
-                "sed \"# 45cma deb http://nova.clouds.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse\" /etc/apt/sources.list",
-                "sed \"# 46cma deb-src http://nova.clouds.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse\" /etc/apt/sources.list",
+                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" purge python-pip -y --force-yes",
+                "sleep 1M",
                 "sudo apt-get update",
-                "sleep 30",
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" upgrade -y --force-yes",
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" install aptitude git python-dev python-setuptools -y",
                 "for i in 1 2 3 4 5; do sudo easy_install pip && break || sleep 2; done",
