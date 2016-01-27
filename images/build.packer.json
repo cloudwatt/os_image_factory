@@ -25,6 +25,8 @@
         {
             "type": "shell",
             "inline": [
+                "sed \"# 45cma deb http://nova.clouds.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse\" /etc/apt/sources.list"
+                "sed \"# 46cma deb-src http://nova.clouds.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse\" /etc/apt/sources.list"
                 "sudo apt-get update",
                 "sleep 30",
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" upgrade -y --force-yes",
