@@ -2,7 +2,7 @@
     "variables": {
         "source_image": "unknown",
         "image_name": "unknown",
-        "build_flavor": "2",
+        "build_flavor": "16",
         "factory_network": "{{ env `FACTORY_NETWORK_ID` }}",
         "factory_security_group_name": "{{ env `FACTORY_SECURITY_GROUP_NAME` }}",
         "bundle_path": "unknown"
