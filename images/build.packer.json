@@ -26,7 +26,7 @@
             "type": "shell",
             "inline": [
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" purge python-pip -y",
-                "sleep 30"
+                "sleep 30",
                 "sudo apt-get update",
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" upgrade -y --force-yes",
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" install aptitude git python-dev python-setuptools -y",
