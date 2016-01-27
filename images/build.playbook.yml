@@ -12,7 +12,7 @@
       img_base: IMG_BASE
 
     final_glance_options: "--min-disk 20"
-    vm_flavor: "2"
+    vm_flavor: "16"
     bundle_target_name: "{{ bundle.name }}-{{ ansible_date_time.date }}{{ ansible_date_time.hour }}{{ ansible_date_time.minute }}"
     packer_file: "build.packer.json"
 
