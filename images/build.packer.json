@@ -18,7 +18,7 @@
             "networks": "{{ user `factory_network` }}",
             "communicator": "ssh",
             "ssh_pty": true,
-            "ssh_timeout": "10m"
+            "ssh_timeout": "5m"
         }
     ],
     "provisioners": [
