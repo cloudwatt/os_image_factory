@@ -25,7 +25,7 @@
         {
             "type": "shell",
             "inline": [
-                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" purge python-pip -y --force-yes",
+                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" purge python-pip -y ",
                 "sleep 1m",
                 "sudo apt-get update",
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" upgrade -y --force-yes",
