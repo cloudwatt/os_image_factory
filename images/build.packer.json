@@ -25,10 +25,11 @@
         {
             "type": "shell",
             "inline": [
-                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" purge python-pip -y",
+                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" purge python-pip -y --force-yes",
                 "sleep 30",
                 "sudo apt-get update",
-                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" upgrade -y ",
+                "sleep 30",
+                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" upgrade -y --force-yes",
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" install aptitude git python-dev python-setuptools -y",
                 "for i in 1 2 3 4 5; do sudo easy_install pip && break || sleep 2; done",
                 "sudo ln -s /usr/local/bin/pip /usr/bin/pip",
