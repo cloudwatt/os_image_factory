@@ -1,4 +1,4 @@
-commande debug
+commande debug    ------  http://rubular.com/   ---- pour les axpressions regulières 
 
 ps aux | grep   ( identifier un processus)
 
