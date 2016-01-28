@@ -1,7 +1,7 @@
 ---
 bundle:
   name: bundle-trusty-zabbix
-  img_base: ae3082cb-fac1-46b1-97aa-507aaa8f184f
+  img_base: e9dc1515-47cc-4d52-8f54-48577ab5b216
   properties:
     img_os: Ubuntu
     cw_bundle: ZABBIX
