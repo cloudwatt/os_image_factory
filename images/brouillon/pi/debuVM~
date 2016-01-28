@@ -1,0 +1,185 @@
+commande debug
+
+ps aux | grep   ( identifier un processus)
+
+ps faux  ( voir l'arbre de construction d'execution commande)
+
+dpkg -EGi ./bio-linux-keyring.deb
+
+root@cloud1-server-5ev3mchj74hp:/var/bio# ps faux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         2  0.0  0.0      0     0 ?        S    10:11   0:00 [kthreadd]
+root         3  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [ksoftirqd/0]
+root         5  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kworker/0:0H]
+root         6  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [kworker/u2:0]
+root         7  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [rcu_sched]
+root         8  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [rcuos/0]
+root         9  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [rcu_bh]
+root        10  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [rcuob/0]
+root        11  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [migration/0]
+root        12  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [watchdog/0]
+root        13  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [khelper]
+root        14  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [kdevtmpfs]
+root        15  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [netns]
+root        16  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [writeback]
+root        17  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kintegrityd]
+root        18  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [bioset]
+root        19  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kworker/u3:0]
+root        20  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kblockd]
+root        21  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [ata_sff]
+root        22  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [khubd]
+root        23  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [md]
+root        24  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [devfreq_wq]
+root        25  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [kworker/0:1]
+root        27  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [khungtaskd]
+root        28  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [kswapd0]
+root        29  0.0  0.0      0     0 ?        SN   10:11   0:00  \_ [ksmd]
+root        30  0.0  0.0      0     0 ?        SN   10:11   0:00  \_ [khugepaged]
+root        31  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [fsnotify_mark]
+root        32  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [ecryptfs-kthrea]
+root        33  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [crypto]
+root        45  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kthrotld]
+root        46  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [kworker/u2:1]
+root        47  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [vballoon]
+root        48  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [scsi_eh_0]
+root        49  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [scsi_eh_1]
+root        70  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [deferwq]
+root        71  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [charger_manager]
+root       112  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kpsmoused]
+root       130  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [kworker/0:2]
+root       172  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kworker/u3:1]
+root       174  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [jbd2/vda1-8]
+root       175  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [ext4-rsv-conver]
+root       552  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kvm-irqfd-clean]
+root      1645  0.0  0.0      0     0 ?        S    10:17   0:00  \_ [kauditd]
+root     25094  0.0  0.0      0     0 ?        S<   10:31   0:00  \_ [xfsalloc]
+root     25095  0.0  0.0      0     0 ?        S<   10:31   0:00  \_ [xfs_mru_cache]
+root     25096  0.0  0.0      0     0 ?        S<   10:31   0:00  \_ [xfslogd]
+root     25117  0.0  0.0      0     0 ?        S<   10:31   0:00  \_ [bioset]
+root         1  0.0  0.1  33488  2808 ?        Ss   10:11   0:01 /sbin/init
+root       528  0.0  0.1  10220  2896 ?        Ss   10:11   0:00 dhclient -1 -v -pf /run/dhclient.eth0.pid -lf /var/lib/dhcp/dhclient.eth0.leases eth0
+root       538  0.0  0.0  15256   644 ?        S    10:11   0:00 upstart-socket-bridge --daemon
+message+  1283  0.0  0.0  39224  1516 ?        Ss   10:13   0:00 dbus-daemon --system --fork
+root      1301  0.0  0.0  15272   636 ?        S    10:13   0:00 upstart-file-bridge --daemon
+syslog    1335  0.0  0.0 255840  1380 ?        Ssl  10:13   0:00 rsyslogd
+root      1401  0.0  0.0  14536   960 tty4     Ss+  10:13   0:00 /sbin/getty -8 38400 tty4
+root      1404  0.0  0.0  14536   964 tty5     Ss+  10:13   0:00 /sbin/getty -8 38400 tty5
+root      1408  0.0  0.0  14536   960 tty2     Ss+  10:13   0:00 /sbin/getty -8 38400 tty2
+root      1409  0.0  0.0  14536   952 tty3     Ss+  10:13   0:00 /sbin/getty -8 38400 tty3
+root      1411  0.0  0.0  14536   956 tty6     Ss+  10:13   0:00 /sbin/getty -8 38400 tty6
+root      1443  0.0  0.0   4364   656 ?        Ss   10:13   0:00 acpid -c /etc/acpi/events -s /var/run/acpid.socket
+root      1446  0.0  0.0  23652   932 ?        Ss   10:13   0:00 cron
+daemon    1449  0.0  0.0  19136   164 ?        Ss   10:13   0:00 atd
+root      1468  0.0  0.1   9472  3500 ?        Ss   10:13   0:00 /usr/sbin/haveged -w 1024
+root      1537  0.0  0.0  14536   956 tty1     Ss+  10:13   0:00 /sbin/getty -8 38400 tty1
+root      1543  0.0  0.0  12784   872 ttyS0    Ss+  10:13   0:00 /sbin/getty -L ttyS0 115200 vt102
+root      2314  0.0  0.2 105628  4224 ?        Ss   10:28   0:00 sshd: cloud [priv]  
+cloud     2374  0.0  0.1 105628  1904 ?        S    10:28   0:00  \_ sshd: cloud@pts/0   
+cloud     2375  0.0  0.2  22752  3836 pts/0    Ss   10:28   0:00      \_ -bash
+root      2391  0.0  0.1  64908  2104 pts/0    S    10:28   0:00          \_ sudo -i
+root      2392  0.0  0.2  22888  4048 pts/0    S    10:28   0:00              \_ -bash
+root     25394  0.0  0.0  18568  1344 pts/0    R+   10:48   0:00                  \_ ps faux
+root      2745  3.3  2.1  81340 38480 pts/0    S    10:30   0:36 apt-get -y --force-yes -o Dir::Etc::Preferences=./pseudo_orphans.pin upgrade
+root     23112  0.0  0.2  16876  3608 pts/2    Ss+  10:31   0:00  \_ /usr/bin/dpkg --status-fd 47 --configure libtsan0:amd64 libgomp1:amd64 libitm1:amd64 libatomic1:amd64 libasan0:amd64 libquadmath0
+root     23305  0.0  0.0  19472   652 ?        S    10:31   0:00 upstart-udev-bridge --daemon
+root     23308  0.0  0.0  49584  1444 ?        Ss   10:31   0:00 /lib/systemd/systemd-udevd --daemon
+root     23952  0.0  0.1  43448  1824 ?        Ss   10:31   0:00 /lib/systemd/systemd-logind
+root     24542  0.0  0.1  61368  3052 ?        Ss   10:31   0:00 /usr/sbin/sshd -D
+root@cloud1-server-5ev3mchj74hp:/var/bio# kill -9 2745
+root@cloud1-server-5ev3mchj74hp:/var/bio# ps faux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         2  0.0  0.0      0     0 ?        S    10:11   0:00 [kthreadd]
+root         3  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [ksoftirqd/0]
+root         5  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kworker/0:0H]
+root         6  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [kworker/u2:0]
+root         7  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [rcu_sched]
+root         8  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [rcuos/0]
+root         9  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [rcu_bh]
+root        10  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [rcuob/0]
+root        11  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [migration/0]
+root        12  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [watchdog/0]
+root        13  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [khelper]
+root        14  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [kdevtmpfs]
+root        15  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [netns]
+root        16  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [writeback]
+root        17  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kintegrityd]
+root        18  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [bioset]
+root        19  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kworker/u3:0]
+root        20  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kblockd]
+root        21  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [ata_sff]
+root        22  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [khubd]
+root        23  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [md]
+root        24  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [devfreq_wq]
+root        25  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [kworker/0:1]
+root        27  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [khungtaskd]
+root        28  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [kswapd0]
+root        29  0.0  0.0      0     0 ?        SN   10:11   0:00  \_ [ksmd]
+root        30  0.0  0.0      0     0 ?        SN   10:11   0:00  \_ [khugepaged]
+root        31  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [fsnotify_mark]
+root        32  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [ecryptfs-kthrea]
+root        33  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [crypto]
+root        45  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kthrotld]
+root        46  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [kworker/u2:1]
+root        47  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [vballoon]
+root        48  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [scsi_eh_0]
+root        49  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [scsi_eh_1]
+root        70  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [deferwq]
+root        71  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [charger_manager]
+root       112  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kpsmoused]
+root       130  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [kworker/0:2]
+root       172  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kworker/u3:1]
+root       174  0.0  0.0      0     0 ?        S    10:11   0:00  \_ [jbd2/vda1-8]
+root       175  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [ext4-rsv-conver]
+root       552  0.0  0.0      0     0 ?        S<   10:11   0:00  \_ [kvm-irqfd-clean]
+root      1645  0.0  0.0      0     0 ?        S    10:17   0:00  \_ [kauditd]
+root     25094  0.0  0.0      0     0 ?        S<   10:31   0:00  \_ [xfsalloc]
+root     25095  0.0  0.0      0     0 ?        S<   10:31   0:00  \_ [xfs_mru_cache]
+root     25096  0.0  0.0      0     0 ?        S<   10:31   0:00  \_ [xfslogd]
+root     25117  0.0  0.0      0     0 ?        S<   10:31   0:00  \_ [bioset]
+root         1  0.0  0.1  33488  2808 ?        Ss   10:11   0:01 /sbin/init
+root       528  0.0  0.1  10220  2896 ?        Ss   10:11   0:00 dhclient -1 -v -pf /run/dhclient.eth0.pid -lf /var/lib/dhcp/dhclient.eth0.leases eth0
+root       538  0.0  0.0  15256   644 ?        S    10:11   0:00 upstart-socket-bridge --daemon
+message+  1283  0.0  0.0  39224  1516 ?        Ss   10:13   0:00 dbus-daemon --system --fork
+root      1301  0.0  0.0  15272   636 ?        S    10:13   0:00 upstart-file-bridge --daemon
+syslog    1335  0.0  0.0 255840  1380 ?        Ssl  10:13   0:00 rsyslogd
+root      1401  0.0  0.0  14536   960 tty4     Ss+  10:13   0:00 /sbin/getty -8 38400 tty4
+root      1404  0.0  0.0  14536   964 tty5     Ss+  10:13   0:00 /sbin/getty -8 38400 tty5
+root      1408  0.0  0.0  14536   960 tty2     Ss+  10:13   0:00 /sbin/getty -8 38400 tty2
+root      1409  0.0  0.0  14536   952 tty3     Ss+  10:13   0:00 /sbin/getty -8 38400 tty3
+root      1411  0.0  0.0  14536   956 tty6     Ss+  10:13   0:00 /sbin/getty -8 38400 tty6
+root      1443  0.0  0.0   4364   656 ?        Ss   10:13   0:00 acpid -c /etc/acpi/events -s /var/run/acpid.socket
+root      1446  0.0  0.0  23652   932 ?        Ss   10:13   0:00 cron
+daemon    1449  0.0  0.0  19136   164 ?        Ss   10:13   0:00 atd
+root      1468  0.0  0.1   9472  3500 ?        Ss   10:13   0:00 /usr/sbin/haveged -w 1024
+root      1537  0.0  0.0  14536   956 tty1     Ss+  10:13   0:00 /sbin/getty -8 38400 tty1
+root      1543  0.0  0.0  12784   872 ttyS0    Ss+  10:13   0:00 /sbin/getty -L ttyS0 115200 vt102
+root      2314  0.0  0.2 105628  4224 ?        Ss   10:28   0:00 sshd: cloud [priv]  
+cloud     2374  0.0  0.1 105628  1904 ?        S    10:28   0:00  \_ sshd: cloud@pts/0   
+cloud     2375  0.0  0.2  22752  3836 pts/0    Ss   10:28   0:00      \_ -bash
+root      2391  0.0  0.1  64908  2104 pts/0    S    10:28   0:00          \_ sudo -i
+root      2392  0.0  0.2  22888  4048 pts/0    S    10:28   0:00              \_ -bash
+root     25395  0.0  0.0  18568  1340 pts/0    R+   10:49   0:00                  \_ ps faux
+root     23305  0.0  0.0  19472   652 ?        S    10:31   0:00 upstart-udev-bridge --daemon
+root     23308  0.0  0.0  49584  1444 ?        Ss   10:31   0:00 /lib/systemd/systemd-udevd --daemon
+root     23952  0.0  0.1  43448  1824 ?        Ss   10:31   0:00 /lib/systemd/systemd-logind
+root     24542  0.0  0.1  61368  3052 ?        Ss   10:31   0:00 /usr/sbin/sshd -D
+root@cloud1-server-5ev3mchj74hp:/var/bio# ll
+total 72
+drwxrwxrwx  2 root root  4096 janv. 13 10:29 ./
+drwxr-xr-x 14 root root  4096 janv. 13 10:28 ../
+-rwxrwxrwx  1 root root  8990 janv. 13 10:28 bio-linux-keyring.deb*
+-rwxrwxrwx  1 root root  2212 janv. 13 10:28 bl_install_master_list.sh*
+-rwxrwxrwx  1 root root  4851 janv. 13 10:28 bl_master_package_list.txt*
+-rwxrwxrwx  1 root root  1746 janv. 13 10:28 message1.txt*
+-rwxrwxrwx  1 root root  5490 janv. 13 10:28 pick_cran_mirror.py*
+-rwxrwxrwx  1 root root   896 janv. 13 10:29 pseudo_orphans.pin*
+-rwxrwxrwx  1 root root   725 janv. 13 10:28 pseudo_orphans.txt*
+-rwxrwxrwx  1 root root  3125 janv. 13 10:28 sources.list.clean*
+-rwxrwxrwx  1 root root 13449 janv. 13 10:28 upgrade_to_8.sh*
+root@cloud1-server-5ev3mchj74hp:/var/bio# dpkg -EGi ./bio-linux-keyring.deb
+dpkg: pas de dégradation de bio-linux-keyring de la version 7 vers l'ancienne 6
+root@cloud1-server-5ev3mchj74hp:/var/bio# apt-get -y install software-properties-common
+Lecture des listes de paquets... Fait
+
+
+

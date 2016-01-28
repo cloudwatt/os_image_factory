@@ -1,0 +1,13 @@
+ 2023  man echo
+ 2024  echo -e "[zabbix_server]\n$(heat resource-list ZABSERV |grep floating_ip_link | cut -d"|" -f3| cut -d "-" -f6) ansible_ssh_user=cloud ansible_ssh_private_key_file=/home/pierre/.ssh/buildshinken.pem\n"
+ 2025  echo -e "[zabbix_server]\n$(heat resource-list ZABSERV |grep floating_ip_link | cut -d"|" -f3| cut -d "-" -f6) ansible_ssh_user=cloud ansible_ssh_private_key_file=/home/pierre/.ssh/buildshinken.pem\n" > hosts_zabbix_demo2
+ 2026  cat hosts_zabbix_demo2
+ 2027  vim should_be_in_bashrc.sh
+ 2028  . should_be_in_bashrc.sh 
+ 2029  inventory_for_demo ZABSERV hosts_zabbix_demo3
+ 2030  cat hosts_zabbix_demo3
+ 2031  cat .bashrc
+ 2032  cat should_be_in_bashrc.sh 
+ 2033  cat hosts_zabbix_demo
+ 2034  history 
+

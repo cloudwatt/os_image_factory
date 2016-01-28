@@ -1,0 +1,390 @@
+
+
+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ ll
+total 20
+drwxrwxr-x 4 pierre pierre 4096 nov 17 16:12 ./
+drwxrwxr-x 9 pierre pierre 4096 nov 17 16:12 ../
+drwxrwxr-x 2 pierre pierre 4096 nov 17 16:12 ansible/
+-rw-rw-r-- 1 pierre pierre  172 nov 17 16:12 build-vars.yml
+drwxrwxr-x 2 pierre pierre 4096 nov 17 16:12 output/
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ ll
+total 20
+drwxrwxr-x 4 pierre pierre 4096 nov 17 16:12 ./
+drwxrwxr-x 9 pierre pierre 4096 nov 17 16:12 ../
+drwxrwxr-x 2 pierre pierre 4096 nov 17 16:12 ansible/
+-rw-rw-r-- 1 pierre pierre  172 nov 17 16:12 build-vars.yml
+drwxrwxr-x 2 pierre pierre 4096 nov 17 16:12 output/
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ heat stack-list
++--------------------------------------+---------------+-----------------+----------------------+
+| id                                   | stack_name    | stack_status    | creation_time        |
++--------------------------------------+---------------+-----------------+----------------------+
+| e06c9651-97ee-4794-b5b4-cabc60dc7b8d | factory_ray   | CREATE_COMPLETE | 2015-11-05T13:40:55Z |
+| 18b1797b-4c79-4ccb-adb1-5edc548d1904 | stack_shinken | CREATE_COMPLETE | 2015-11-06T13:46:41Z |
+| dddd2ca4-0cde-4f7e-ae6b-4c252606361a | factory_pie   | CREATE_COMPLETE | 2015-11-08T20:30:49Z |
+| 399874cd-23fe-4720-a0bb-0d84fae625a5 | shinken_stack | CREATE_COMPLETE | 2015-11-09T12:29:07Z |
+| b3b9f67a-40db-4e6c-b17f-4c196445bb6e | vm_shinken    | CREATE_COMPLETE | 2015-11-09T15:12:34Z |
+| 882837f5-9481-4c77-a601-082096175f8f | shinken_vm    | CREATE_COMPLETE | 2015-11-09T15:29:28Z |
+| a5b031d9-9828-48e4-ba02-2731397e858c | shinken_build | CREATE_COMPLETE | 2015-11-16T13:12:10Z |
+| 43fa0023-3150-47bc-a119-78d0876b1704 | test          | CREATE_COMPLETE | 2015-11-17T13:17:56Z |
++--------------------------------------+---------------+-----------------+----------------------+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ 
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ ll
+total 20
+drwxrwxr-x 4 pierre pierre 4096 nov 17 16:12 ./
+drwxrwxr-x 9 pierre pierre 4096 nov 17 16:12 ../
+drwxrwxr-x 2 pierre pierre 4096 nov 17 16:12 ansible/
+-rw-rw-r-- 1 pierre pierre  172 nov 17 16:12 build-vars.yml
+drwxrwxr-x 2 pierre pierre 4096 nov 17 16:12 output/
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ cat output/bundle-trusty-shinken.heat.yml.j2 
+heat_template_version: 2013-05-23
+
+
+description: All-in-one Shinken stack
+
+
+parameters:
+  keypair_name:
+    description: Keypair to inject in instance
+    label: SSH Keypair
+    type: string
+
+  flavor_name:
+    default: s1.cw.small-1
+    description: Flavor to use for the deployed instance
+    type: string
+    label: Instance Type (Flavor)
+    constraints:
+      - allowed_values:
+        - t1.cw.tiny
+        - s1.cw.small-1
+        - n1.cw.highcpu-2
+        - n1.cw.highcpu-4
+        - n1.cw.highcpu-8
+        - n1.cw.standard-1
+        - n1.cw.standard-2
+        - n1.cw.standard-4
+        - n1.cw.standard-8
+        - n1.cw.standard-12
+        - n1.cw.standard-16
+        - n1.cw.highmem-2
+        - n1.cw.highmem-4
+        - n1.cw.highmem-8
+        - n1.cw.highmem-12
+
+resources:
+  network:
+    type: OS::Neutron::Net
+
+  subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: network }
+      ip_version: 4
+      cidr: 10.0.1.0/24
+      allocation_pools:
+        - { start: 10.0.1.100, end: 10.0.1.199 }
+
+  security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      rules:
+        - { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
+        - { direction: ingress, protocol: TCP, port_range_min: 7767, port_range_max: 7767 }
+        - { direction: ingress, protocol: ICMP }
+        - { direction: egress, protocol: ICMP }
+        - { direction: egress, protocol: TCP }
+        - { direction: egress, protocol: UDP }
+
+  floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network_id: 6ea98324-0f14-49f6-97c0-885d1b8dc517
+
+  floating_ip_link:
+    type: OS::Nova::FloatingIPAssociation
+    properties:
+      floating_ip: { get_resource: floating_ip }
+      server_id: { get_resource: server }
+
+  server:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: keypair_name }
+      image: {{ result_img_id }}                                                          // il faut remplacer par Id de l'image voulu dans "openstack image list"
+      flavor: { get_param: flavor_name }
+      networks:
+        - network: { get_resource: network }
+      security_groups:
+        - { get_resource: security_group }
+
+outputs:
+  floating_ip_url:
+    description: Shinken URL
+    value:
+      str_replace:
+        template: http://$floating_ip:7767/
+        params:
+          $floating_ip: { get_attr: [floating_ip, floating_ip_address] }
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ 
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ openstack image list 
++--------------------------------------+------------------------------------------------------------------+
+| ID                                   | Name                                                             |
++--------------------------------------+------------------------------------------------------------------+
+| 3c2cb401-6040-4fc6-800f-435e723b79a2 | bundle-trusty-shinken-2015-11-161107                             |
+| 17b44811-7d30-4a90-9df2-bc33fba0467d | bundle-trusty-shinken-2015-11-100935                             |
+| 6724577a-fa00-4bd8-9e48-938ab4329cfe | bundle-trusty-shinken-2015-11-091453                             |
+| 8ee1afc2-1341-408b-aff4-cdd6cff7d38a | bundle-trusty-shinken-2015-11-091431                             |
+| b6376e4b-2acb-43a6-b743-6f2d615375c1 | bundle-trusty-shinken-2015-11-091204                             |
+| 3ea564f3-71fb-4a60-bcfa-17de0e0e86d3 | bundle-trusty-shinken-2015-11-061043                             |
+| 65141b29-f233-4471-a348-dfad5960dff3 | bundle-trusty-shinken-2015-11-061029                             |
+| 4bd0a453-d0af-4007-9e99-e591c2a405a7 | bundle-trusty-shinken-2015-11-060920                             |
+| e5d06f46-f160-4fc7-9680-c735c47a4a02 | Stack orchestration heat Ubuntu 14.04.2 LETSCHAT                 |
+| b30d69f3-2d96-4c3d-b956-0dc61a6c3cf8 | Stack orchestration heat Ubuntu 14.04.2 DEVKIT                   |
+| 2bd45df9-4f54-4f37-b259-2451d0532833 | Stack orchestration heat Ubuntu 14.04.2 DOKUWIKI                 |
+| 55d4ee4c-9c04-466a-8f1b-7c57358ccd54 | HaaS MapR 4.0.2 CentOS 6.6                                       |
+| 5fe11bb6-3ba8-4ac0-b297-b0337c937936 | HaaS MapR 4.0.2 Ubuntu 14.04                                     |
+| e8bc1b1d-ad51-4b78-b0fd-f9c901b1d6a7 | HaaS Storm 0.9.2 Ubuntu 14.04                                    |
+| daf56116-7b0d-432c-b19c-c058100b543b | Stack orchestration heat HaaS 2.1.8                              |
+| 29789ac0-9828-4c87-b3f4-0f1f242ab1c4 | Ubuntu 12.04                                                     |
+| ce6f3302-c3dd-4031-b6f1-273bfe92ac78 | Stack orchestration heat Ubuntu 14.04.2 JENKINS                  |
+| e10fcf36-583e-4b3b-b0f2-4959e3176cd0 | Stack orchestration heat Ubuntu 14.04.2 LDAP                     |
+| 6ca0517d-fcc3-4354-8c10-e8c6cf1ac181 | Stack orchestration heat Ubuntu 14.04.2 TOMCAT7                  |
+| 12b1c9e1-772d-4cf9-b432-a151ea77ab98 | HaaS Hortonworks 2.0.6 CentOS 6.6 (liberty) xma                  |
+| 417aa678-bf11-4f66-b11d-122ae49085a9 | Stack orchestration heat Ubuntu 14.04.2 GITLAB                   |
+| 7648d316-d5a4-4f32-8925-06b1dbd1dbb9 | DBCE-CentOS-6.6-x86_64                                           |
+| f36ce087-e26a-4e1f-9f2b-81c3c610ba02 | DBCE-Ubuntu-14.04-x86_64                                         |
+| 4e905d3c-d52f-489c-9711-ebaf29bdccb8 | DBCE-Debian-7.6-x86_64                                           |
+| a6b4ddb3-61d2-4b0b-84e5-ae8a6d7210f4 | Stack orchestration heat HaaS 2.1.7                              |
+| 50112a3e-5241-478d-8c3b-6e2f29fa7c79 | HaaS Apache 2.6.0 Ubuntu 14.04                                   |
+| b713bcb8-2188-4d96-91cb-436e1a51dae5 | HaaS Cloudera 5.3.0 CentOS 6.5                                   |
+| 4f937c8d-0725-426d-9e14-0898525d50a9 | HaaS Cloudera 5.3.0 Ubuntu 14.04                                 |
+| 9209c396-58bd-4305-9f1d-d9a636cc2da2 | CentOS 7.0                                                       |
+| 9897cb03-1f63-47ec-86b7-647b48716ad8 | HaaS Spark 1.0 Ubuntu 14.04                                      |
+| 329a7631-4645-46fb-b16e-bb506c24971b | HaaS Cloudera 5.0 Ubuntu 14.04                                   |
+| b58e12d3-9641-481e-897e-4f8b5a9790b8 | HaaS Cloudera 5.0 CentOS 6.5                                     |
+| 4fadf41c-105e-4f9c-a885-1051710b61f4 | HaaS Hortonworks 2.0.6 CentOS 6.5                                |
+| c4c9f1de-f050-40a1-832a-c2fd29873cad | HaaS Hortonworks 1.3.2 CentOS 6.5                                |
+| 07ac72b1-5321-41ab-9a53-934d8d9038f2 | HaaS Apache 1.2.1 Ubuntu 14.04                                   |
+| f0a6546f-1496-41a8-9838-4a0353e7e5a2 | Stack orchestration heat Ubuntu 14.04.2 ETHERPAD                 |
+| 531ce299-1722-4695-8c6a-95d8b9fbfc29 | Stack orchestration heat Ubuntu 14.04.2 GHOST                    |
+| d39acb3c-c695-4001-abec-9a77a67a0688 | Stack orchestration heat Ubuntu 14.04.2 POSTGRESQL               |
+| 35ce027f-0df6-464a-beef-08736dad876b | Stack orchestration heat Ubuntu 14.04.2 MEAN                     |
+| 168f7c6b-20a6-4a4e-8052-d1200aa36a1e | Debian Jessie                                                    |
+| ffbd043f-682d-4866-afe6-41ce5eac3306 | Stack orchestration heat Ubuntu 14.04.2 WORDPRESS                |
+| c3bf8565-e374-49e7-9693-f7e80999d2cb | Stack orchestration heat Ubuntu 14.04.2 LAMP                     |
+| ae3082cb-fac1-46b1-97aa-507aaa8f184f | Ubuntu 14.04                                                     |
+| 3d014779-fa19-49c8-8310-6c9a163ed934 | Windows Server 2008 R2 Enterprise                                |
+| e765ce0a-2121-4243-81aa-f04773171940 | Debian Wheezy                                                    |
+| fdc5d2b0-5332-42f4-ab14-9d0c2c80838c | OpenSUSE 13.1                                                    |
+| 781ac7f1-f94c-4680-bf60-98e649fa150c | Fedora 20                                                        |
+| d48f697e-7bb7-4c4d-b1c0-76674ac2cf47 | CentOS 6.5                                                       |
+| e194b52d-cf80-4b05-9be3-56a2f3ba10ff | SUSE Linux Enterprise Server 11 SP3 64 bits - Basic Subscription |
+| ed01abf8-e6a8-4dcf-b9bb-d2dd0aefd503 | Windows Server 2012 R2                                           |
++--------------------------------------+------------------------------------------------------------------+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ openstack image list | grep Jessie
+| 168f7c6b-20a6-4a4e-8052-d1200aa36a1e | Debian Jessie                                                    |
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ cp output/bundle-trusty-shinken.heat.yml.j2 ./
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ mv bu
+build-vars.yml                     bundle-trusty-shinken.heat.yml.j2  
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ mv bu
+build-vars.yml                     bundle-trusty-shinken.heat.yml.j2  
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ mv bundle-trusty-shinken.heat.yml.j2 bundle-trusty-shinken.heat.yml
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ vim bundle-trusty-shinken.heat.yml 
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ heat stack-create UN_NOM -f 
+ansible/                        build-vars.yml                  bundle-trusty-shinken.heat.yml  output/                         
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ heat stack-create UN_NOM -f bundle-trusty-shinken.heat.yml -Pkeypair_name=pierreray
++--------------------------------------+---------------+--------------------+----------------------+
+| id                                   | stack_name    | stack_status       | creation_time        |
++--------------------------------------+---------------+--------------------+----------------------+
+| e06c9651-97ee-4794-b5b4-cabc60dc7b8d | factory_ray   | CREATE_COMPLETE    | 2015-11-05T13:40:55Z |
+| 18b1797b-4c79-4ccb-adb1-5edc548d1904 | stack_shinken | CREATE_COMPLETE    | 2015-11-06T13:46:41Z |
+| dddd2ca4-0cde-4f7e-ae6b-4c252606361a | factory_pie   | CREATE_COMPLETE    | 2015-11-08T20:30:49Z |
+| 399874cd-23fe-4720-a0bb-0d84fae625a5 | shinken_stack | CREATE_COMPLETE    | 2015-11-09T12:29:07Z |
+| b3b9f67a-40db-4e6c-b17f-4c196445bb6e | vm_shinken    | CREATE_COMPLETE    | 2015-11-09T15:12:34Z |
+| 882837f5-9481-4c77-a601-082096175f8f | shinken_vm    | CREATE_COMPLETE    | 2015-11-09T15:29:28Z |
+| a5b031d9-9828-48e4-ba02-2731397e858c | shinken_build | CREATE_COMPLETE    | 2015-11-16T13:12:10Z |
+| 43fa0023-3150-47bc-a119-78d0876b1704 | test          | CREATE_COMPLETE    | 2015-11-17T13:17:56Z |
+| c9f9edfe-3114-4685-a685-5aa2b7242d11 | UN_NOM        | CREATE_IN_PROGRESS | 2015-11-17T16:10:03Z |
++--------------------------------------+---------------+--------------------+----------------------+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ heat resource-list UN_NOM
++------------------+--------------------------------------+---------------------------------+--------------------+----------------------+
+| resource_name    | physical_resource_id                 | resource_type                   | resource_status    | updated_time         |
++------------------+--------------------------------------+---------------------------------+--------------------+----------------------+
+| security_group   | d17fae6a-64a3-425b-b89f-f29585b4d4fe | OS::Neutron::SecurityGroup      | CREATE_COMPLETE    | 2015-11-17T16:10:03Z |
+| floating_ip      | a7bfd5e3-9afa-4c05-89c1-5d13385a6300 | OS::Neutron::FloatingIP         | CREATE_COMPLETE    | 2015-11-17T16:10:05Z |
+| network          | 1c158a10-43a3-49dd-97bc-5c797665c502 | OS::Neutron::Net                | CREATE_COMPLETE    | 2015-11-17T16:10:05Z |
+| subnet           | 8b69b37d-4a0c-4ac4-9537-aa341dda6317 | OS::Neutron::Subnet             | CREATE_COMPLETE    | 2015-11-17T16:10:06Z |
+| server           | c7c1ad1b-dc9f-4dde-9e3a-d41b1924d791 | OS::Nova::Server                | CREATE_IN_PROGRESS | 2015-11-17T16:10:12Z |
+| floating_ip_link |                                      | OS::Nova::FloatingIPAssociation | INIT_COMPLETE      | 2015-11-17T16:10:24Z |
++------------------+--------------------------------------+---------------------------------+--------------------+----------------------+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ heat resource-list UN_NOM
++------------------+--------------------------------------+---------------------------------+--------------------+----------------------+
+| resource_name    | physical_resource_id                 | resource_type                   | resource_status    | updated_time         |
++------------------+--------------------------------------+---------------------------------+--------------------+----------------------+
+| security_group   | d17fae6a-64a3-425b-b89f-f29585b4d4fe | OS::Neutron::SecurityGroup      | CREATE_COMPLETE    | 2015-11-17T16:10:03Z |
+| floating_ip      | a7bfd5e3-9afa-4c05-89c1-5d13385a6300 | OS::Neutron::FloatingIP         | CREATE_COMPLETE    | 2015-11-17T16:10:05Z |
+| network          | 1c158a10-43a3-49dd-97bc-5c797665c502 | OS::Neutron::Net                | CREATE_COMPLETE    | 2015-11-17T16:10:05Z |
+| subnet           | 8b69b37d-4a0c-4ac4-9537-aa341dda6317 | OS::Neutron::Subnet             | CREATE_COMPLETE    | 2015-11-17T16:10:06Z |
+| server           | c7c1ad1b-dc9f-4dde-9e3a-d41b1924d791 | OS::Nova::Server                | CREATE_IN_PROGRESS | 2015-11-17T16:10:12Z |
+| floating_ip_link |                                      | OS::Nova::FloatingIPAssociation | INIT_COMPLETE      | 2015-11-17T16:10:35Z |
++------------------+--------------------------------------+---------------------------------+--------------------+----------------------+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ heat resource-list UN_NOM
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+| resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+| security_group   | d17fae6a-64a3-425b-b89f-f29585b4d4fe              | OS::Neutron::SecurityGroup      | CREATE_COMPLETE | 2015-11-17T16:10:03Z |
+| floating_ip      | a7bfd5e3-9afa-4c05-89c1-5d13385a6300              | OS::Neutron::FloatingIP         | CREATE_COMPLETE | 2015-11-17T16:10:05Z |
+| network          | 1c158a10-43a3-49dd-97bc-5c797665c502              | OS::Neutron::Net                | CREATE_COMPLETE | 2015-11-17T16:10:05Z |
+| subnet           | 8b69b37d-4a0c-4ac4-9537-aa341dda6317              | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-17T16:10:06Z |
+| server           | c7c1ad1b-dc9f-4dde-9e3a-d41b1924d791              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-17T16:10:12Z |
+| floating_ip_link | a7bfd5e3-9afa-4c05-89c1-5d13385a6300-84.39.39.193 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-17T16:10:38Z |
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ sudo vim /etc/ansible/hosts
+[sudo] password for pierre: 
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ 
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ ansible-playbook ansible/bootstrap.yml 
+
+PLAY [all] ******************************************************************** 
+
+GATHERING FACTS *************************************************************** 
+The authenticity of host '84.39.39.193 (84.39.39.193)' can't be established.
+ECDSA key fingerprint is ce:fd:0a:8a:33:25:50:5a:fc:5b:dc:1b:f5:09:8d:88.
+Are you sure you want to continue connecting (yes/no)? yes
+ok: [84.39.39.193]
+
+TASK: [apt update_cache=true upgrade=full] ************************************ 
+changed: [84.39.39.193]
+
+TASK: [install pip packages] ************************************************** 
+
+
+
+
+ssh 84.39.39.38 -i ~/.ssh/pierreray.pem -l cloud -vvv      //tester la connexion machine host vers remote machine
+
+ansible group1 -m ping
+84.39.39.38 | success >> {
+    "changed": false,
+    "ping": "pong"
+
+
+
+
+=====================================NEUTRON==========================================================================
+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ neutron router-create router1        // creation routeur
+Created a new router:
++-----------------------+--------------------------------------+
+| Field                 | Value                                |
++-----------------------+--------------------------------------+
+| admin_state_up        | True                                 |
+| external_gateway_info |                                      |
+| id                    | 4628f0af-042a-4068-a201-eae3447dacff |
+| name                  | router1                              |
+| status                | ACTIVE                               |
+| tenant_id             | 8acb072da1b14c61b9dced19a6be3355     |
++-----------------------+--------------------------------------+
+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ neutron help subnet-create | less
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ neutron subnet-list
++--------------------------------------+-------------------------------------+---------------+--------------------------------------------------+
+| id                                   | name                                | cidr          | allocation_pools                                 |
++--------------------------------------+-------------------------------------+---------------+--------------------------------------------------+
+| cc9a01a9-a97c-445d-b38f-5e37c318316d | factory_ray-dmz_subnet-t2lq4nf6jmuf | 10.42.42.0/24 | {"start": "10.42.42.100", "end": "10.42.42.199"} |
+| 0408df02-8971-45e7-b52a-4849166acb25 | stack_shinken-subnet-wudlumfzu3it   | 10.0.1.0/24   | {"start": "10.0.1.100", "end": "10.0.1.199"}     |
+| 1c760770-ebb7-432a-97ce-7d4119085c20 | factory_pie-dmz_subnet-62224kd2egzq | 10.42.42.0/24 | {"start": "10.42.42.100", "end": "10.42.42.199"} |
+| 666f0416-f81b-4f9d-9fb7-1e3d5bca9eaa | shinken_stack-subnet-mjlwchk36sx4   | 10.0.1.0/24   | {"start": "10.0.1.100", "end": "10.0.1.199"}     |
+| ecacd786-2aab-4a3c-8509-c45222f51636 | vm_shinken-subnet-lkbzyijqt5km      | 10.0.1.0/24   | {"start": "10.0.1.100", "end": "10.0.1.199"}     |
+| 32ac3e20-f030-44f0-af28-ef96587b8ddc | shinken_vm-subnet-7ms3vnf6w5ny      | 10.0.1.0/24   | {"start": "10.0.1.100", "end": "10.0.1.199"}     |
+| fb95c57a-e499-44e5-ab3b-5603c29368c1 | shinken_build-subnet-g43limf2zw5c   | 10.0.1.0/24   | {"start": "10.0.1.100", "end": "10.0.1.199"}     |
+| 8ee14116-05f5-4bf8-9d68-d25e9b9cccc5 | test-dmz_subnet-sywjefbwpivt        | 10.42.42.0/24 | {"start": "10.42.42.100", "end": "10.42.42.199"} |
+| 8b69b37d-4a0c-4ac4-9537-aa341dda6317 | UN_NOM-subnet-rj6ujsjil347          | 10.0.1.0/24   | {"start": "10.0.1.100", "end": "10.0.1.199"}     |
+| d85083dc-e395-4221-b7d7-16f56525593d | FIRST-subnet-okekqpfv4jvz           | 10.0.1.0/24   | {"start": "10.0.1.100", "end": "10.0.1.199"}     |
+| 3140d9ab-9611-4765-8533-9242970ee02a | teshinken-subnet-adnd42ko4pmu       | 10.0.1.0/24   | {"start": "10.0.1.100", "end": "10.0.1.199"}     |
+| 7fb00c04-10e0-43d5-847a-c4de5d314b9c | clientshinken-subnet-uczxedp4jyiw   | 10.0.1.0/24   | {"start": "10.0.1.10", "end": "10.0.1.199"}      |
++--------------------------------------+-------------------------------------+---------------+--------------------------------------------------+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ neutron router-list
++--------------------------------------+----------------------------------+-----------------------------------------------------------------------------+
+| id                                   | name                             | external_gateway_info                                                       |
++--------------------------------------+----------------------------------+-----------------------------------------------------------------------------+
+| be2b3216-d0d4-44f2-bdc9-1efd2c8e5c56 | 8acb072da1b14c61b9dced19a6be3355 | null                                                                        |
+| 99e43965-1375-4bf1-b47e-0b82ccfcccfa | factory_pie-router-bbbbneyexa6s  | {"network_id": "6ea98324-0f14-49f6-97c0-885d1b8dc517", "enable_snat": true} |
+| ba896b76-99c1-4437-a577-42578e67619d | factory_ray-router-3hvsyte6a2et  | {"network_id": "6ea98324-0f14-49f6-97c0-885d1b8dc517", "enable_snat": true} |
+| fce641b9-30f2-474f-b39d-5b02bd016d75 | help                             | null                                                                        |
+| 4628f0af-042a-4068-a201-eae3447dacff | router1                          | null                                                                        |
+| 7dac1834-f24b-4f19-ab99-a4caf714edec | test-router-r63qc3la7wrd         | {"network_id": "6ea98324-0f14-49f6-97c0-885d1b8dc517", "enable_snat": true} |
++--------------------------------------+----------------------------------+-----------------------------------------------------------------------------+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ neutron router-port-list router1
+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ nova list 
++--------------------------------------+-----------------------------------+--------+------------+-------------+-------------------------------------------------------------+
+| ID                                   | Name                              | Status | Task State | Power State | Networks                                                    |
++--------------------------------------+-----------------------------------+--------+------------+-------------+-------------------------------------------------------------+
+| 90b10242-bd8b-4a01-b0c0-50a8fa2e26de | FIRST-server-w52xn6afnpl3         | ACTIVE | -          | Running     | FIRST-network-t6a537qjcpkj=10.0.1.100, 84.39.37.206         |
+| c7c1ad1b-dc9f-4dde-9e3a-d41b1924d791 | UN_NOM-server-rayje62gufih        | ACTIVE | -          | Running     | UN_NOM-network-cppykdqpsuco=10.0.1.100, 84.39.39.193        |
+| 80d32e54-78cd-447c-a32a-4b7b7f3fd6d9 | clientshinken-server-emcsqjbw3dhj | ACTIVE | -          | Running     | clientshinken-network-c7ifnts6le65=10.0.1.10, 84.39.32.110  |
+| b3cc01f5-b1e4-4729-8822-2c9ef21b706e | factory_pie-server-ywywz75t64j4   | ACTIVE | -          | Running     | factory_pie-dmz-ujw6ve6n77ab=10.42.42.100, 84.39.39.41      |
+| bcae0099-003d-4a8b-95d5-23592c650b1b | factory_ray-server-ygonxsxcyeji   | ACTIVE | -          | Running     | factory_ray-dmz-o7xxovtqtftw=10.42.42.100, 84.39.39.64      |
+| 1bea9616-c8a5-4963-91b3-ba487b22e665 | shinken_build-server-xvnacvbqyaqk | ACTIVE | -          | Running     | shinken_build-network-oroqsw3m4vrl=10.0.1.100, 84.39.39.72  |
+| 33ca1d7f-d732-45e2-80ee-327beee25b48 | shinken_stack-server-46jbexdyi4ab | ACTIVE | -          | Running     | shinken_stack-network-5pzz4ahzhlet=10.0.1.100, 84.39.39.9   |
+| 14429484-65b6-4eef-8f49-5e3a288cef5c | stack_shinken-server-7ggcemrh4pdq | ACTIVE | -          | Running     | stack_shinken-network-b4cag3ism4lf=10.0.1.100, 84.39.35.189 |
+| 5f9c89e0-ba7b-4971-9be7-9dd77ba8d7f4 | teshinken-server-ajurtfxws5em     | ACTIVE | -          | Running     | teshinken-network-qycgyswvmvx2=10.0.1.100, 84.39.33.71      |
+| 4da673bb-8ae1-458d-b928-5c2575b2c5b6 | test-server-za6af7ns7rpj          | ACTIVE | -          | Running     | test-dmz-lckjq7hrjtvm=10.42.42.100, 84.39.39.38             |
+| e59faeda-2221-4783-99d0-28e5e7f6a3eb | vm_shinken-server-wuiv5letkdj2    | ACTIVE | -          | Running     | vm_shinken-network-e44kr3n67zlt=10.0.1.100, 84.39.37.152    |
++--------------------------------------+-----------------------------------+--------+------------+-------------+-------------------------------------------------------------+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ neutron router-interface-add router1 teshinken-subnet-adnd42ko4pmu                             // Add interface network
+Added interface 97a318be-03a1-4181-8c24-90b1d8d1babe to router router1.
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ neutron router-interface-add router1 clientshinken-subnet-uczxedp4jyiw
+Cidr 10.0.1.0/24 of subnet 7fb00c04-10e0-43d5-847a-c4de5d314b9c overlaps with cidr 10.0.1.0/24 of subnet 3140d9ab-9611-4765-8533-9242970ee02a
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ 
+
+
+3931A27291
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ neutron router-list
++--------------------------------------+----------------------------------+-----------------------------------------------------------------------------+
+| id                                   | name                             | external_gateway_info                                                       |
++--------------------------------------+----------------------------------+-----------------------------------------------------------------------------+
+| be2b3216-d0d4-44f2-bdc9-1efd2c8e5c56 | 8acb072da1b14c61b9dced19a6be3355 | null                                                                        |
+| 99e43965-1375-4bf1-b47e-0b82ccfcccfa | factory_pie-router-bbbbneyexa6s  | {"network_id": "6ea98324-0f14-49f6-97c0-885d1b8dc517", "enable_snat": true} |
+| ba896b76-99c1-4437-a577-42578e67619d | factory_ray-router-3hvsyte6a2et  | {"network_id": "6ea98324-0f14-49f6-97c0-885d1b8dc517", "enable_snat": true} |
+| fce641b9-30f2-474f-b39d-5b02bd016d75 | help                             | null                                                                        |
+| 4628f0af-042a-4068-a201-eae3447dacff | router1                          | null                                                                        |
+| 7c345bb2-8099-45d6-b0a1-bc20329fe348 | router2                          | null                                                                        |
+| 7dac1834-f24b-4f19-ab99-a4caf714edec | test-router-r63qc3la7wrd         | {"network_id": "6ea98324-0f14-49f6-97c0-885d1b8dc517", "enable_snat": true} |
++--------------------------------------+----------------------------------+-----------------------------------------------------------------------------+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ neutron router-port-list router2
++--------------------------------------+--------------------------------------+-------------------+---------------------------------------------------------------------------------+
+| id                                   | name                                 | mac_address       | fixed_ips                                                                       |
++--------------------------------------+--------------------------------------+-------------------+---------------------------------------------------------------------------------+
+| b06fcc9d-5f01-4447-99a8-3b6dce4dad9b | b06fcc9d-5f01-4447-99a8-3b6dce4dad9b | 02:b0:6f:cc:9d:5f | {"subnet_id": "2a4831f4-02b2-4d36-a70d-ffba814021cd", "ip_address": "10.1.1.1"} |
++--------------------------------------+--------------------------------------+-------------------+---------------------------------------------------------------------------------+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ neutron router-port-list router1
++--------------------------------------+--------------------------------------+-------------------+---------------------------------------------------------------------------------+
+| id                                   | name                                 | mac_address       | fixed_ips                                                                       |
++--------------------------------------+--------------------------------------+-------------------+---------------------------------------------------------------------------------+
+| 4e91150b-192f-4175-bc51-0cd2cdf57100 | 4e91150b-192f-4175-bc51-0cd2cdf57100 | 02:4e:91:15:0b:19 | {"subnet_id": "658c9ec3-28ee-40ce-877a-da63c1ec3979", "ip_address": "10.0.2.1"} |
+| 97a318be-03a1-4181-8c24-90b1d8d1babe | 97a318be-03a1-4181-8c24-90b1d8d1babe | 02:97:a3:18:be:03 | {"subnet_id": "3140d9ab-9611-4765-8533-9242970ee02a", "ip_address": "10.0.1.1"} |
++--------------------------------------+--------------------------------------+-------------------+---------------------------------------------------------------------------------+
+
+
+
+=====================Security group===========se connecter à la console puis à l'instance groupe================Acces & securirty================================
+CLIENT (shinken)
+
+	Ingress IPv4 	ICMP 	0 - 65535 	0.0.0.0/0 	- 	
+	Egress 	IPv4 	ICMP 	0 - 65535 	0.0.0.0/0 	- 	
+	Egress 	IPv4 	TCP 	0 - 65535 	0.0.0.0/0 	- 	
+	Ingress IPv4 	TCP 	22 (SSH) 	0.0.0.0/0 	- 	
+	Ingress IPv4 	TCP 	161 	    0.0.0.0/0 	- 	
+	Egress 	IPv4 	TCP 	161 	   0.0.0.0/0 	- 	
+	Ingress IPv4 	TCP 	7767 	  0.0.0.0/0 	- 	
+	Egress 	IPv4 	UDP 	0 - 65535 	0.0.0.0/0 	- 	
+	Ingress IPv4 	UDP 	123 	  0.0.0.0/0 	- 	
+	Egress 	IPv4 	UDP 	123 	  0.0.0.0/0 	- 	
+	Ingress IPv4 	UDP 	161 	10.0.1.0/24 	- 	
+
+pierre@cloud:~/os_image_factory/images/bundle-trusty-shinken$ neutron security-group-list           // diagnostique 
+
+
+

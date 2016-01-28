@@ -1,0 +1,1000 @@
+  990  ssh 84.39.40.86 -l cloud -i ~/.ssh/buildshinken.pem 
+  991  cd bundle-trusty-mediagoblin/
+  992  ll
+  993  cd ansible/
+  994  ll
+  995  cd ..
+  996  cd tes/
+  997  ll
+  998  cd ansible-debian-mediagoblin/
+  999  ll
+ 1000  ansible-playbook site.yml 
+ 1001  ll
+ 1002  ansible-playbook site.yml 
+ 1003  ll
+ 1004  ansible-playbook site.yml 
+ 1005  ll
+ 1006  ansible-playbook site.yml 
+ 1007  ll
+ 1008  cd ..
+ 1009  ansible-playbook site.yml 
+ 1010  ll
+ 1011  cd ansible/
+ 1012  ll
+ 1013  cd ..
+ 1014  cd tes/
+ 1015  ll
+ 1016  cd ansible-debian-mediagoblin/
+ 1017  ll
+ 1018  ansible-playbook site.yml 
+ 1019  ll
+ 1020  cd roles/
+ 1021  ll
+ 1022  cd mediagoblin
+ 1023  ll
+ 1024  cd handlers/
+ 1025  ll
+ 1026  cat main.yml
+ 1027  cd ..
+ 1028  ll
+ 1029  ansible-playbook site.yml 
+ 1030  ssh 84.39.40.86 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1031  cd ..
+ 1032  ll
+ 1033  cd ansible-debian-mediagoblin/
+ 1034  ll
+ 1035  ansible-playbook site.yml 
+ 1036  ansible-playbook site.yml
+ 1037  ls
+ 1038  cat README
+ 1039  vim inventory
+ 1040  rm inventory
+ 1041  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1042  ssh 84.39.40.86 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1043  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1044  ll
+ 1045  cd brouillon_biolinux/
+ 1046  ll
+ 1047  mv bundle-trusty-biolinux.heat.yml ~/os_image_factory/images/bundle-trusty-biolinux/
+ 1048  ll
+ 1049  cd .;d
+ 1050  cd ..
+ 1051  ll
+ 1052  cd ansible/
+ 1053  ll
+ 1054  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1055  glance image-list 
+ 1056  ll
+ 1057  cd brouillon_biolinux/
+ 1058  ll
+ 1059  cd ..
+ 1060  cd os_image_factory/images/
+ 1061  ll
+ 1062  cd bundle-trusty-biolinux/
+ 1063  ll
+ 1064  cp -r brouillon_biolinux/ ~/shinken-wip/
+ 1065  git delete repositot
+ 1066  git delete repository brouillon_biolinux/
+ 1067  git rm -r brouillon_biolinux/
+ 1068  git status *
+ 1069  ll
+ 1070  git status 
+ 1071  ll
+ 1072  git commit --message="remove directory brouillon_file"
+ 1073  git push 
+ 1074  git push origin master
+ 1075  cd 
+ 1076  cd os_image_factory/images/bundle-trusty-mediagoblin/
+ 1077  ll
+ 1078  cd tes/
+ 1079  ll
+ 1080  cd ansible-debian-mediagoblin/
+ 1081  ll
+ 1082  ansible --version
+ 1083  heat stack-list
+ 1084  heat stack-delete verif
+ 1085  heat stack-delete hom
+ 1086  heat stack-delete test
+ 1087  heat stack-delete EXCEL
+ 1088  heat stack-delete EXCELON
+ 1089  heat stack-delete PORTO
+ 1090  heat stack-delete pierre
+ 1091  heat stack-delete BIEN
+ 1092  heat stack-delete BIENO
+ 1093  heat stack-delete media
+ 1094  heat stack-list
+ 1095  heat stack-create jeu -f bundle-trusty-mediagoblin.heat.yml -Pkeypair_name=buildshinken
+ 1096  heat resource-list jeu
+ 1097  ll
+ 1098  heat resource-list jeu
+ 1099  ll
+ 1100  heat resource-list jeu
+ 1101  ll
+ 1102  ansible-playbook site.yml 
+ 1103  cd 
+ 1104  cd ~/.ssh/
+ 1105  ll
+ 1106  cd ~/os_image_factory/images/
+ 1107  ll
+ 1108  heat stack-list 
+ 1109  heat resource-list factoray
+ 1110  heat stack-show factoray
+ 1111  ssh 84.39.40.82 -l cloud  -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1112  ll
+ 1113  cd shinken-wip/
+ 1114  ll
+ 1115  cd 
+ 1116  cd os_image_factory/images/bundle-trusty-mediagoblin/
+ 1117  ll
+ 1118  cat Vagrantfile
+ 1119  cd ..
+ 1120  cd bundle-trusty-biolinux/
+ 1121  cd 
+ 1122  ll
+ 1123  cd Downloads/
+ 1124  ll
+ 1125  mv pierrekey.pem ~/.ssh/
+ 1126  chmod 600 ~/.ssh/pierrekey.pem 
+ 1127  cd
+ 1128  ll
+ 1129  cd os_image_factory/
+ 1130  heat stack-create nouvellefacto -f setup/os_image_factory.heat.yml -Pkeypair_name=pierrekey.pem
+ 1131  heat stack-create nouvellefacto -f setup/os_image_factory.heat.yml -Pkeypair_name=~/.ssh/pierrekey.pem
+ 1132  ll
+ 1133  heat stack-create nouvellefacto -f setup/os_image_factory.heat.yml -Pkeypair_name=pierrekey.pem
+ 1134  cd ~/ssh /
+ 1135  ll
+ 1136  cd ~/ssh/
+ 1137  cd ~/.ssh/
+ 1138  ll
+ 1139  ~/os_image_factory/images/
+ 1140  cd ~/os_image_factory/
+ 1141  ll
+ 1142  heat stack-create nvlefacto -f setup/os_image_factory.heat.yml -Pkeypair_name=buildshinken 
+ 1143  ssh $FACTORY_IP -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1144  heat resource-list*
+ 1145  heat resource-list nvlefacto
+ 1146  ssh 84.39.33.98 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1147  ssh 84.39.33.98  -i ~/.ssh/buildshinken.pem -l cloud -vvv
+ 1148  heat stack-create bon  -f setup/os_image_factory.heat.yml -Pkeypair_name=pierre.pem
+ 1149  heat stack-create bon  -f setup/os_image_factory.heat.yml -Pkeypair_name=pierreray.pem
+ 1150  heat stack-list
+ 1151  heat resource-list factopierre
+ 1152  heat stack-show factopierre
+ 1153  ssh 84.39.33.248 -l cloud  -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1154  ansible --version
+ 1155  cd ~/Downloads/
+ 1156  ll
+ 1157  sudo reboot now
+ 1158  cd os_image_factory/images/bundle-trusty-mediagoblin/
+ 1159  ansible-playbook ansible/bootstrap.yml
+ 1160  - name: Create virtualenv
+ 1161  ll
+ 1162  git clone 
+ 1163  - name: Create virtualenv
+ 1164  git clone 
+ 1165  - name: Create virtualenv
+ 1166  git clone https://github.com/ptisserand/ansible-mediagoblin.git mon
+ 1167  cd montest2/
+ 1168  ll
+ 1169  cat README.md
+ 1170  cat main.yml 
+ 1171  cat README.md
+ 1172  ansible-playbook main.yml 
+ 1173  ll
+ 1174  cat README.md
+ 1175  ll
+ 1176  heat stack-list 
+ 1177  heat resource-list VM1
+ 1178  heat resource-list VM
+ 1179  ansible-playbook main.yml 
+ 1180  glance image-list
+ 1181  cd 
+ 1182  cd os_image_factory/images/bundle-trusty-mediagoblin/
+ 1183  ll
+ 1184  cd ansible/
+ 1185  ll
+ 1186  cd ..
+ 1187  ll
+ 1188  cd tes/
+ 1189  ll
+ 1190  cd ansible-debian-mediagoblin/
+ 1191  ll
+ 1192  cp bundle-trusty-mediagoblin.heat.yml ~/os_image_factory/images/bundle-trusty-mediagoblin/
+ 1193  cd ..
+ 1194  ll
+ 1195  heat rsou
+ 1196  heat resource-list VM3
+ 1197  ansible pet -m ping 
+ 1198  ssh 84.39.40.147 -i ~/.ssh/buildshinken.pem -l cloud -vvv
+ 1199  ll
+ 1200  heat stack-create GOM -f bundle-trusty-mediagoblin.heat.yml -Pkeypair_name=buildshinken 
+ 1201  heat stack-create GOMA -f bundle-trusty-mediagoblin.heat.yml -Pkeypair_name=buildshinken 
+ 1202  ssh 84.39.40.147 -i ~/.ssh/buildshinken.pem -l cloud -vvv
+ 1203  ssh 84.39.40.147 -l cloud -i ~/.ssh/buildshinken.pem  -vvv
+ 1204  heat resource-list GOMA
+ 1205  heat resource-list VM3
+ 1206  ansible pet -m ping 
+ 1207  heat stack-list
+ 1208  ll
+ 1209  cd ansible/
+ 1210  ll
+ 1211  heat resource-list GOMA
+ 1212  ansible pet -m ping
+ 1213  ssh 84.39.40.143 -l cloud -i ~/.ssh/buildshinken.pem -vvv
+ 1214  ssh 84.39.40.143  -i ~/.ssh/buildshinken.pem -l cloud  -vvv
+ 1215  cd ..
+ 1216  ansible-playbook ansible/bootstrap.yml
+ 1217  heat resource-list VM
+ 1218  heat resource-list VM3
+ 1219  heat resource-list VM1
+ 1220  heat stack-create QDS -f bundle-trusty-mediagoblin.heat.yml -Pkeypair_name=buildshinken
+ 1221  heat resource-list QDS
+ 1222  ansible pet -m ping 
+ 1223  ansible-playbook ansible/bootstrap.yml
+ 1224  sudo -i
+ 1225  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1226  ll
+ 1227  rm -r brouillon_biolinux/
+ 1228  rm -r config.dat.new
+ 1229  vim build-vars.yml 
+ 1230  glance image-list 
+ 1231  vim build-vars.yml 
+ 1232  git pull
+ 1233  vim build-vars.yml 
+ 1234  git push
+ 1235  heat stack-create VM -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken 
+ 1236  heat resource-list VM
+ 1237  heat resource-list | grep floating_ip_link
+ 1238  heat resource-list VM | grep floating_ip_link
+ 1239  ls
+ 1240  vim build-vars.yml
+ 1241  ll
+ 1242  heat resource-list VM | grep floating_ip_link
+ 1243  heat resource-list VM 
+ 1244  heat resource-list VM
+ 1245  heat resource-list 
+ 1246  heat resource-list VM
+ 1247  heat resource-list VM | grep floating_ip_link
+ 1248  ls
+ 1249  cd ansib
+ 1250  ll
+ 1251  cd ..
+ 1252  ll
+ 1253  cd ..
+ 1254  cd bundle-trusty-mediagoblin/
+ 1255  ll
+ 1256  cd tes/
+ 1257  ll
+ 1258  cd ansible-debian-mediagoblin/
+ 1259  ll
+ 1260  cd roles/
+ 1261  ll
+ 1262  cd ..
+ 1263  ll
+ 1264  heat stack-create VM1 -f bundle-trusty-mediagoblin.heat.yml -Pkeypair_name=buildshinken
+ 1265  heat resource-list VM
+ 1266  ll
+ 1267  mkdir mydosssier
+ 1268  cd mydosssier/
+ 1269  git clone git://git.savannah.gnu.org/mediagoblin.git -b stable
+ 1270  cd mediagoblin/
+ 1271  ll
+ 1272  git submodule init && git submodule update
+ 1273  (virtualenv --system-site-packages . || virtualenv .)
+ 1274  cd ..
+ 1275  ansible-playbook ansible/bootstrap.yml
+ 1276  ssh 84.39.38.241 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1277  ansible-playbook ansible/bootstrap.yml
+ 1278  sudo reboot now
+ 1279  cd os_image_factory/images/
+ 1280  setxkbmap fr
+ 1281  ll
+ 1282  heat stack-list
+ 1283  heat resource-list factopierre
+ 1284  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1285  cd os_image_factory/images/bundle-trusty-mediagoblin/
+ 1286  ssh 84.39.38.74 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1287  cd os_image_factory/images/bundle-trusty-mediagoblin/
+ 1288  heat stack-list 
+ 1289  heat resource-list MEDIA
+ 1290  ansible-playbook ansible/bootstrap.yml
+ 1291  heat stack-create NVM -f bundle-trusty-mediagoblin.heat.yml -Pkeypair_name=buildshinken
+ 1292  ansible-playbook ansible/bootstrap.yml
+ 1293  cd ansible/
+ 1294  cp bootstrap.yml bootstrap.yml.old
+ 1295  cd..
+ 1296  cd ..
+ 1297  ansible-playbook ansible/bootstrap.yml
+ 1298  ssh 84.39.32.126 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1299  ansible-playbook ansible/bootstrap.yml
+ 1300  ssh 84.39.32.126 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1301  ansible-playbook ansible/bootstrap.yml
+ 1302  heat stack-create RDO -f bundle-trusty-mediagoblin.heat.yml -Pkeypair_name=buildshinken 
+ 1303  ansible-playbook ansible/bootstrap.yml
+ 1304  heat resource-list
+ 1305  heat resource-list 
+ 1306  heat resource-list  RDO 
+ 1307  ssh 84.39.35.75 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1308  cd os_image_factory/images/
+ 1309  heat resource-list factopierre
+ 1310  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1311  vim /etc/ansible/hosts
+ 1312  ansible pet -m ping
+ 1313  ll
+ 1314  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1315  ll
+ 1316  cat bundle-trusty-biolinux.heat.yml
+ 1317  ls
+ 1318  vim bundle-trusty-biolinux.heat.yml
+ 1319  ll
+ 1320  cd ..
+ 1321  ll
+ 1322  ls
+ 1323  cd bundle-trusty-biolinux/
+ 1324  ansible pet -m ping
+ 1325  heat stack-creta GEF -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshiinken
+ 1326  heat stack-creta GEF -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken
+ 1327  heat stack-create GEF -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken
+ 1328  heat resource-list GEF
+ 1329  cd ~/Downloads/
+ 1330  ll
+ 1331  cd mediagoblin-0.8.1/
+ 1332  ll
+ 1333  cd mediagoblin/
+ 1334  ll
+ 1335  cd ..
+ 1336  vim mediagoblin.ini
+ 1337  routing.py
+ 1338  cd themes/
+ 1339  cd edit/
+ 1340  ll
+ 1341  ./lazystarter.sh
+ 1342  cat mediagoblin.example.ini
+ 1343  ll
+ 1344  cd m4/
+ 1345  ll
+ 1346  cd ..
+ 1347  ll
+ 1348  cd 
+ 1349  cd ~/os_image_factory/cat unattended_upgrade.sh
+ 1350  cd pycharm-community-5.0.2.tar.gz
+ 1351  ~/Downloads/
+ 1352  ll
+ 1353  cd ~/Downloads/
+ 1354  ll
+ 1355  cd mediagoblin-0.8.1/
+ 1356  ll
+ 1357  install-sh
+ 1358  cat README
+ 1359  cd 
+ 1360  ll
+ 1361  cd os_image_factory/images/bundle-trusty-bundle-trusty-biolinux/
+ 1362  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1363  ll
+ 1364  cd output/
+ 1365  ll
+ 1366  cat bundle-trusty-biolinux.heat.yml.j2
+ 1367  routing.py
+ 1368  vim bundle-trusty-biolinux.heat.yml.j2
+ 1369  ll
+ 1370  ssh 
+ 1371  ll
+ 1372  ls
+ 1373  vim bundle-trusty-biolinux.heat.yml.j2
+ 1374  cd ~/Downloads/
+ 1375  ll
+ 1376  unzip VirtualBox_BioLinux-8.0.2_VDI-[VirtuaslBoxImages.com].rar
+ 1377  ls
+ 1378  unzip VirtualBox_BioLinux-8.0.2_VDI-[VirtuaslBoxImages.com].rar
+ 1379  sudo unzip VirtualBox_BioLinux-8.0.2_VDI-[VirtuaslBoxImages.com].rar
+ 1380  sudo unzip VirtualBox_BioLinux-8.0.2_VDI-[VirtuaslBoxImages.com].rar -d bio/
+ 1381  sudo unzip VirtualBox_BioLinux-8.0.2_VDI-[VirtuaslBoxImages.com].rar
+ 1382  ll
+ 1383  tar --help
+ 1384  sudo tar -xf VirtualBox_BioLinux-8.0.2_VDI-[VirtuaslBoxImages.com].rar 
+ 1385  cd 
+ 1386  cd shinken-wip/
+ 1387  ll
+ 1388  cd be
+ 1389  cd brouillon_biolinux/
+ 1390  ll
+ 1391  cd ansible.old/
+ 1392  ll
+ 1393  cat bootstrap.yml
+ 1394  ll
+ 1395  cat pseudo_orphans.txt
+ 1396  sudo -s
+ 1397  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1398  heat resource-list factopierr
+ 1399  heat resource-list factopierre
+ 1400  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem -L localhost:8080
+ 1401  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem -L 8080_localhost:8080
+ 1402  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1403  vagrant provision 
+ 1404  rm ~/.ssh/known_hosts
+ 1405  vagrant provision 
+ 1406  vagrant ssh
+ 1407  ll
+ 1408  cd ansib
+ 1409  ll
+ 1410  mv listPackagebio.txt listPackagebio.sh
+ 1411  vim listPackagebio.sh
+ 1412  sed 's/^/- /' listPackagebio.sh
+ 1413  vim listPackagebio.sh
+ 1414  cd ..
+ 1415  vagrant provision 
+ 1416  heat stack-list
+ 1417  heat resource-list GEF
+ 1418  cd shinken-wip/
+ 1419  ll
+ 1420  cd brouillon_biolinux/
+ 1421  ll
+ 1422  cd ansible.old/
+ 1423  ll
+ 1424  cat sources.list
+ 1425  ll
+ 1426  cat bootstrap.yml
+ 1427  ll
+ 1428  ansible pet -m ping
+ 1429  cd ..
+ 1430  ll
+ 1431  Cat Vagrantfile
+ 1432  ansible pet -m ping
+ 1433  ll
+ 1434  cd ansible.old/
+ 1435  ll
+ 1436  cd ..
+ 1437  ansible pet -m ping
+ 1438  ll
+ 1439  cat Vagrantfile
+ 1440  ll
+ 1441  cd Vagrantfile ~/os_image_factory/images/bundle-trusty-biolinux/
+ 1442  cp Vagrantfile ~/os_image_factory/images/bundle-trusty-biolinux/Vagrantfile
+ 1443  **
+ 1444  cp Vagrantfile ~/os_image_factory/images/bundle-trusty-biolinux/Vagrantfile
+ 1445  cd ~/os_image_factory/images/bundle-trusty-biolinux/
+ 1446  cat Vagrantfile 
+ 1447  ll
+ 1448  cd ansible/
+ 1449  ll
+ 1450  cd ..
+ 1451  vagrant up
+ 1452  vagrant provision 
+ 1453  ll
+ 1454  ansible pet -m ping 
+ 1455  ansible pet -m ping
+ 1456  ll
+ 1457  ansible pet -m ping
+ 1458  vim /etc/ansible/hosts
+ 1459  sudo 
+ 1460  sudo -s
+ 1461  heat stack-lis
+ 1462  heat stack-list
+ 1463  heat resource-list factopierre
+ 1464  cd os_image_factory/
+ 1465  ssh 84.39.33.248 -l cloud -- 
+ 1466  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1467  cd images/
+ 1468  ll
+ 1469  heat stack-list
+ 1470  heat resource-list NVM
+ 1471  ll
+ 1472  cd bundle-trusty-wordpress/
+ 1473  ll
+ 1474  ca ansible/
+ 1475  ll
+ 1476  cd
+ 1477  ll
+ 1478  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1479  heat stack-list
+ 1480  heat resource-list factopierre
+ 1481  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem -L localhost:8080
+ 1482  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1483  setxkbmap fr
+ 1484  cd os_image_factory/images/bundle-trusty-mediagoblin/
+ 1485  ssh 
+ 1486  ssh 84.39.38.74 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1487  heat stack-create MEDIA -f bundle-trusty-mediagoblin.heat.yml -Pkeypair_name=buildshinken 
+ 1488  heat resource-list MEDIA
+ 1489  ansible-playbook ansible/bootstrap.yml
+ 1490  ssh 84.39.38.74 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1491  ./bin/gmg dbupdate
+ 1492  cd mediagoblin/
+ 1493  ll
+ 1494  cd .vagrant/
+ 1495  ll
+ 1496  cd machines/
+ 1497  ll
+ 1498  cd default/
+ 1499  ll
+ 1500  cd virtualbox/
+ 1501  ll
+ 1502  cat action_provision
+ 1503  ll
+ 1504  cat action_set_name
+ 1505  ll
+ 1506  cd ..
+ 1507  ll
+ 1508  heat stack-list
+ 1509  heat stack-delete YTL
+ 1510  heat stack-delete jeu
+ 1511  heat stack-delete DETERMINE
+ 1512  heat stack-delete nvlefacto
+ 1513  heat stack-delete 
+ 1514  heat stack-delete VM1
+ 1515  heat stack-delete GOMA
+ 1516  heat stack-delete QDS
+ 1517  heat stack-delete 
+ 1518  heat stack-delete NVM
+ 1519  heat stack-delete RDO
+ 1520  heat stack-list
+ 1521  cd ..
+ 1522  cd bundle-trusty-biolinux/
+ 1523  ll
+ 1524  heat stack-create repreBio -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken
+ 1525  heat resource-list repreBio
+ 1526  cd ansible/
+ 1527  cp bootstrap.yml bootstrap.yml.old1
+ 1528  cd ..
+ 1529  heat stack-create BIO -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken
+ 1530  cd ansible/
+ 1531  ll
+ 1532  vim packageBio
+ 1533  mv packageBio packageBio.sh
+ 1534  sh packageBio.sh
+ 1535  ls
+ 1536  cat config.dat
+ 1537  ls
+ 1538  cd ..
+ 1539  ansible pet -m ping
+ 1540  ssh 84.39.35.107  -i ~/.ssh/buildshinken.pem -l 8080:localhost:8080
+ 1541  heat stack-list
+ 1542  heat resource-list VM3
+ 1543  ansible pet -m ping
+ 1544  vim /etc/ansible/hosts
+ 1545  ansible pet -m ping
+ 1546  vim /etc/ansible/hosts
+ 1547  ansible pet -m ping
+ 1548  vim /etc/ansible/hosts
+ 1549  ansible pet -m ping
+ 1550  vim /etc/ansible/hosts
+ 1551  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1552  ll
+ 1553  heat stack-create CINQ -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken 
+ 1554  ssh 84.39.33.71
+ 1555  ssh 84.39.33.71 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1556  cd AB/
+ 1557  cd ansib
+ 1558  ll
+ 1559  cp sources.list ~/os_image_factory/images/bundle-trusty-biolinux/ansible/
+ 1560  cd ~/os_image_factory/images/bundle-trusty-biolinux/ansible/
+ 1561  ll
+ 1562  cd ..
+ 1563  git pull
+ 1564  cat images/bundle-trusty-biolinux/output/bundle-trusty-biolinux.heat.yml.j2
+ 1565  vim images/bundle-trusty-biolinux/output/bundle-trusty-biolinux.heat.yml.j2
+ 1566  git status 
+ 1567  git add ansible/bootstrap.yml
+ 1568  git add ansible/config.dat
+ 1569  ansible/upgrade8.sh
+ 1570  output/bundle-trusty-biolinux.heat.yml.j2
+ 1571  git status 
+ 1572  cd ansible/
+ 1573  git status 
+ 1574  cd ..
+ 1575  git commit --m="update file"
+ 1576  git push
+ 1577  git fetch --all master 
+ 1578  git fetch -u master 
+ 1579  git push 
+ 1580  git pull
+ 1581  git merge origin/
+ 1582  git merge origin/master 
+ 1583  git push 
+ 1584  cd 
+ 1585  mv os_image_factory ost/
+ 1586  git clone https://github.com/pierreane/os_image_factory.git 
+ 1587  ll
+ 1588  mv ost/ aus-facto
+ 1589  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1590  ll
+ 1591  cd ansible/
+ 1592  ll
+ 1593  cd 
+ 1594  ca aus-facto/images/bundle-trusty-biolinux/ansible/
+ 1595  cd aus-facto/images/bundle-trusty-biolinux/ansible/
+ 1596  ll
+ 1597  cp sources.list  ~/os_image_factory/images/bundle-trusty-biolinux/ansible/
+ 1598  cd
+ 1599  ll
+ 1600  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1601  cd ansible/
+ 1602  ll
+ 1603  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1604  heat stack-create QUATRE -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken 
+ 1605  heat resource-list QUATRE
+ 1606  heat stack-list 
+ 1607  heat resource-list CINQ 
+ 1608  sudo reboot
+ 1609  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1610  ll
+ 1611  vagrant up 
+ 1612  vim Vagrantfile 
+ 1613  vagrant up
+ 1614  vagrant provision 
+ 1615  vagrant ssh
+ 1616  vagrant provision 
+ 1617  cd os_image_factory/ima
+ 1618  ll
+ 1619  cd os_image_factory/
+ 1620  heat stack-list
+ 1621  heat resource-list factopierre
+ 1622  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1623  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1624  ll
+ 1625  cd ansib
+ 1626  cd ..
+ 1627  cd ansible 
+ 1628  ll
+ 1629  cd ..
+ 1630  ll
+ 1631  heat resource-list 
+ 1632  heat resource-list TROIS
+ 1633  ansible-playbook ansible/bootstrap.yml 
+ 1634  sudo -s
+ 1635  ansible hosts -m ping
+ 1636  vim /etc/ansible/hosts
+ 1637  ansible hosts -m ping
+ 1638  vim /etc/ansible/hosts
+ 1639  ansible hosts -m ping
+ 1640  vim /etc/ansible/hosts
+ 1641  ansible hosts -m ping 
+ 1642  ansible hosts -m ping *
+ 1643  ansible hosts -m ping 
+ 1644  vim /etc/ansible/hosts
+ 1645  ansible hosts -m ping 
+ 1646  vim /etc/ansible/hosts
+ 1647  ansible hosts -m ping
+ 1648  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1649  heat stack-create DEUX -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken
+ 1650  heat resource-list DEUX
+ 1651  heat stack-create TROIS -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken
+ 1652  ansible-playbook ansible/bootstrap.yml 
+ 1653  ssh 84.39.40.253 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1654  ansible-playbook ansible/bootstrap.yml 
+ 1655  ssh 84.39.40.253 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1656  ansible-playbook ansible/bootstrap.yml 
+ 1657  ssh 84.39.40.253 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1658  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1659  ll
+ 1660  cd ansible/
+ 1661  cd ..
+ 1662  git status 
+ 1663  git add ansible/sources.list
+ 1664  git status 
+ 1665  git commit --message="add file sources.list"
+ 1666  git push 
+ 1667  git status 
+ 1668  git add ansible/bootstrap.yml
+ 1669  git status 
+ 1670  git commit --message="add boostrap file"
+ 1671  git push 
+ 1672  ssh 84.39.41.43 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1673  git status 
+ 1674  ansible-playbook ansible/bootstrap.yml 
+ 1675  git status 
+ 1676  git add ansible/bootstrap.yml
+ 1677  git commit --message="modified file"
+ 1678  git push 
+ 1679  git status 
+ 1680  git add ansible/bootstrap.yml
+ 1681  git commit --message="modified bootstrap file"
+ 1682  git push 
+ 1683  ll
+ 1684  git status 
+ 1685  git add ansible/bootstrap.yml
+ 1686  git status 
+ 1687  git commit --message="modified bootstrap file"
+ 1688  git push
+ 1689  ansible-playbook ansible/bootstrap.yml 
+ 1690  cp os_image_factory os_image_factory.old 
+ 1691  cp os_image_factory/ os_image_factory.old 
+ 1692  mv os_image_factory os_image_factory.old 
+ 1693  ll
+ 1694  git clone https://github.com/pierreane/os_image_factory.git
+ 1695  ll
+ 1696  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1697  cd 
+ 1698  cd os_image_factory.old/
+ 1699  cd images/bundle-trusty-biolinux/
+ 1700  cp bundle-trusty-biolinux.heat.yml ~/os_image_factory/images/bundle-trusty-biolinux/
+ 1701  cd
+ 1702  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1703  heat stack-create CLOUD -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken 
+ 1704  heat resource-list CLOUD
+ 1705  ansible-playbook ansible/bootstrap.yml 
+ 1706  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1707  heat stack-create FORE -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken
+ 1708  heat resource-list FORE 
+ 1709  cd 
+ 1710  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1711  heat stack-create CJUE -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken 
+ 1712  heat resource-list CJUE
+ 1713  cd 
+ 1714  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1715  ansible-playbook ansible/bootstrap.yml 
+ 1716  ssh 84.39.39.210 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1717  ansible-playbook ansible/bootstrap.yml 
+ 1718  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1719  heat stack-create REFER -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken 
+ 1720  heat resource-list REFER 
+ 1721  ansible-playbook ansible/bootstrap.yml 
+ 1722  ssh 84.39.38.74 -l cloud -i ~/.ssh/buildshinken 
+ 1723  ssh 84.39.38.74 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1724  git rm ansible/sources.list 
+ 1725  glance image-list
+ 1726  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1727  heat stack-create RECIMQ -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken 
+ 1728  heat resource-list RECIMQ
+ 1729  ansible all -m ping
+ 1730  ssh 84.39.33.142 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1731  heat stack-create RECINQ -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken
+ 1732  heat resource-list RECINQ
+ 1733  heat stack-create QTB -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken 
+ 1734  heat resource-list QTB
+ 1735  heat stack-create FER -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken 
+ 1736  heat resource-list FER 
+ 1737  ansible-playbook ansible/bootstrap.yml 
+ 1738  ssh 84.39.32.183 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1739  git status 
+ 1740  git rm ansible/sources.list
+ 1741  git add ansible/bootstrap.yml
+ 1742  git status 
+ 1743  git push 
+ 1744  git pull
+ 1745  git push 
+ 1746  git status 
+ 1747  git push 
+ 1748  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1749  heat stack-create REQUATRE -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken
+ 1750  heat resource-list REQUATRE
+ 1751  ansible-playbook ansible/bootstrap.yml 
+ 1752  ssh 84.39.33.160 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1753  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1754  ll
+ 1755  heat stack-create RETROIS -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken 
+ 1756  heat resource-list RETROIS
+ 1757  vagrant ssh
+ 1758  vagrant provision 
+ 1759  ansible hosts -m ping 
+ 1760  ansible-playbook ansible/bootstrap.yml 
+ 1761  ssh 84.39.40.253 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1762  ansible-playbook -m ping
+ 1763  ansible-playbook ansible/bootstrap.yml 
+ 1764  ssh 84.39.36.193 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1765  ansible-playbook ansible/bootstrap.yml 
+ 1766  ssh 84.39.33.142 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1767  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1768  heat stack-create REDEUX -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken
+ 1769  heat resource-list REDEUX
+ 1770  ping 84.39.32.152 
+ 1771  ssh 84.39.32.152 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1772  ansible hosts -m ping 
+ 1773  git pull
+ 1774  ansible hosts -m ping 
+ 1775  ssh 84.39.32.152 -i ~/.ssh/buildshinken.pem -l cloud -vvv
+ 1776  vim /etc/ansible/hosts
+ 1777  ssh 84.39.32.152 -i ~/.ssh/buildshinken.pem -l cloud -vvv
+ 1778  ansible hosts -m ping
+ 1779  ansible-playbook ansible/bootstrap.yml 
+ 1780  ssh 84.39.37.204 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1781  ansible-playbook ansible/bootstrap.yml 
+ 1782  ssh 84.39.33.160 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1783  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1784  ll
+ 1785  cd AB
+ 1786  ll
+ 1787  cd ..
+ 1788  cd
+ 1789  cd aus-facto/images/bundle-trusty-biolinux/
+ 1790  ll
+ 1791  cp Vagrantfile ~/os_image_factory/images/bundle-trusty-biolinux/
+ 1792  cd  ~/os_image_factory/images/bundle-trusty-biolinux/
+ 1793  ll
+ 1794  cat Vagrantfile 
+ 1795  vagrant up
+ 1796  rm ~/.ssh/known_hosts
+ 1797  vagrant provision 
+ 1798  vagrant ssh
+ 1799  heat resource-list REDEUX
+ 1800  ssh 84.39.32.152 -l cloud -i ~/.ssh/buildshinken.pem -vvv
+ 1801  heat stack-list 
+ 1802  heat resource-list REDEUX
+ 1803  vagrant provision 
+ 1804  vagrant ssh
+ 1805  git status 
+ 1806  git add ansible/bootstrap.yml
+ 1807  git status 
+ 1808  git commit --message="modified bootstrap file"
+ 1809  git push 
+ 1810  git pull 
+ 1811  git commit --message=""
+ 1812  git push 
+ 1813  vagrant provision 
+ 1814  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1815  ll
+ 1816  git status 
+ 1817  git add ansible/bootstrap.yml
+ 1818  heat stack-list 
+ 1819  heat resource-list factopierre
+ 1820  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1821  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1822  ssh 84.39.33.40 -f 
+ 1823  ssh 84.39.33.40 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1824  ansible-playbook ansible/bootstrap.yml 
+ 1825  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1826  git status 
+ 1827  git add ansible/bootstrap.yml
+ 1828  git status 
+ 1829  git push 
+ 1830  git commit --message=" update file "
+ 1831  git push 
+ 1832  ll
+ 1833  cd ansible/
+ 1834  vim update.sh
+ 1835  cd ..
+ 1836  ansible-playbook ansible/bootstrap.yml 
+ 1837  ssh 84.39.41.43 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1838  ansible-playbook ansible/bootstrap.yml 
+ 1839  sudo reboot
+ 1840  cd os_image_factory.old/
+ 1841  cd images/bundle-trusty-biolinux/
+ 1842  ll
+ 1843  cd AB/
+ 1844  ll
+ 1845  cd ansib
+ 1846  ll
+ 1847  cat bootstrap.yml 
+ 1848  sudo -s
+ 1849  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1850  heat stack-create ONE -f bundle-trusty-biolinux.heat.yml -Pkeypair_name=buildshinken
+ 1851  heat resource-list ONE
+ 1852  cd os_image_factory/images/
+ 1853  ll
+ 1854  cat build-yum.packer.json
+ 1855  openstack flavor 
+ 1856  openstack flavor list
+ 1857  gedit recap
+ 1858  vim /etc/ansible/hosts
+ 1859  ansible pet -m ping
+ 1860  ssh 84.39.41.58 -i ~/.ssh/buildshinken.pem -l cloud -vvv
+ 1861  ansible pet -m ping
+ 1862  ssh 84.39.41.58 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1863  setxkbmap fr
+ 1864  cd os_image_factory/images/
+ 1865  heat resource-list factopierre
+ 1866  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1867  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1868  ll
+ 1869  setxkbmap fr
+ 1870  cd os_image_factory/images/
+ 1871  heat resource-list factopierre
+ 1872  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1873  heat stack-show factopierre
+ 1874  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1875  sudo reboot 
+ 1876  cd aus-facto/
+ 1877  cd images/bundle-trusty-mediagoblin/
+ 1878  ll
+ 1879  cd tes/
+ 1880  ll
+ 1881  cd ansible-debian-mediagoblin/
+ 1882  ll
+ 1883  cd ..
+ 1884  cd AB
+ 1885  cd AB/
+ 1886  cd ..
+ 1887  cd AB/
+ 1888  ll
+ 1889  cd montest2/
+ 1890  ll
+ 1891  cd roles/
+ 1892  ll
+ 1893  cd mediagoblin/
+ 1894  ll
+ 1895  cd ..
+ 1896  ll
+ 1897  ansible-playbook main.yml
+ 1898  ssh 84.39.41.58 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1899  vim /etc/ansible/hosts
+ 1900  ansible pet -m ping
+ 1901  cd os_image_factory/images/
+ 1902  ll
+ 1903  openstack flavor 
+ 1904  openstack flavor list
+ 1905  heat stack-list
+ 1906  heat resource-list ONE
+ 1907  ssh 84.39.41.58 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1908  ll
+ 1909  cat build.playbook.yml
+ 1910  cd bundle-trusty-biolinux/
+ 1911  ll
+ 1912  heat stack-list 
+ 1913  cd ..
+ 1914  cd bundle-trusty-mediagoblin/
+ 1915  ansible-playbook ansible/bootstrap.yml 
+ 1916  cd 
+ 1917  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1918  heat stack-list 
+ 1919  heat resource-list ONE
+ 1920  ssh 84.39.41.58 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1921  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1922  ll
+ 1923  cd ..
+ 1924  cd
+ 1925  ll
+ 1926  cd os_image_factory.old/
+ 1927  ll
+ 1928  cd images/
+ 1929  ll
+ 1930  cd bundle-trusty-mediagoblin/
+ 1931  ll
+ 1932  cd ansible/
+ 1933  ll
+ 1934  cd 
+ 1935  ll
+ 1936  cat txt
+ 1937  cat test.retry
+ 1938  si
+ 1939  sudo -s 
+ 1940  setxkbmap fr
+ 1941  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1942  ll
+ 1943  heat resource-list factopierre
+ 1944  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1945  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1946  sudo reboot 
+ 1947  heat resource-list factopierre
+ 1948  ssh 84.39.33.248 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1949  cd aus-facto/images/bundle-trusty-mediagoblin/
+ 1950  heat stack-list 
+ 1951  heat resource-list ONE
+ 1952  ssh 84.39.41.58 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1953  ssh 84.39.41.58 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1954  ssh 84.39.41.58 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1955  ll
+ 1956  cat bundle-trusty-mediagoblin.heat.yml
+ 1957  heat stack-create TVM -f bundle-trusty-mediagoblin.heat.yml -Pkeypair_name=buildshinken 
+ 1958  heat resource-list TVM
+ 1959  ll
+ 1960  cd AB
+ 1961  ll
+ 1962  cd montest2/
+ 1963  ll
+ 1964  ansible-playbook main.yml
+ 1965  ssh 84.39.41.58 -l cloud -i ~/.ssh/buildshinken.pem 
+ 1966  ssh 84.39.41.58 -l cloud -i ~/.ssh/buildshinken.pem -L 6543:localhost:6543
+ 1967  cd os_image_factory/images/bundle-trusty-biolinux/
+ 1968  heat resource-list factopierre
+ 1969  gedit tex
+ 1970  setxkbmap fr
+ 1971  cd aus-facto/images/bundle-trusty-mediagoblin/
+ 1972  ll
+ 1973  cd AB
+ 1974  ll
+ 1975  cd montest2/
+ 1976  ll
+ 1977  cd roles/
+ 1978  ll
+ 1979  cd mediagoblin/
+ 1980  ll
+ 1981  cd ..
+ 1982  ll
+ 1983  cd ..
+ 1984  ll
+ 1985  heat stack-list
+ 1986  heat resource-list ONE
+ 1987  ssh 84.39.41.58  -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:8080
+ 1988  ssh 84.39.41.58  -l cloud -i ~/.ssh/buildshinken.pem 
+

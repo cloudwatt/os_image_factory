@@ -1,0 +1,74 @@
+                   Diagnostique du systeme 
+
+cd /var/lib/shinken/libexec/
+   46  ll
+   47  cd /usr/lib/nagios/plugins/
+   48  ll
+   49  cd ..
+   50  cd /etc/
+   51  cd shinken/
+   52  cd templates/
+   53  ll
+   54  cd ..
+   55  cd hosts
+   56  cd ..
+   57  cd snmp/
+   58  ll
+   59  cd ..
+   60  cd shinken/
+   61  ll
+   62  cd modules/
+   63  ll
+   64  cd /var/lib/shinken/inventory         // liste toutes les tools installés pour l'application
+   65  ll
+   66  cd linux-snmp/
+   67  ll
+   68  cd /etc/shinken/
+   69  cd hosts
+   70  sudo vim slave_shinken.cfg 
+   71  sudo service shinken restart 
+   72  sudo service snmpd status 
+   73  cd ..
+   74  cd /etc/snmp/
+   75  sudo vim snmpd.conf 
+   76  cd /var/log/shinken/
+   77  ll
+   78  ls -lt
+   79  cat brokerd.log 
+   80  sudo cat brokerd.log 
+   81  sudo cat schedulerd.log 
+   82  cd /etc/
+   83  sudo vim /etc/shinken/hosts/slave_shinken.cfg 
+   84  sudo vim /etc/shinken/hosts/localhost.cfg 
+   85  sudo service shinken restart 
+   86  sudo vim /etc/shinken/hosts/slave_shinken.cfg 
+   87  cd /var/lib/shinken/inventory
+   88  ll
+   89  cat linux-snmp/
+   90  cat linux-snmp/content.json 
+   91  cd /var/lib/shinken/libexec/
+   92  ll
+   93  cd /var/log/shinken/
+   94  grep -rli setuid ./                        // recherche dans ce repertoire et dans les précédentes le motif setuid
+   95  sudo grep -rli setuid ./
+   96  cat schedulerd.log 
+   97  sudo cat schedulerd.log 
+   98  sudo cat schedulerd.log | grep -i setuid
+   99  cd /var/lib/shinken/
+  100  find ./ | grep notify-host-by-email
+  101  cd /etc/shinken/
+  102  find ./ | grep notify-host-by-email
+  103  cat commands/notify-host-by-email.cfg 
+  104  find /var/lib/shinken/ | grep notify_by_email
+  105  ll /var/lib/shinken/libexec/notify_by_email.py
+  106  sudo chmod u+s /var/lib/shinken/libexec/notify_by_email.py
+  107  ll /var/lib/shinken/libexec/notify_by_email.py
+  108  sudo apt-get remove ntpdate
+  109  sudo apt-get install ntp
+  110  grep -rl remote-host ./
+  111  cd /var/lib/shinken/
+  112  grep -rl remote-host ./
+  113  cat ./libexec/logFiles_linux.conf
+  114  sudo ll /root
+  115  sudo ls /root
+

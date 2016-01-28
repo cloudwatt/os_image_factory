@@ -1,0 +1,13 @@
+Sensu : 
+
+Sensu se veut plus polyvalent que Collectd. Capable de gérer 
+-la collecte de métriques
+-de définir des seuils d’alertes sur ces valeurs
+
+=> on a affaire ici à de multiples briques  : un ou plusieurs serveurs stockant leur état dans Redis.
+ 
+=> un client par machine, tous communiquant via RabbitMQ ( c'est un midleware parfois appelé Message-Oriented Middleware) qui implémente le message Protocole Advanced Queuing (AMQP). Le serveur de RabbitMQ est écrit dans le langage de programmation Erlang et est construit sur ​​la plate-forme Open Telecom cadre pour le regroupement et le basculement. 
+
+http://florin.myip.org/blog/files/sensu.png ( schema sensu)
+
+
