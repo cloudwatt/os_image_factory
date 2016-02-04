@@ -5,11 +5,12 @@
 ##
 #
 - hosts: all
+  user: cloud
   become: yes
 
   vars:
     db_name: zabbix
-    slaves_playbook_url: https://raw.githubusercontent.com/pierreane/os_image_factory/master/images/bundle-trusty-zabbix/ansible/slave-monitoring_zabbix.yml
+    slaves_playbook_url: https://raw.githubusercontent.com/cloudwatt/os_image_factory/master/images/bundle-trusty-zabbix/ansible/slave-monitoring_zabbix.yml
     host_inventory: |
       [local]
       127.0.0.1 ansible_connection=local
@@ -23,7 +24,7 @@
       apt: pkg='ntpdate' state=absent purge=yes
 
     - name: install pip packages
-      pip: name={{ item }}
+      pip: name={{ item }} state=latest
       with_items:
         - Pycurl
         - cherrypy

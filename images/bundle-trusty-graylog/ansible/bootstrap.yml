@@ -6,7 +6,7 @@
 #
 - hosts: local
   user: cloud
-  sudo: true
+  become: yes
 
   tasks:
     - name: apt-get update & upgrade
@@ -34,10 +34,10 @@
       apt: deb=/tmp/graylog_latest.deb
 
     - name: mongodb repository key trusted
-      shell: sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+      shell: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
 
     - name: mongodb repository added
-      apt_repository: repo='deb http://repo.mongodb.org/apt/ubuntu {{ ansible_lsb.codename }}/mongodb-org/3.0 multiverse' state=present
+      apt_repository: repo='deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.0 main' state=present
 
     - name: elasticsearch repository key is trusted
       apt_key:
@@ -61,6 +61,8 @@
         - mongodb-org
         - elasticsearch
         - openjdk-7-jre
+        - libcurl3-dev
+
 
     - name: elasticsearch cluster name is graylog2
       lineinfile:

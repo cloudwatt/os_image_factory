@@ -6,7 +6,7 @@
 #
 - hosts: local
   user: cloud
-  sudo: true
+  become: yes
 
   tasks:
 
