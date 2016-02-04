@@ -6,7 +6,7 @@
 #
 - hosts: local
   user: cloud
-  sudo: true
+  become : yes
 
   tasks:
     - name: apt-get update & upgrade
@@ -34,6 +34,7 @@
         - python-cffi
         - libguestfs-tools
         - python-setuptools
+        - build-essential
 
     - name: apt package pip is absent
       apt: pkg=python-pip state=absent purge=yes
