@@ -9,6 +9,12 @@
   become : yes
 
   tasks:
+
+    - name: add repo JQ
+      lineinfile:
+        dest=/etc/apt/source.list
+        line="deb http://cz.archive.ubuntu.com/ubuntu trusty main universe"
+
     - name: apt-get update & upgrade
       apt:
         upgrade=full
@@ -19,7 +25,6 @@
         src=/bin/bash
         dest=/bin/sh
         state=link
-
     - name: apt packages installed
       apt: pkg="{{ item }}" state=present
       with_items:
