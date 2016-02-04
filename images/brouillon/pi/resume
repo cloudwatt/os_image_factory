@@ -1,0 +1,299 @@
+http://linuxfr.org/news/presentation-d-ansible-et-version-2-a-venir
+
+http://rubular.com/
+
+
+
+
+
+glance image-show 9f58c30e-5c90-497f-b11e-0bcf62bff0b4
+
+
+
+
+
+Création d'une factory
+
+1/=> création de  keypair dans la console sur l'onglet acces securité ( nommée cette clé) nommé ici "pierreray"        
+pierre@cloud:~$  mv Downloads/pierreray.pem .ssh/
+pierre@cloud:~$ cd .ssh/
+pierre@cloud:~/.ssh$ ls
+     raymond.pem     
+
+
+2/=> Dans la meme console créée l'api Rest permettant d'etablir la connexion au serveur, lui attribué les droits 755 nommé ici "cloudwatt_openrc.sh"
+pierre@cloud:~/Downloads$ mv 0750177324_@_1446721342-openrc.sh ~/cloudwatt_openrc.sh                                        ///Aller dans Download puis renommé l'API REST ici en cloudwatt_openrc.sh
+pierre@cloud:~$ chmod 755 cloudwatt_openrc.sh                                                                               /// Attribuer les droits
+
+pierre@cloud:~/os_image_factory$ cd setup/                                                                                 /// se connecter dans os_image_factory => cd setup/ 
+
+
+pierre@cloud:~/os_image_factory/setup$ source ~/cloudwatt_openrc.sh 
+Please enter your OpenStack Password:                                                                                      /// mot de passe connexion à la console cloudwatt
+
+
+pierre@cloud:~/os_image_factory/setup$ heat stack-create factory_ray -f os_image_factory.heat.yml -Pkeypair_name=pierreray                        ///création de la factory
+
+
+
+pierre@cloud:~/os_image_factory/setup$ heat stack-list                                                      // verification de la création de la stack factory si son status est "complete"
++--------------------------------------+-------------+-----------------+----------------------+
+| id                                   | stack_name  | stack_status    | creation_time        |
++--------------------------------------+-------------+-----------------+----------------------+
+| e06c9651-97ee-4794-b5b4-cabc60dc7b8d | factory_ray | CREATE_COMPLETE | 2015-11-05T13:40:55Z |
++--------------------------------------+-------------+-----------------+----------------------+
+
+
+pierre@cloud:~/os_image_factory/setup$ heat stack-show factory_ray                                     ///  Pour avoir @IP de la factory necessaire à la connexion
++----------------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+| Property             | Value                                                                                                                                      |
++----------------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+| capabilities         | []                                                                                                                                         |
+| creation_time        | 2015-11-05T13:40:55Z                                                                                                                       |
+| description          | Openstack Image Factory                                                                                                                    |
+| disable_rollback     | True                                                                                                                                       |
+| id                   | e06c9651-97ee-4794-b5b4-cabc60dc7b8d                                                                                                       |
+| links                | https://orchestration.fr1.cloudwatt.com/v1/8acb072da1b14c61b9dced19a6be3355/stacks/factory_ray/e06c9651-97ee-4794-b5b4-cabc60dc7b8d (self) |
+| notification_topics  | []                                                                                                                                         |
+| outputs              | [                                                                                                                                          |
+|                      |   {                                                                                                                                        |
+|                      |     "output_value": "84.39.39.64",                                                                                                         |
+|                      |     "description": "IP address of the deployed compute instance",                                                                          |
+|                      |     "output_key": "floating_ip"                                                                                                            |
+|                      |   }                                                                                                                                        |
+|                      | ]                                                                                                                                          |
+| parameters           | {                                                                                                                                          |
+|                      |   "OS::stack_id": "e06c9651-97ee-4794-b5b4-cabc60dc7b8d",                                                                                  |
+|                      |   "image_id": "168f7c6b-20a6-4a4e-8052-d1200aa36a1e",                                                                                      |
+|                      |   "flavor_name": "n1.cw.highcpu-2",                                                                                                        |
+|                      |   "OS::stack_name": "factory_ray",                                                                                                         |
+|                      |   "keypair_name": "pierreray"                                                                                                              |
+|                      | }                                                                                                                                          |
+| parent               | None                                                                                                                                       |
+| stack_name           | factory_ray                                                                                                                                |
+| stack_owner          | pierre-raymond.ane-ext+compute@cloudwatt.com                                                                                               |
+| stack_status         | CREATE_COMPLETE                                                                                                                            |
+| stack_status_reason  | Stack CREATE completed successfully                                                                                                        |
+| template_description | Openstack Image Factory                                                                                                                    |
+| timeout_mins         | None                                                                                                                                       |
+| updated_time         | None                                                                                                                                       |
++----------------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+
+
+
+pierre@cloud:~/os_image_factory/setup$ ssh 84.39.39.64 -l cloud -i ~/.ssh/pierreray.pem -L 8080:localhost:8080                 /// connexion au serveur avec @IPadresse factory ici=84.39.39.64
+
+
+cloud@factory-ray-server-ygonxsxcyeji:~$ sudo nano /var/lib/jenkins/.profile                                                   /// enregistrement des variables dans la racine du profile jenkins
+cloud@factory-ray-server-ygonxsxcyeji:~$ sudo nano /var/lib/jenkins/.profile
+cloud@factory-ray-server-ygonxsxcyeji:~$ sudo service jenkins restart                                                           // se connecter au navigateur sur le serveur : localhost:8080
+
+
+====>  sur jenkins : "News Item" puis "Item name (donner un nom à sa build" puis "freestyle" puis 'git" puis "add build step" puis "shell = images/build.sh bundle-trusty-shinken"  
+puis  "packer.latest.log,images/target/bundle-trusty-shinken/bundle-trusty-shinken.heat.yml.j2"
+Freestyle project
+
+premiere connexion jenkins ( cloud@factory-ray-server-ygonxsxcyeji:~$ sudo nano /var/lib/jenkins/.profile   ==> remplir avec les donnée de ce fichier ~/.ssh/cloudwatt_openrc.sh
+ avec motpass console: raymondpierre21*
+
+II/   Partie 
+
+ 163  openstack  image list | grep -i wordpress
+  164  openstack  image list | grep acd263e2-0bf6-405d-b3e8-a4441b9da54e
+  165  heat stack-create pier -f /home/pierre/Downloads/
+                                                               // bundle-trusty-wordpress.heat.yml s'obtient en se connectant à jenkins images / target / bundle-trusty-shinken / output / puis download le fichier en question
+
+  166  heat stack-create pier -f /home/pierre/Downloads/bundle-trusty-wordpress.heat.yml 
+  167  heat stack-create pier -f /home/pierre/Downloads/bundle-trusty-wordpress.heat.yml -Pkeypair_name=raymond              // création d'une stack  et la clé "raymond" est une nouvelle clé générée dans la console access security
+
+  168 env | grep OS
+  169 ~/.bashrc                                                                                                              // permet d'enregistrer  le contenu de ces variables pierre@cloud:~$ nano ~/cloudwatt_openrc.sh
+  
+  168  mv /home/pierre/Downloads/raymond.pem /home/pierre/.ssh/
+  169  chmod 600 /home/pierre/.ssh/raymond.pem
+  170  heat stack-list 
+  171  heat resource-list
+  172  heat resource-list pier
+  173  ssh 84.39.39.158 -l cloud -i ~/.ssh/raymond.pem 
+  174  emacs test.sh
+  175  emacs test.sh -nw
+  176  sh test.sh 
+
+
+
+
+
+
+pierre@cloud:/var/log$ heat stack-list 
++--------------------------------------+-------------+-----------------+----------------------+
+| id                                   | stack_name  | stack_status    | creation_time        |
++--------------------------------------+-------------+-----------------+----------------------+
+| a4da448e-a536-43ba-bd6a-d4c744086bad | IMG_FACTORY | CREATE_COMPLETE | 2015-09-23T09:30:57Z |
+| 107f1103-18b6-4023-b3cb-5cc0755c3fc9 | P_FACTORY   | CREATE_COMPLETE | 2015-10-27T12:34:38Z |
+| 3d8d227b-1190-42f0-aebb-34046d52b6f9 | LEFT        | CREATE_COMPLETE | 2015-10-27T15:09:50Z |
+| 9ee303df-e4cb-4119-9c12-7f3e7766e2b6 | RIGHT       | CREATE_COMPLETE | 2015-10-27T15:10:04Z |
+| b7fe16f4-a6bd-4645-9b61-4496137fc13d | pier        | CREATE_COMPLETE | 2015-10-27T15:48:06Z |
++--------------------------------------+-------------+-----------------+----------------------+
+
+pierre@cloud:/var/log$ heat resource-list pier
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+| resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+| security_group   | d8650686-2a2a-462d-af17-02fc310e32c2              | OS::Neutron::SecurityGroup      | CREATE_COMPLETE | 2015-10-27T15:48:06Z |
+| network          | 9c1c317f-57f3-449d-ac59-2de82b23bf36              | OS::Neutron::Net                | CREATE_COMPLETE | 2015-10-27T15:48:09Z |
+| floating_ip      | f22ef41c-aee9-4bf3-97af-f4c76ae9bbe9              | OS::Neutron::FloatingIP         | CREATE_COMPLETE | 2015-10-27T15:48:10Z |
+| subnet           | 50645f58-ffb5-4aaa-890c-6fc8a787266d              | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-10-27T15:48:11Z |
+| server           | be14e094-50a4-4a6b-a6f0-c77186cd1843              | OS::Nova::Server                | CREATE_COMPLETE | 2015-10-27T15:48:13Z |
+| floating_ip_link | f22ef41c-aee9-4bf3-97af-f4c76ae9bbe9-84.39.39.158 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-10-27T15:49:05Z |
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+pierre@cloud:/var/log$ ssh 84.39.39.158 -l cloud -i ~/.ssh/raymond.pem               // Connexion a sa VM
+The authenticity of host '84.39.39.158 (84.39.39.158)' can't be established.
+ECDSA key fingerprint is ba:b3:5b:5f:dd:2f:7d:92:ce:c9:35:f3:d0:0a:ba:de.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '84.39.39.158' (ECDSA) to the list of known hosts.
+Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.13.0-52-generic x86_64)                 // https://console.cloudwatt.com/project/instances/ ( pour verifier @IP de la stack ici est 84.39.39.158
+
+
+
+
+
+================================================================================================================================================================================================
+
+
+
+
+root@cloud:/home/pierre/.ssh# ssh 84.39.35.189 -l cloud -i ~/.ssh/buildshinken.pem 
+
+pierre@cloud:~$ ssh 84.39.35.189 -l cloud -i ~/.ssh/buildshinken.pem 
+Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.13.0-52-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+
+  System information as of Fri Nov  6 15:08:21 UTC 2015
+
+  System load:  0.0               Processes:           86
+  Usage of /:   2.2% of 49.18GB   Users logged in:     0
+  Memory usage: 15%               IP address for eth0: 10.0.1.100
+  Swap usage:   0%
+
+  Graph this data and manage this system at:
+    https://landscape.canonical.com/
+
+  Get cloud support with Ubuntu Advantage Cloud Guest:
+    http://www.ubuntu.com/business/services/cloud
+
+7 packages can be updated.
+7 updates are security updates.
+
+
+Last login: Fri Nov  6 15:08:24 2015 from 185.23.92.11
+cloud@stack-shinken-server-7ggcemrh4pdq:~$ logout
+Connection to 84.39.35.189 closed.
+pierre@cloud:~$ ssh 84.39.35.189 -l cloud -i ~/.ssh/buildshinken.pem -L 8080:localhost:80
+Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.13.0-52-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+
+  System information as of Fri Nov  6 15:10:58 UTC 2015
+
+  System load:  0.09              Processes:           86
+  Usage of /:   2.2% of 49.18GB   Users logged in:     0
+  Memory usage: 15%               IP address for eth0: 10.0.1.100
+  Swap usage:   0%
+
+  Graph this data and manage this system at:
+    https://landscape.canonical.com/
+
+  Get cloud support with Ubuntu Advantage Cloud Guest:
+    http://www.ubuntu.com/business/services/cloud
+
+7 packages can be updated.
+7 updates are security updates.
+
+
+Last login: Fri Nov  6 15:10:59 2015 from 185.23.92.11
+cloud@stack-shinken-server-7ggcemrh4pdq:~$ channel 3: open failed: connect failed: Connection refused
+
+cloud@stack-shinken-server-7ggcemrh4pdq:~$ netstat -plantu | grep LISTEN
+(No info could be read for "-p": geteuid()=1000 but you should be root.)
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -               
+tcp        0      0 0.0.0.0:7767            0.0.0.0:*               LISTEN   
+
+
+
+
+ heat stack-create shinken_vm -f /home/pierre/Downloads/bundle-trusty-shinken.heat.yml -Pkeypair_name=buildshinken
++--------------------------------------+---------------+--------------------+----------------------+
+| id                                   | stack_name    | stack_status       | creation_time        |
++--------------------------------------+---------------+--------------------+----------------------+
+| e06c9651-97ee-4794-b5b4-cabc60dc7b8d | factory_ray   | CREATE_COMPLETE    | 2015-11-05T13:40:55Z |
+| 18b1797b-4c79-4ccb-adb1-5edc548d1904 | stack_shinken | CREATE_COMPLETE    | 2015-11-06T13:46:41Z |
+| dddd2ca4-0cde-4f7e-ae6b-4c252606361a | factory_pie   | CREATE_COMPLETE    | 2015-11-08T20:30:49Z |
+| 399874cd-23fe-4720-a0bb-0d84fae625a5 | shinken_stack | CREATE_COMPLETE    | 2015-11-09T12:29:07Z |
+| b3b9f67a-40db-4e6c-b17f-4c196445bb6e | vm_shinken    | CREATE_COMPLETE    | 2015-11-09T15:12:34Z |
+| 882837f5-9481-4c77-a601-082096175f8f | shinken_vm    | CREATE_IN_PROGRESS | 2015-11-09T15:29:28Z |
++--------------------------------------+---------------+--------------------+----------------------+
+pierre@cloud:~/Downloads$ heat stack-show shinken_vm 
++----------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| Property             | Value                                                                                                                                     |
++----------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| capabilities         | []                                                                                                                                        |
+| creation_time        | 2015-11-09T15:29:28Z                                                                                                                      |
+| description          | All-in-one Shinken stack                                                                                                                  |
+| disable_rollback     | True                                                                                                                                      |
+| id                   | 882837f5-9481-4c77-a601-082096175f8f                                                                                                      |
+| links                | https://orchestration.fr1.cloudwatt.com/v1/8acb072da1b14c61b9dced19a6be3355/stacks/shinken_vm/882837f5-9481-4c77-a601-082096175f8f (self) |
+| notification_topics  | []                                                                                                                                        |
+| outputs              | [                                                                                                                                         |
+|                      |   {                                                                                                                                       |
+|                      |     "output_value": "http://84.39.37.66:7767/",                                                                                           |
+|                      |     "description": "Shinken URL",                                                                                                         |
+|                      |     "output_key": "floating_ip_url"                                                                                                       |
+|                      |   }                                                                                                                                       |
+|                      | ]                                                                                                                                         |
+| parameters           | {                                                                                                                                         |
+|                      |   "OS::stack_id": "882837f5-9481-4c77-a601-082096175f8f",                                                                                 |
+|                      |   "flavor_name": "s1.cw.small-1",                                                                                                         |
+|                      |   "OS::stack_name": "shinken_vm",                                                                                                         |
+|                      |   "keypair_name": "buildshinken"                                                                                                          |
+|                      | }                                                                                                                                         |
+| parent               | None                                                                                                                                      |
+| stack_name           | shinken_vm                                                                                                                                |
+| stack_owner          | pierre-raymond.ane-ext+compute@cloudwatt.com                                                                                              |
+| stack_status         | CREATE_COMPLETE                                                                                                                           |
+| stack_status_reason  | Stack CREATE completed successfully                                                                                                       |
+| template_description | All-in-one Shinken stack                                                                                                                  |
+| timeout_mins         | None                                                                                                                                      |
+| updated_time         | None                                                                                                                                      |
++----------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+
+
+
+
+
+
+
+=================================================================================================
+
+
+{% for key,value in zabbix_agent_conf.iteritems() %}
+{{ key }}={{ value }}
+{% endfor %}
+
+{% for line in zabbix_agent_Include %}
+Include={{line}}
+{% endfor %}
+
+
+
+
+
+
+
+===============================  neutron --help port-list       
+
+
+
+
+
+pierre@cloud:~/Downloads$ ssh 84.39.37.66 -l cloud -i ~/.ssh/buildshinken.pem

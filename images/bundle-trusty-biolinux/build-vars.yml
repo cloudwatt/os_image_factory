@@ -1,8 +1,8 @@
 ---
 bundle:
-  name: bundle-trusty-zabbix
+  name: bundle-trusty-biolinux
   img_base: e9dc1515-47cc-4d52-8f54-48577ab5b216
   properties:
     img_os: Ubuntu
-    cw_bundle: ZABBIX
+    cw_bundle: BIOLINUX
     cw_origin: Cloudwatt

@@ -1,0 +1,40 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+- hosts: all
+  become: yes
+
+  tasks:
+    
+    - name: pip is installed
+      easy_install: name=pip
+
+    - name: pip packages are installed
+      pip: name="{{ item }}" state=latest
+      with_items:
+        - pip
+
+    - name: install apt-get install apt-utils
+      apt: name=apt-utils state=present
+
+    - name: template config.dat
+      template: src=config.dat  dest=/var/cache/debconf/config.dat
+
+    - name: update system
+      apt: update_cache=true upgrade=full
+
+    - name: install package
+      shell: apt-get -u dist-upgrade -y --force-yes
+
+    - name: install libcgmanager0
+      shell: apt-get install libcgmanager0
+
+    - name: copy upgrade8.sh
+      copy: src=upgrade8.sh dest=/root/upgrade8.sh owner=root group=root mode=0744
+
+    - script: upgrade8.sh --some-arguments 1234
+ 
+

@@ -1,0 +1,84 @@
+====> recapitulation lancer slave sur serveur
+
+
+
+pierre@cloud:~$ heat resource-list stack-ghost       //création de cette machine sur cloudwatt.com => produit => application =>ghost
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+| resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+| security_group   | 8e86058f-4933-4835-9d95-d2145f46dbc5              | OS::Neutron::SecurityGroup      | CREATE_COMPLETE | 2015-11-24T15:18:27Z |
+| floating_ip      | a7357436-68b0-4108-a77c-7f25489380d1              | OS::Neutron::FloatingIP         | CREATE_COMPLETE | 2015-11-24T15:18:29Z |
+| network          | ad58e87f-c52b-4a43-a9a4-eae6445534b3              | OS::Neutron::Net                | CREATE_COMPLETE | 2015-11-24T15:18:29Z |
+| subnet           | bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c              | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-24T15:18:30Z |
+| server           | 81ce0266-3361-471a-9b0c-6c37e32c9e9e              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-24T15:18:38Z |
+| floating_ip_link | a7357436-68b0-4108-a77c-7f25489380d1-84.39.36.143 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T15:19:31Z |
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+pierre@cloud:~$ neutron router-create monitoring         // création du router
+Created a new router:
++-----------------------+--------------------------------------+
+| Field                 | Value                                |
++-----------------------+--------------------------------------+
+| admin_state_up        | True                                 |
+| external_gateway_info |                                      |
+| id                    | babdd078-c0c6-4280-88f5-0f77951a5933 |
+| name                  | monitoring                           |
+| status                | ACTIVE                               |
+| tenant_id             | 8acb072da1b14c61b9dced19a6be3355     |
++-----------------------+--------------------------------------+
+pierre@cloud:~$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 bd69c3f5-ddc8-4fe4-8cbe-19ecea0fdf2c      // Add id du router + subnet host ghost
+Added interface a31a1d46-63f4-4315-8eb6-594bd17bc42f to router babdd078-c0c6-4280-88f5-0f77951a5933.
+pierre@cloud:~$ heat resource-list BUILD_SHINE      
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+| resource_name    | physical_resource_id                              | resource_type                   | resource_status | updated_time         |
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+| floating_ip      | ce734a7e-2079-46a9-84c7-e136446cb879              | OS::Neutron::FloatingIP         | CREATE_COMPLETE | 2015-11-24T14:47:33Z |
+| security_group   | 916f6d0c-02ac-4ce9-ad3a-67ddf9a61b03              | OS::Neutron::SecurityGroup      | CREATE_COMPLETE | 2015-11-24T14:47:35Z |
+| network          | e9ca7722-e5c7-4b17-b842-1343155b4461              | OS::Neutron::Net                | CREATE_COMPLETE | 2015-11-24T14:47:36Z |
+| subnet           | 57b4ea12-75c9-4f0c-87e9-2c1ebe58e860              | OS::Neutron::Subnet             | CREATE_COMPLETE | 2015-11-24T14:47:37Z |
+| server           | fd868139-6333-49ae-a1d4-6b9099eab4cd              | OS::Nova::Server                | CREATE_COMPLETE | 2015-11-24T14:47:41Z |
+| floating_ip_link | ce734a7e-2079-46a9-84c7-e136446cb879-84.39.33.194 | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2015-11-24T14:48:30Z |
++------------------+---------------------------------------------------+---------------------------------+-----------------+----------------------+
+pierre@cloud:~$ neutron router-interface-add babdd078-c0c6-4280-88f5-0f77951a5933 57b4ea12-75c9-4f0c-87e9-2c1ebe58e860        // Add id du router + subnet host server
+Added interface 4455951e-17ce-4dfb-bee9-6c7025494103 to router babdd078-c0c6-4280-88f5-0f77951a5933.
+pierre@cloud:~$ 
+pierre@cloud:~$ cat .ssh/buildshinken.pem                                                                       // copie ma key et colle dans un file sur le server
+-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEAqwgQd7Rz2siIsp0OOKP6WxPHIN5mKSRRz9YjI+ZWmYDMsSQS
+ukRKSpmMIU5dJe45+IAp3mI/+pi2aXWUc6SHbwJhIL1K5MCa8HMoreuPltDFzawb
+v5ONXSQsLoX6pFS8r9fRJGSgaqMLOoKuMKS1Cx5SAP9nyJySzCBgoyKPCyoaNT/I
+Kso0efT4uug/fRVm4xQ6rQlE2vRf0O7CmBfSiUXckCEM2vJyaEVkIijoTghgY0Gf
+Bz6IFbX1hQimMa3jpv3PFJKa5/YfgC4H7SUOQaHmWsaF8ObvnGlm2OJ+GynnkLc7
+j0gR4IcMoTq5f8vpaIbCMlscWTN1VujwJ0aIowIDAQABAoIBACXYhPxYHALfuQ/9
+HPZ/opigycGGNQkJlmjtM51wDN2u2JyiJNq+3cmgLJf6JTaNfpp0kc854nprbIHt
+mMn2MFnqJt/9wyLXU/G9KdVCeOWgkQSv/vvnhLKFnJk24H2YmqA2m3r4IV83cPaj
+kDQHXmB1dyPtYGPN8dXlnDy9GvYXIFT0jRN/D/jOeyU1zBo8J01vj/tjrz0T3+Ln
+EmfzfXfV4GN7c+1skXWaVxCf/8FJNDww+y9LwQowdvCmwjgt/ZfZroFypMZhBNNF
+lHIUGfWCq4i00GqXrxP9cmxp6l6vTfrG6ZN8P/8MjUMX/cJtFFcsVSKiwqq8o4CS
+oaLCduECgYEA07Ao0VsY/oEdjliaoqvrpg3HXVXABXRu+RlSWfra2/faTLbyqEQP
+0KatXBlS/NKOm48ACzaKiabvGm/YgJ5Fy5nUQP4C5pDslP9IHKdqwgy6AmT6Fhe0
+jwLqem4mA8aSw/pp9YrdeWQq1polU2aA/9FPgomIxSaYn9YrDuWrpUkCgYEAztU3
+sRUHnNrA0ib5LIuJQ0JF4mh8W+Dn0N34mnuYBrbtF/9icZD7Ayk4Dy86rMrcWacC
+JPyJMp1+ottT5VatcBsn9cKnvllD4TVoab4cF9sByUe8h5WMutic2vF0uSngYtpj
+7vJp5hB0/XByxElUHRjPcfPiB09tJP1MDSbXeosCgYEAogUCOLpwtto7tOc786WC
+BuYk4NrwzTwAc8ddsGC/gfyBqJWdxAvTzu7DYOpBCiBd5dHdRrfH8PNDrghMvKRm
+5x4lxlij/7SMXr3Eg6nfnAYBmDOQ9bfPCmZA8NO9ZMZnLnhLARP3zyFLaFUynFKo
+CSQ6pr59X+faiPtymURPy4ECgYA7ZtUV0JpdHB5gvLy3ZGPJo1D601NT9+XcAMQT
+agehdgvl5nzZbPAKWl41TjUlxyU9wk9FXBnzJXRnRWJ07U3mcoYpePxAGNb76SDR
+rb3XxBhhPG8S6Yp/ZxK1dr81JqfA/EPTLl/nqTZQS2lKoly79pItggOaYd9QzkZ3
+SH5+PQKBgFUNUNSqPHWe7+mtU7E4JmFTCLHURTyPEbNBBTYzKzrN6cvZrg7dQe7t
+G0HqDYZ3xwJFRcHmHOhoTO49XrWO/2+4fTRzOPHCfJv7Y5f+BP0X+oIxyQ/PMEVA
+hVwLYyIn10xhV4sWrVRAD0EIHkPh+9dGe9ZiUplUY9DmZH/UfJ0M
+-----END RSA PRIVATE KEY-----
+pierre@cloud:~$ 
+
+
+====Connexion sur le server 
+
+    vim .ssh/build_shinken.pem                                            // edit le fichier build_shinken.pem puis colle the key 
+   14  chmod 600 .ssh/build_shinken.pem                                   // donne des droits de permissions
+   15  ssh 10.0.2.100 -l cloud -i .ssh/build_shinken.pem                  // se connecte en ssh
+   16  vim /etc/ansible/hosts                                             // renseigne le fichier host
+   17  ansible slaves -m ping
+   18  cd
+   19  ansible-playbook slave-monitoring.yml
+

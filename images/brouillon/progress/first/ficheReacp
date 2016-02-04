@@ -1,0 +1,76 @@
+1/ install et configuration compte cloudWatt (27-10-2015)
+
+1  sudo bash < <(curl -s https://raw.githubusercontent.com/aurelienmaury/ansible-toolbox/master/seed-ubuntu.sh)
+    2  reboot
+    3  sudo reboot
+    4  apt-get install firefox-browser
+    5  apt-get install firefox
+    6  env | grep OS
+    7  heat stack-list
+    8  sudo install giuthub desktop
+    9  LL
+   10  ll
+   11  git 
+   12  git clone https://github.com/cloudwatt/os_image_factory.git
+   13  ll
+   14  ll os_image_factory/
+   15  cd os_image_factory/
+   16  ll
+   17  sudo apt-get install atom 
+   18  atom
+   19  sudo apt-get install atom-editor 
+   20  sudo add-apt-repository ppa:webupd8team/atom
+   21  sudo apt-get update
+   22  sudo apt-get install atom
+   23  heat stack-list
+   24  ls
+   25  cd Bureau
+   26  pwd
+   27  heat stack-create $FACTORY_NAME -f setup/os_image_factory.heat.yml -Pkeypair_name=$YOUR_KEYPAIR_NAME
+   28  sudo heat stack-create $FACTORY_NAME -f setup/os_image_factory.heat.yml -Pkeypair_name=$YOUR_KEYPAIR_NAME
+   29  sudo heat stack-create pierre  -f setup/os_image_factory.heat.yml -Pkeypair_name=seconde
+   30  sudo heat stack-create pierre  -f setup/os_image_factory.heat.yml -Pkeypair_name=seconde -Pusername=aurelien.maury-ext+compute@cloudwatt.com
+   31  sudo heat stack-create $FACTORY_NAME  -f setup/os_image_factory.heat.yml -Pkeypair_name=seconde -Pusername=aurelien.maury-ext+compute@cloudwatt.com
+   32  heat stack-list
+   33  *ll
+   34  ll
+   35  cd
+   36  ll
+   37  vi open_rc.sh
+   38  cat open_rc.sh 
+   39  . open_rc.sh 
+   40  source open_rc.sh 
+   41  ll
+   42  source ~/open_rc.sh 
+   43  source /open_rc.sh 
+   44  pwd
+   45  clear
+   46  cd os_image_factory/
+   47  env | grep OS
+   48  sudo heat stack-create $FACTORY_NAME  -f setup/os_image_factory.heat.yml -Pkeypair_name=seconde -Pusername=aurelien.maury-ext+compute@cloudwatt.com
+   49  sudheat stack-create $FACTORY_NAME  -f setup/os_image_factory.heat.yml -Pkeypair_name=seconde -Pusername=aurelien.maury-ext+compute@cloudwatt.com
+   50  heat stack-create $FACTORY_NAME  -f setup/os_image_factory.heat.yml -Pkeypair_name=seconde -Pusername=aurelien.maury-ext+compute@cloudwatt.com
+   51  ll
+   52  heat stack-create $FACTORY_NAME  -f setup/os_image_factory.heat.yml -Pkeypair_name=seconde -Pusername=aurelien.maury-ext+compute@cloudwatt.co
+   53  heat stack-create $FACTORY_NAME  -f setup/os_image_factory.heat.yml
+   54  clear
+   55  heat stack-create $FACTORY_NAME  -f setup/os_image_factory.heat.yml
+   56  heat stack-create FACTORY  -f setup/os_image_factory.heat.yml -Pkeypair_name=seconde -Pusername=aurelien.maury-ext+compute@cloudwatt.com
+   57  heat stack-create FACTORY  -f setup/os_image_factory.heat.yml -Pkeypair_name=seconde
+   58  heat stack-list
+   59  heat
+   60  heat stack-list
+   61  heat stack-delete FACTORY
+   62  heat stack-create P_FACTORY  -f setup/os_image_factory.heat.yml -Pkeypair_name=seconde
+   63  heat stack-show P_FACTORY
+   64  heat stack-delete P_FACTORY
+   65  heat stack-create PIERRE_FACTORY  -f setup/os_image_factory.heat.yml -Pkeypair_name=seconde
+   66  heat stack-list
+   67  heat stack-create P_FACTORY  -f setup/os_image_factory.heat.yml -Pkeypair_name=pierre
+   68  watch -n1 heat stack-list
+   69  heat stack-delete PIERRE_FACTORY
+   70  heat stack-show P_FACTORY
+   71  tail .bash_history 
+   72  tail ~/.bash_history 
+   73  history
+

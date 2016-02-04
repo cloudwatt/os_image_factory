@@ -1,0 +1,28 @@
+syntax playbook ansible
+
+console => shinken install sqlitedb
+
+playbook : 
+ 
+tasks:    
+  - name: installing SQLitedb                      // les "-" marque une liste comme un dictionnaire
+      command: /usr/bin/shinken install {{ item }}
+        creates=/var/lib/shinken/modules/{{ item }}
+      with_items:
+        - sqlitedb
+
+console => apt-get install sendxmp
+
+playbook :
+
+tasks:
+ - name: packages installed
+      apt: pkg="{{ item }}" state=present
+      with_items:
+        - sendxmpp
+
+
+
+
+Playbook                 * notify: indique si le package n'est pas installé veuillez l'installer
+                         * Tous les notify sont déclarés dans handlers ( s'il y'a plusieurs, veuillez mettre une liste 
