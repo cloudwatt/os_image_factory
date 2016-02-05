@@ -12,7 +12,7 @@
 
     - name: add repo JQ
       lineinfile:
-        dest=/etc/apt/source.list
+        dest=/etc/apt/sources.list
         line="deb http://cz.archive.ubuntu.com/ubuntu trusty main universe"
 
     - name: apt-get update & upgrade
