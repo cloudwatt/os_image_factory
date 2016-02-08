@@ -33,6 +33,11 @@ parameters:
         - n1.cw.highmem-8
         - n1.cw.highmem-12
 
+  subnet_id:
+    label: Subnet ID
+    description: Subnet to attach to router to allow connection to LDAP
+    type: string
+
   passcode:
     label: GnuPG Encryption Key Passcode
     description: Passcode for GnuPG Keys used to encrypt and sign all data backups
@@ -63,6 +68,12 @@ resources:
     properties:
       router_id: { get_resource: router }
       subnet_id: { get_resource: subnet }
+
+  other_interface:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router_id: { get_resource: router }
+      subnet_id: { get_param: subnet_id }
 
   security_group:
     type: OS::Neutron::SecurityGroup
@@ -116,7 +127,7 @@ resources:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: keypair_name }
-      image: 63a4d184-1b49-4547-9e42-f4a69179d849
+      image: {{ result_img_id }}
       flavor: { get_param: flavor_name }
       networks:
         - network: { get_resource: network }
@@ -145,6 +156,16 @@ outputs:
         params:
           $ROUTER$: { get_attr: [router, name] }
           $SUBNET$: { get_resource: subnet }
+
+  subnet-cidr:
+    description: |
+      Subnet CIDR script
+    value:
+      str_replace:
+        template: |
+          neutron subnet-show $SUBNET$ | grep "| cidr" | cut -d"|" -f3
+        params:
+          $SUBNET$: { get_param: subnet_id }
 
   ip_route_set:
     description: |
