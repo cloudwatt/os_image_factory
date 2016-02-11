@@ -25,6 +25,7 @@
         src=/bin/bash
         dest=/bin/sh
         state=link
+
     - name: apt packages installed
       apt: pkg="{{ item }}" state=present
       with_items:
@@ -86,7 +87,7 @@
         dest="/etc/duplicity/{{ item.remote }}"
         owner=root
         group=root
-        mode=0644
+        mode=0700
       with_items:
         - { local: dup_from_swift.sh, remote: from_swift.sh     }
         - { local: dup_to_swift.sh,   remote: to_swift.sh       }
@@ -94,6 +95,7 @@
         - { local: key_encrypt.batch, remote: key_encrypt.batch }
         - { local: key_sign.batch,    remote: key_sign.batch    }
         - { local: set_os_cred.sh,    remote: set_os_cred.sh    }
+        - { local: volume_mnt.sh,     remote: volume_mnt.sh     }
 
     - name: /root/.ssh exists
       file:
@@ -128,3 +130,5 @@
 
     - name: packages installed
       apt: pkg=postfix state=present
+
+

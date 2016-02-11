@@ -33,6 +33,27 @@ parameters:
         - n1.cw.highmem-8
         - n1.cw.highmem-12
 
+  volume_size:
+    default: 10
+    label: Backup Volume Size
+    description: Size of Volume for DevKit Storage (Gigabytes)
+    type: number
+    constraints:
+      - range: { min: 10, max: 10000 }
+        description: Volume must be at least 10 gigabytes
+
+  volume_type:
+    default: standard
+    label: Backup Volume Type
+    description: Performance flavor of the linked Volume for DevKit Storage
+    type: string
+    constraints:
+      - allowed_values:
+          - standard
+          - performant
+
+
+
   passcode:
     label: GnuPG Encryption Key Passcode
     description: Passcode for GnuPG Keys used to encrypt and sign all data backups
@@ -77,6 +98,21 @@ resources:
         - { direction: egress, protocol: TCP }
         - { direction: egress, protocol: UDP }
 
+  volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: { get_param: volume_size }
+      volume_type: { get_param: volume_type }
+      metadata:
+        fs_type: ext4
+
+  volume_attachement:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: server }
+      mountpoint: /dev/vdb
+      volume_id: { get_resource: volume }
+
   floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
@@ -109,6 +145,9 @@ resources:
             export SIGN_KEY=`   gpg --list-keys | egrep "^sub" | cut -d"/" -f2 | cut -d" " -f1 | head -n 1`
             export ENCRYPT_KEY=`gpg --list-keys | egrep "^sub" | cut -d"/" -f2 | cut -d" " -f1 | tail -n 1`
             """ > /etc/duplicity/dup_vars.sh
+            PASSPHRASE="$PASSCODE$" > /root/.passphrase
+            chmod 700 /root/.passphrase
+            bash /etc/duplicity/volume_mnt.sh
           params:
             $PASSCODE$: { get_param: passcode }
 
@@ -116,7 +155,7 @@ resources:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: keypair_name }
-      image: 63a4d184-1b49-4547-9e42-f4a69179d849
+      image: fb30d1b6-0983-4eee-a664-2c754c215811
       flavor: { get_param: flavor_name }
       networks:
         - network: { get_resource: network }
