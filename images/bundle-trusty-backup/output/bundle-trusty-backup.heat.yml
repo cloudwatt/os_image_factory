@@ -145,8 +145,6 @@ resources:
             export SIGN_KEY=`   gpg --list-keys | egrep "^sub" | cut -d"/" -f2 | cut -d" " -f1 | head -n 1`
             export ENCRYPT_KEY=`gpg --list-keys | egrep "^sub" | cut -d"/" -f2 | cut -d" " -f1 | tail -n 1`
             """ > /etc/duplicity/dup_vars.sh
-            PASSPHRASE="$PASSCODE$" > /root/.passphrase
-            chmod 700 /root/.passphrase
             bash /etc/duplicity/volume_mnt.sh
           params:
             $PASSCODE$: { get_param: passcode }
