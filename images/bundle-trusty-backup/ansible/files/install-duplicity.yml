@@ -1,0 +1,13 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+- hosts: local
+  user: cloud
+  become : yes
+
+  tasks:
+    - name: apt packages installed
+      apt: pkg=duplicty state=present

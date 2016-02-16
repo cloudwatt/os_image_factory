@@ -146,6 +146,7 @@ resources:
             export ENCRYPT_KEY=`gpg --list-keys | egrep "^sub" | cut -d"/" -f2 | cut -d" " -f1 | tail -n 1`
             """ > /etc/duplicity/dup_vars.sh
             bash /etc/duplicity/volume_mnt.sh
+            chown cloud /mnt/vbd && chgrp cloud /mnt/vdb
           params:
             $PASSCODE$: { get_param: passcode }
 
