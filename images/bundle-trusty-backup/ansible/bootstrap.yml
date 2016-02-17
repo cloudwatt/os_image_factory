@@ -96,7 +96,6 @@
         - { local: key_sign.batch,    remote: key_sign.batch    }
         - { local: set_os_cred.sh,    remote: set_os_cred.sh    }
         - { local: volume_mnt.sh,     remote: volume_mnt.sh     }
-        - { local: install-duplicity.yml, remote: install-duplicity.yml }
 
     - name: /root/.ssh exists
       file:
