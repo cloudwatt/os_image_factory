@@ -16,9 +16,9 @@ Tout d'abord, clonez ce dossier `setup_oneclick`. Vous avez maintenant le dossie
 
 Pour la publication de votre app, vous avez créé votre template d’orchestration HEAT qui est en format .yaml. Il faut le transformer en format .json. Pour ce faire « Google est votre ami », vous trouverez sur le web des traducteurs yaml/json.
 
-Au fait, dans le dossier, vous trouverez des exemples de syntaxe json.
+Au fait, dans le dossier `/stacks`, vous trouverez des exemples de syntaxe json.
 
-Une fois votre .json généré, placez le dans le dossier `setup_oneclick/stacks/`
+Une fois votre .json généré, placez-le dans le dossier `setup_oneclick/stacks/`
 
 ### Sur votre site web
 Placez le dossier `setup_oneclick/` et toute son arborescence à l'endroit de votre choix sur votre site, le chemin n'ayant pas d'importance.
