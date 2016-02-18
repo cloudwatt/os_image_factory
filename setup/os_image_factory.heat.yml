@@ -90,7 +90,7 @@ resources:
         apt-get update
         apt-get -o Dpkg::Options::="--force-confold" upgrade -y
         apt-get -o Dpkg::Options::="--force-confold" remove python-pip --purge -y
-        apt-get -o Dpkg::Options::="--force-confold" install aptitude git python-dev python-setuptools -y
+        apt-get -o Dpkg::Options::="--force-confold" install aptitude git python-dev python-setuptools build-essential -y
 
         for i in 1 2 3 4 5; do easy_install pip && break || sleep 2; done
 
