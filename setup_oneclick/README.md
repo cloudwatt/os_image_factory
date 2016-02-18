@@ -5,7 +5,9 @@ Les apps sont mises à disposition dans notre répertoire Github pour un déploi
 
 En septembre 2015, nous avons publié en opensource notre *Openstack Image Factory* pour la construction des images.
 
-Maintenant, nous allons passer dans d’autres coulisses et vous expliquer comment publier vos applications sur **votre** site web en utilisant cette **1-clic Factory**. Suivez le guide et faites attention où vous marchez.
+Maintenant, nous allons passer dans d’autres coulisses et vous expliquer comment lancer **vos** applications (naturellement déployées sur le cloud public de Cloudwatt) depuis **votre** site web en utilisant cette **1-clic Factory**.
+
+Suivez le guide et faites attention où vous marchez.
 
 ## L’usine 1-clic
 
