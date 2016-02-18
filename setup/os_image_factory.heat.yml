@@ -13,7 +13,7 @@ parameters:
     type: string
 
   image_id:
-    default: "168f7c6b-20a6-4a4e-8052-d1200aa36a1e"
+    default: "060a3341-36b8-4b25-8d02-c9f0d925427e"
     description: Image ID of the system (default is Cloudwatt's Debian Jessie)
     type: string
 
@@ -90,7 +90,7 @@ resources:
         apt-get update
         apt-get -o Dpkg::Options::="--force-confold" upgrade -y
         apt-get -o Dpkg::Options::="--force-confold" remove python-pip --purge -y
-        apt-get -o Dpkg::Options::="--force-confold" install aptitude git python-dev python-setuptools -y
+        apt-get -o Dpkg::Options::="--force-confold" install aptitude git python-dev python-setuptools build-essential -y
 
         for i in 1 2 3 4 5; do easy_install pip && break || sleep 2; done
 
