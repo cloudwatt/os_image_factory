@@ -1,11 +1,8 @@
+
 ---
 bundle:
   name: bundle-jessie-strongswan
-<<<<<<< HEAD
   img_base: 168f7c6b-20a6-4a4e-8052-d1200aa36a1e
-=======
-  img_base: 060a3341-36b8-4b25-8d02-c9f0d925427e
->>>>>>> 64b05d60251a48af3706a8fcc87fca0a2aeda649
   properties:
     img_os: Debian
     cw_bundle: STRONGSWAN
