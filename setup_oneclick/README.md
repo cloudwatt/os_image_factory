@@ -5,14 +5,14 @@ Les apps sont mises à disposition dans notre répertoire Github pour un déploi
 
 En septembre 2015, nous avons publié en opensource notre *Openstack Image Factory* pour la construction des images.
 
-Maintenant, nous allons passer dans d’autres coulisses et vous expliquer comment lancer **vos** applications (naturellement déployées sur le cloud public de Cloudwatt) depuis **votre** site web en utilisant cette **1-clic Factory**.
+Maintenant, nous allons passer dans d’autres coulisses et vous expliquer comment lancer **vos** applications (naturellement déployées sur le cloud public de Cloudwatt) depuis **votre** site web en utilisant ce **1-clic Factory**.
 
 Suivez le guide et faites attention où vous marchez.
 
 ## L’usine 1-clic
 
 ### Sur le Github
-Tout d'abord, clonez ce dossier `setup_oneclick`. Vous avez maintenant ce dossier dans votre espace privatif Github.
+Tout d'abord, clonez ce dossier `setup_oneclick`. Vous avez maintenant le dossier dans votre espace privatif Github.
 
 Pour la publication de votre app, vous avez créé votre template d’orchestration HEAT qui est en format .yaml. Il faut le transformer en format .json. Pour ce faire « Google est votre ami », vous trouverez sur le web des traducteurs yaml/json.
 
