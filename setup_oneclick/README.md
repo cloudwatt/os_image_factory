@@ -23,7 +23,7 @@ Une fois votre .json généré, placez le dans le dossier `setup_oneclick/stacks
 ### Sur votre site web
 Placez le dossier `setup_oneclick/` et toute son arborescence à l'endroit de votre choix sur votre site, le chemin n'ayant pas d'importance.
 
-Votre 1-click est maintenant prêt à être utilisé.
+Votre 1-click est maintenant prêt à être utilisé. 
 
 ### Utilisation 
 
