@@ -1,0 +1,151 @@
+<div class="container oneclick" ng-controller="ContactController" ng-if="requiresAuth()">
+
+
+   <center><img src="https://www.cloudwatt.com/fr/images/logo.png"></center>
+
+   <br>
+
+    <ul ng-if="!stack">
+    </ul>
+
+    <div ng-if="heat"><center>
+        <form name="myForm" class="contact-form" role="form">
+            <div class="form-group">
+                <label class="control-label col-sm-4 text-left bold" for="stack_name">Nom de l'application - Stack Name:</label>
+                
+                    <div class="control-wrap">
+                  <input type="text" ng-maxlength="64" ng-minlength="3" class="form-control" name="stack_name" id="stack_name" placeholder="Nom de l'application" title="The Stack name to start" ng-model="stack_name.value">
+              </div>
+                  <div class="help-block info">
+                   <!--  <div><b translate="TemplateVersion">Template Version</b>: {{ heat.descriptor.heat_template_version }}</div> -->
+                    <div><b translate="Description">Description</b>: {{ heat.descriptor.description }}</div><br><br>
+                </div>
+            
+        </div>
+
+
+        
+        <fieldset ng-repeat="group in heat.guiGroups">
+                <div class="form-group" ng-repeat="input in group.inputs">
+                    <label class="control-label col-sm-4 text-left bold" for="{{ input.attributes.id }}">{{ input.attributes.label }}:</label>
+                
+                        <select style='width:100%;' class="form-control" ng-if="canListKeypairs && input.nodeType == 'input' && input.attributes.id == 'keypair_name'" name="{{ input.attributes.id }}" id="{{ input.attributes.id }}" title="{{ input.attributes.description }}" ng-model="input.attributes.value">
+                            <option class="form-control" ng-repeat="val in refreshKeypairs().keypairs" title="{{val.keypair.fingerprint}}" ng-selected="val.keypair.name == input.attributes.value">{{ val.keypair.name }}</option>
+                        </select>
+                       <div class="control-wrap">
+                        <input type="{{input.attributes.type}}" ng-maxlength="{{input.attributes.maxLength}}" ng-minlength="{{input.attributes.minLength}}" class="form-control" ng-pattern="{{input.attributes.pattern}}" ng-if="input.nodeType == 'input' && (!canListKeypairs || input.attributes.id != 'keypair_name')" name="{{ input.attributes.id }}" id="{{ input.attributes.id }}" placeholder="{{ input.attributes.description }}" title="{{ input.attributes.description }}" ng-model="input.attributes.value" data-error="{{ input.attributes.dataErrors}}">
+                    </div>
+                        <!-- <textarea class="form-control" ng-maxlength="{{input.attributes.maxLength}}" ng-minlength="{{input.attributes.minLength}}" ng-if="input.nodeType == 'textarea'" name="{{ input.attributes.id }}" id="{{ input.attributes.id }}" placeholder="{{ input.attributes.description }}" title="{{ input.attributes.description }}" data-error="{{ input.attributes.dataError}}" ng-model="input.attributes.value">{{ input.attributes.value}}</textarea> -->
+
+                        <select style='width:100%;' class="form-control" ng-if="input.nodeType == 'select'" name="{{ input.attributes.id }}" id="{{ input.attributes.id }}" title="{{ input.attributes.description }}" ng-model="input.attributes.value">
+                            <option ng-repeat="val in input.possibleValues" ng-selected="val == input.attributes.value">{{ val }}</option>
+                        </select>
+                        <div ng-if="input.attributes.description" class="help-block info"><!-- {{input.attributes.description}} -->
+                            <div class="error" ng-if="(myForm[input.attributes.id].$error.pattern || myForm[input.attributes.id].$error.required || myForm[input.attributes.id].$error.minLength || myForm[input.attributes.id].$error.maxLength)"><em ng-if="input.attributes.dataErrors">{{input.attributes.dataErrors}}</em>
+                                <ul class="error">
+                                    <li class="error" ng-show="myForm[input.attributes.id].$error.pattern">Field does not validate pattern !</li>
+                                    <li class="error" ng-show="myForm[input.attributes.id].$error.required">Field is missing !</li>
+                                    <li class="error" ng-show="myForm[input.attributes.id].$error.minlength">Field is too short !</li>
+                                    <li class="error" ng-show="myForm[input.attributes.id].$error.maxlength">Field is too long !</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div ng-if="input.attributes.id == 'keypair_name'" class="help-block info"><a href="{{consolePublicUrl}}/project/access_and_security/?tab=access_security_tabs__keypairs_tab" translate="ManageKeypairsLabel" target="_blank">Manage my keypairs&hellip; (SSH Keys)</a>
+                           <div ng-if="refreshKeypairs().keypairs.length === 0">
+                            <button class="btn btn-warning" ng-if="!keypairCreated" ng-click="createKeypair('cloudwatt_ssh_keypair_'+refreshKeypairs().keypairs.length)" translate="CreateKeypair">You don't have any keypair, Create a new Keypair!</button>                            
+                           </div>
+
+                           <br><br>
+                           <!-- <div ng-if="keypairCreated && keypairCreated.keypair"><p class="bg-success" translate="KeypairCreatedTitle">Your SSH keypair has been created.</p>
+                             <p class="bg-info" translate="KeypairCreatedInfo">Please copy the following content of the key in a file <code>~/ssh/id_rsa</code></p>
+                             <textarea style="font-family: monospace !important" readonly="readonly" cols="76" rows="13">{{keypairCreated.keypair.private_key}}</textarea>
+                             <p class="bg-info" translate="KeypairPublicInfo">You public key (to add to <code>~/.ssh/authorized_keys of servers outside Cloudwatt if you want to reuse-it):</code></p>
+                             <textarea style="font-family: monospace !important" readonly="readonly" cols="76" rows="5">{{keypairCreated.keypair.public_key}}</textarea>
+                           </div>   -->
+                    </div>
+                
+            </fieldset>
+   <div class="form-group">
+    <ul class="error" ng-if="myForm.$error">
+        <li class="error" ng-show="myForm.$error.pattern">Some fields do not validate patterns !</li>
+        <li class="error" ng-show="myForm.$error.required">Some fields are missing !</li>
+        <li class="error" ng-show="myForm.$error.minLength">Some fields are too short !</li>
+        <li class="error" ng-show="myForm.$error.maxLength">Some fields are too long !</li>
+    </ul>
+</div>
+</center>
+<div class="form-group"><center>
+    <label for="tenantId" class="control-label col-sm-4 text-left bold">Tenant:</label>
+    <div class="col-sm-8">
+        <select style='width:100%;' class="form-control" id="tenantId" name="tenantId" ng-model="heatTenantId.id" required="required">
+          <option ng-repeat="t in listTenants().tenants" title="{{t.description}}" ng-selected="t.id == heatTenantId.id" value="{{t.id}}">{{t.name}}</option>
+      </select>
+  </div>
+</div>
+<div>
+    <br>
+
+    <div ng-if="getScopedToken(heatTenantId.id)">
+    </center><center> <button type="submit" ng-click="startStack()" class="btn btn-primary">Lancer</button>
+    <br><br>
+    <div ng-if="refreshStacks()">
+        <div ng-if="refreshStacks()">
+            <h3 translate="MyStacks">My Stacks</h3>
+            <table class="table table-striped">
+                <thead>
+                    <th translate="Name">Name</th>
+                    <th translate="Status" style="min-width: 20% !important;">Status</th>
+                    <th translate="CreationTime">Creation Time</th>
+                    <th translate="Description">Description</th>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="s in refreshStacks().stacks">
+                        <td title="{{s.id}}"><a target="_blank" href="{{consolePublicUrl}}/project/stacks/stack/{{s.id}}">{{ s.stack_name }}</a>
+                        </td>
+
+                        <td title="{{s.stack_status_reason}}"><!-- {{s.stack_status|translate}} -->
+
+                            <div ng-if="s.stack_status == 'CREATE_COMPLETE'">
+                                <img title="{{s.stack_status_reason|translate}}" src="img/icons/pastille-verte.png" style="float:left; margin-right: 10px;">
+                                <div ng-if="myStacksDetails[s.id].stack" style="float:left;">
+                                    <div ng-repeat="output in myStacksDetails[s.id].stack.outputs" style="float:left;">
+                                        <div title="{{output.output_key}}" style="float:left;">
+                                            <a target="_blank" ng-if="output.output_value.substring(0,4) == 'http'" href="{{output.output_value}}" class="button button_small">Accéder</a><span ng-if="output.output_value.substring(0,4) != 'http'"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="s.stack_status == 'CREATE_IN_PROGRESS'"><img title="{{s.stack_status_reason|translate}}" src="img/icons/loading.gif"></div>
+
+                            <div ng-if="s.stack_status == 'DELETE_FAILED'"><img title="{{s.stack_status_reason|translate}}" src="img/icons/pastille-rouge.png"></div>
+
+                            <div ng-if="s.stack_status == 'CREATE_FAILED'"><img title="{{s.stack_status_reason|translate}}" src="img/icons/pastille-rouge.png"></div>
+
+                            <div ng-if="s.stack_status == 'ERROR'"><img title="{{s.stack_status_reason|translate}}" src="img/icons/pastille-rouge.png"></div>
+
+                            <div ng-if="s.stack_status == 'DELETE_IN_PROGRESS'"><img title="{{s.stack_status_reason|translate}}" src="img/icons/pastille-orange.png"></div>
+
+                            <!-- <div ng-if="s.stack_status_reason"></div> -->
+
+                            
+                        </td>
+
+                        <td>
+                            <time datetime="{{ s.creation_time }}">{{ s.creation_time | date : 'short'}}</time>
+                        </td>
+                        <td>{{ s.description }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- <button ng-click="refreshStacks(true)" translate="Refresh">Refresh</button> -->
+        </div>
+    </div>
+</div>
+
+</div>
+</form>
+
+</center></div>
+</div>

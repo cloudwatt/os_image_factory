@@ -1,0 +1,157 @@
+.oneclick {
+  padding: 20px !important; 
+  width: 70% !important; 
+  background: white; 
+  border-radius: 20px;
+  margin-top: 50px !important;
+  box-shadow: 0px 0px 5px gray;
+}
+
+.oneclick-login {
+  padding: 20px !important; 
+  width: 50% !important; 
+  background: white; 
+  border-radius: 20px;
+  margin-top: 50px !important;
+  box-shadow: 0px 0px 5px gray;
+}
+
+@media screen and (max-width: 400px) {
+
+  .oneclick {
+    padding: 20px !important; 
+    width: 100% !important; 
+    background: white; 
+    margin: 0px !important; 
+    border-radius: 20px;
+    box-shadow: 0px 0px 5px gray;
+  }
+
+  .oneclick-login {
+    padding: 20px !important; 
+    width: 100% !important; 
+    background: white; 
+    border-radius: 20px;
+    margin-top: 50px !important;
+    box-shadow: 0px 0px 5px gray;
+  }
+
+}
+
+.view-container {
+  position: relative;
+}
+
+.view-frame.ng-enter,
+.view-frame.ng-leave {
+  background: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.view-frame.ng-enter {
+  -webkit-animation: 0.5s fade-in;
+  -moz-animation: 0.5s fade-in;
+  -o-animation: 0.5s fade-in;
+  animation: 0.5s fade-in;
+  z-index: 100;
+}
+
+.view-frame.ng-leave {
+  -webkit-animation: 0.5s fade-out;
+  -moz-animation: 0.5s fade-out;
+  -o-animation: 0.5s fade-out;
+  animation: 0.5s fade-out;
+  z-index: 99;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@-moz-keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@-moz-keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.swiftFile,
+.swiftDir {
+  cursor: pointer;
+}
+
+.swiftFile:before {
+  content: url(../img/icons/ic_file_download_black_18dp.png);
+}
+
+.swiftDir:before {
+  content: url(../img/icons/ic_folder_black_18dp.png);
+}
+
+.accountShortInfo {
+  margin: 1em 0;
+  padding: .5em 0;
+  border-top: 1px #ddd solid;
+  border-bottom: 1px #ddd solid;
+}
+
+
+.form-control {
+  -webkit-transition:all linear 0.5s;
+  transition:all linear 0.5s;
+  background: transparent;
+}
+.form-control.ng-invalid {
+  color:white;
+  background: red;
+}
+
+
+
+

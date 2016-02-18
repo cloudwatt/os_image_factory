@@ -1,0 +1,67 @@
+<div class="container oneclick-login">
+ <div class="row-fluid">
+
+   <center><img src="https://www.cloudwatt.com/fr/images/logo.png">
+   <br><br>
+
+      <form role="form" ng-submit="login(credentials)" ng-controller="LoginController" class="contact-form field-icons-yes" id="contact-form" action='' method="POST" form-autofill-fix>
+
+  
+         <label class="control-label" for="username">Identifiant :</label>
+         <div class="control-wrap"> <span class="icon"><img src="img/icons/user.png"></span>
+           <input type="email" id="username" name="username" placeholder="myemail@example.com" class="required" ng-model="credentials.username" autofocus>
+        </div>
+
+        <label class="control-label" for="password">Mot de passe :</label>
+        <div class="control-wrap" style="width: 100% !important;"> <span class="icon"><img src="img/icons/key.png"></span>
+         <input type="password" id="password" name="password" class="required" ng-model="credentials.password" placeholder="mot de passe" style="width: 100% !important;">
+      </div>
+      <br>
+      <div class="controls pull-right">
+               <center><button class="button" type="submit">Se connecter</button> <br>
+                <a href="https://www.cloudwatt.com/cockpit/#/create-contact" target="_blank">Créer un compte</a></center>
+            </div>
+
+   </form>
+
+   </center>
+</div>
+</div>
+
+
+<!--  <div class="container oneclick">
+   <div class="row">
+    <div class="col-sm-offset-3 col-sm-6" style="padding: 20px;">
+
+      <center><img src="https://www.cloudwatt.com/fr/images/logo.png"></center><br>
+
+      <form role="form" ng-submit="login(credentials)" ng-controller="LoginController" class="form-horizontal" action='' method="POST" form-autofill-fix>
+         <center>
+            <div class="form-group">
+               
+               <label class="control-label" for="username">Identifiant :</label>
+               <div class="controls">
+                  <input type="email" id="username" name="username" placeholder="myemail@example.com" class="form-control" ng-model="credentials.username" autofocus>
+               </div>
+            </div>
+            <div class="form-group">
+               
+               <label class="control-label" for="password">Mot de passe :</label>
+               <div class="controls">
+                  <input type="password" id="password" name="password" class="form-control" ng-model="credentials.password">
+               </div>
+            </div>
+         </center>
+         <br>
+         <div class="control-group">
+           
+            <div class="controls pull-right">
+               <center><button class="button" type="submit">Se connecter</button> <br>
+                <a href="https://www.cloudwatt.com/cockpit/#/create-contact" target="_blank">Créer un compte</a></center>
+            </div>
+         </div>
+      </form>
+   </div>
+</div>
+</div>
+ -->
