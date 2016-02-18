@@ -15,6 +15,7 @@ Suivez le guide et faites attention où vous marchez.
 Tout d'abord, clonez ce dossier `setup_oneclick`. Vous avez maintenant ce dossier dans votre espace privatif Github.
 
 Pour la publication de votre app, vous avez créé votre template d’orchestration HEAT qui est en format .yaml. Il faut le transformer en format .json. Pour ce faire « Google est votre ami », vous trouverez sur le web des traducteurs yaml/json.
+
 Au fait, dans le dossier, vous trouverez des exemples de syntaxe json.
 
 Une fois votre .json généré, placez le dans le dossier `setup_oneclick/stacks/`
@@ -34,4 +35,4 @@ Par exemple pour wordpress.json : `www.monnomdesite.com/mesapps/setup_oneclick/#
 Vous pouvez aussi modifier les .css pour les aligner sur le look & feel de votre site.
 
 ## Licence
-Le contenu de ce dépôt est la propriété de Cloudwatt et placé sous licence GPLv3.
+Le contenu de ce dépôt est la propriété de Cloudwatt et placé sous licence [GPLv3](https://github.com/cloudwatt/os_image_factory/blob/master/LICENSE).
