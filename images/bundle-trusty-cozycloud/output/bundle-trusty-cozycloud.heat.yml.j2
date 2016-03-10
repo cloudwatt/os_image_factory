@@ -97,15 +97,15 @@ resources:
       floating_ip: { get_resource: floating_ip }
       server_id: { get_resource: server }
 
+
 outputs:
   floating_ip_url:
     description: Cozycloud URL
     value:
       str_replace:
-      template: ip-{ "Fn::Replace": [ {'.': '-'}, $floating_ip]}.rev.cloudwatt.com
-      params:
-        $floating_ip: { get_attr: [floating_ip, floating_ip_address] }
-
+        template: https://ip-$public_dns.rev.cloudwatt.com/
+        params:
+          $public_dns: {"Fn::Replace": [ {'.': '-'}, get_attr: [floating_ip, floating_ip_address]]}
 
 
 
