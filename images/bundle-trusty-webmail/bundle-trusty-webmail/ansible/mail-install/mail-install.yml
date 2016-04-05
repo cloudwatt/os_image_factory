@@ -1,0 +1,16 @@
+---
+# Requires Ansible >= 1.9
+- hosts: local
+  user: cloud
+  become: true
+
+  roles:
+   - packages
+   - certificate
+   - database
+   - security
+   - postfix
+   - dovecot
+   - postfixadmin
+   - rainloop
+
