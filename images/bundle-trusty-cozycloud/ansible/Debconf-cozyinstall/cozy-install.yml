@@ -9,6 +9,29 @@
 
 
   tasks:
+
+    - name: needed packages are installed
+      apt:
+        pkg={{ item }}
+        state=present
+      with_items:
+        - ca-certificates
+        - apt-transport-https
+        - cozy
+        - python
+        - python-dev
+        - python-virtualenv
+        - python-mysqldb
+        - gcc
+        - dialog
+        - libaugeas0
+        - libssl-dev
+        - libffi-dev
+        - ca-certificates
+        - python-pip
+        - git
+        - python2-pythondialog
+
     - name: Debconf cozy
       debconf:
         name="{{ item.name }}"
