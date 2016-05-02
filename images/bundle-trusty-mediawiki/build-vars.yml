@@ -1,7 +1,7 @@
 ---
 bundle:
   name: bundle-trusty-mediawiki
-  img_base: e9dc1515-47cc-4d52-8f54-48577ab5b216
+  img_base: b01b46d8-c68f-49dc-a8fc-8e580db47162
   properties:
     img_os: Ubuntu
     cw_bundle: MEDIAWIKI
