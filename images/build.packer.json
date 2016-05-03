@@ -28,7 +28,7 @@
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" purge python-pip -y",
                 "sudo apt-get update",
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" upgrade -y",
-                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" install aptitude git gcc python-dev python-pip -y",
+                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" install aptitude git gcc libssl-dev python-dev python-pip -y",
                 "sudo pip install -U pip ansible",
                 "sudo pip install ndg-httpsclient",
                 "sudo pip install -U ndg-httpsclient"
