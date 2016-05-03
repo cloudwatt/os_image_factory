@@ -30,8 +30,9 @@
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" upgrade -y",
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" install aptitude git gcc python-dev python-setuptools -y",
                 "for i in 1 2 3 4 5; do sudo easy_install pip && break || sleep 2; done",
+                "sudo pip install -U pip ansible",
                 "sudo pip install ndg-httpsclient",
-                "sudo pip install -U pip ansible ndg-httpsclient"
+                "sudo pip install -U ndg-httpsclient"
             ]
         },
         {
