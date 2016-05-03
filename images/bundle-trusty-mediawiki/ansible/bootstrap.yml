@@ -27,40 +27,55 @@
         pkg={{ item }}
         state=present
       with_items:
+        - php5-intl
+        - php5-gd
+        - texlive
+        - php5-xcache
         - apache2
         - libapache2-mod-php5
         - php5-mysql
         - python-mysqldb
-        - mediawiki
 
+    - name: create www folder
+      file:
+        path=/var/www/html/mediawiki
+        state=directory
+        owner=cloud
+        group=cloud
+        mode=0777
+
+    - name: create mediawiki folder
+      file:
+        path=/mediawiki
+        state=directory
+        owner=cloud
+        group=cloud
+        mode=0777
+
+    - name: get mediawiki
+      get_url:
+        url=http://releases.wikimedia.org/mediawiki/1.26/mediawiki-1.26.2.tar.gz
+        dest=/mediawiki/
+        owner=cloud
+        group=cloud
+        mode=0777
+
+    - name: extract mediawiki
+      unarchive:
+        src=/mediawiki/mediawiki-1.26.2.tar.gz
+        dest=/mediawiki/
+        mode=0777
+        copy=no
+
+    - name: expose mediawiki
+      shell:
+        mv /mediawiki/mediawiki-1.26.2/* /var/www/html/mediawiki/
 
     - name: apache2 started
       service: name=apache2 state=started
 
     - name: apache2 enabled
       service: name=apache2 enabled=yes
-
-    - name: Apache conf
-      file:
-        dest=/etc/apache2/sites-available/mediawiki.conf
-        src=/etc/mediawiki/apache.conf
-        state=link
-      notify: enable apache site
-
-    - name: create mediawiki directory
-      file:
-        path=/var/www/mediawiki
-        state=directory
-        mode=0644
-
-    - name: lib mediaWiki
-      copy:
-        src=wget/mediawiki-1.26.2/
-        dest=/var/www/mediawiki
-        owner=root
-        group=root
-        mode=0644
-      notify: restart apache
 
     - name: installdb create
       file:

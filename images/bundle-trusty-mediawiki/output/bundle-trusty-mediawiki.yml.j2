@@ -86,8 +86,6 @@ resources:
             $floating_ip$: { get_attr: [floating_ip, floating_ip_address] }
 
 
-
-
   floating_ip_link:
     type: OS::Nova::FloatingIPAssociation
     properties:
@@ -95,6 +93,10 @@ resources:
       server_id: { get_resource: server }
 
 outputs:
-  floating_ip:
-    description: IP address of the deployed compute instance
-    value: { get_attr: [floating_ip, floating_ip_address] }
+  floating_ip_url:
+    description: Mediawiki URL
+    value:
+      str_replace:
+        template: https://$floating_ip/mediawiki
+        params:
+          $floating_ip: { get_attr: [floating_ip, floating_ip_address] }
