@@ -32,8 +32,7 @@
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" install aptitude git build-essential python-dev python-setuptools -y",
                 "for i in 1 2 3 4 5; do sudo easy_install pip && break || sleep 2; done",
                 "sudo ln -s /usr/local/bin/pip /usr/bin/pip",
-                "sudo pip install -U pip ansible",
-                "sudo pip install --upgrade ndg-httpsclient"
+                "sudo pip install -U pip ansible ndg-httpsclient",
             ]
         },
         {
