@@ -5,6 +5,7 @@
 ##
 #
 - hosts: local
+  become: yes
 
   vars:
     bundle:
