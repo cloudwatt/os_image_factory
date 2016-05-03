@@ -35,6 +35,7 @@
         - libapache2-mod-php5
         - php5-mysql
         - python-mysqldb
+        - mysql-server
 
     - name: create www folder
       file:
