@@ -79,7 +79,7 @@
 
     - name: installdb create
       file:
-        path=installdb/
+        path=/installdb/
         state=directory
         owner=cloud
         group=cloud

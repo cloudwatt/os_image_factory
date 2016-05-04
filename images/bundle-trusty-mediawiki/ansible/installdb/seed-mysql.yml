@@ -8,8 +8,8 @@
 
     mediawiki:
       floating_ip: "{{ lookup('file', '/etc/stack_floating_ip') }}"
-      password_db: "{{ lookup('password', '/etc/mediawiki/password_db chars=ascii_letters,digits,hexdigits,punctuation') }}"
-      secret_key: "{{ lookup('password', '/etc/mediawiki/secret_key length=65 chars=ascii_letters,digits') }}"
+      password_db: "{{ lookup('password', '/mediawiki/password_db chars=ascii_letters,digits,hexdigits,punctuation') }}"
+      secret_key: "{{ lookup('password', '/mediawiki/secret_key length=65 chars=ascii_letters,digits') }}"
       upgrade_key: "{{ lookup('password', '/etc/mediawiki/secret_key length=17 chars=ascii_letters,digits') }}"
 
 
