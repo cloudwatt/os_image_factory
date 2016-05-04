@@ -91,7 +91,7 @@
         dest=/installdb/seed-mysql.yml
         owner=cloud
         group=cloud
-        mode=0700
+        mode=0777
 
 
     - name: cp mediawiki.etc.conf
