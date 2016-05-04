@@ -80,26 +80,26 @@
 
     - name: installdb create
       file:
-        path=/root/installdb
+        path=installdb/
         state=directory
         mode=0644
 
     - name: cp seed mysql
       copy:
         src=installdb/seed-mysql.yml
-        dest=/root/installdb/seed-mysql.yml
-        owner=root
-        group=root
-        mode=0644
+        dest=/installdb/seed-mysql.yml
+        owner=cloud
+        group=cloud
+        mode=0700
 
 
     - name: cp mediawiki.etc.conf
       copy:
         src=installdb/mediawiki.etc.conf
-        dest=/root/installdb/mediawiki.etc.conf
-        owner=root
-        group=root
-        mode=0644
+        dest=/installdb/mediawiki.etc.conf
+        owner=cloud
+        group=cloud
+        mode=0700
 
   handlers:
     - name: enable apache site
