@@ -6,7 +6,7 @@
 heat_template_version: 2013-05-23
 
 
-description: All-in-one WordPress stack
+description: All-in-one mediawiki stack
 
 
 parameters:
@@ -16,19 +16,23 @@ parameters:
     type: string
 
   flavor_name:
-    default: s1.cw.small-1
+    default: n2.cw.standard-1
     description: Flavor to use for the deployed instance
     type: string
     label: Instance Type (Flavor)
     constraints:
       - allowed_values:
+          - t1.cw.tiny
           - s1.cw.small-1
-          - n1.cw.standard-1
-          - n1.cw.standard-2
-          - n1.cw.standard-4
-          - n1.cw.standard-8
-          - n1.cw.standard-12
-          - n1.cw.standard-16
+          - n2.cw.standard-1
+          - n2.cw.standard-2
+          - n2.cw.standard-4
+          - n2.cw.standard-8
+          - n2.cw.standard-16
+          - n2.cw.highmem-2
+          - n2.cw.highmem-4
+          - n2.cw.highmem-8
+          - n2.cw.highmem-12
 
 
 resources:
@@ -80,10 +84,12 @@ resources:
             mkdir /etc/ansible
             echo "[local]" >> /etc/ansible/hosts
             echo "127.0.0.1 ansible_connection=local" >> /etc/ansible/hosts
-            ansible-playbook /installdb/seed-mysql.yml
-            rm -rf /installdb/
-          params:33713558-82db-4cb4-aaaa-42a1e99e453e
+            ansible-playbook /root/installdb/seed-mysql.yml
+            rm -rf /root/installdb/
+          params:
             $floating_ip$: { get_attr: [floating_ip, floating_ip_address] }
+
+
 
 
   floating_ip_link:
@@ -97,6 +103,6 @@ outputs:
     description: Mediawiki URL
     value:
       str_replace:
-        template: http://$floating_ip/mediawiki
+        template: http://$floating_ip$/mediawiki
         params:
-          $floating_ip: { get_attr: [floating_ip, floating_ip_address] }
+          $floating_ip$: { get_attr: [floating_ip, floating_ip_address] }
