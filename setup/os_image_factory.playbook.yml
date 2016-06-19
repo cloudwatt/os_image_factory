@@ -14,31 +14,61 @@
         zip_url: "https://releases.hashicorp.com/packer/0.8.6/packer_0.8.6_linux_amd64.zip"
       jenkins:
         local_url: "http://127.0.0.1:8080"
-        repository: "deb http://pkg.jenkins-ci.org/debian binary/"
-        repo_key: "http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key"
+        repository_deb: "deb http://pkg.jenkins-ci.org/debian binary/"
+        repo_key_deb: "http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key"
+        repository_yum: "http://pkg.jenkins.io/redhat-stable"
+        repo_key_yum: "http://pkg.jenkins.io/redhat-stable/jenkins.io.key"
 
   tasks:
-    - name: toolkit packages present
+    - name: toolkit packages present (apt-based OSE)
       apt: pkg="{{ item }}" state=present
       with_items:
         - aptitude
         - git
         - python-dev
         - python-setuptools
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-    - name: apt package pip is absent
+    - name: toolkit packages present (yum-based OSE)
+      yum: pkg="{{ item }}" state=present
+      with_items:
+        - git
+        - python-devel
+        - python-setuptools
+        - gcc
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+    - name: apt package pip is absent (apt-based OSE)
       apt: pkg=python-pip state=absent purge=yes
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-    - name: system upgrade
+    - name: apt package pip is absent (yum-based OSE)
+      yum: pkg=python*-pip state=absent
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+    - name: system upgrade (apt-based OSE)
       apt: update_cache=yes upgrade=full
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-    - name: jenkins key server is known
-      apt_key: url="{{ os_image_factory.jenkins.repo_key }}" state=present
+    - name: jenkins key server is known (apt-based OSE)
+      apt_key: url="{{ os_image_factory.jenkins.repo_key_deb }}" state=present
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-    - name: jenkins apt server is known
-      apt_repository: repo="{{ os_image_factory.jenkins.repository }}" state=present
+    - name: jenkins package server is known (apt-based OSE)
+      apt_repository: repo="{{ os_image_factory.jenkins.repository_deb }}" state=present
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-    - name: needed packages installed
+    - name: jenkins package server is known (yum-based OSE)
+      yum_repository:
+        name: "jenkins"
+        description: "Jenkins CI packages server"
+        baseurl: "{{ os_image_factory.jenkins.repository_yum }}"
+        gpgcheck: yes
+        gpgkey: "{{ os_image_factory.jenkins.repo_key_yum }}"
+        state: present
+      when: ansible_distribution == 'CentOS' or ansible_distribution == "RedHat"
+
+    - name: needed packages installed (apt-based OSE)
       apt: update_cache=yes pkg="{{ item }}" state=present
       with_items:
         - libguestfs-tools
@@ -47,6 +77,23 @@
         - libssl-dev
         - jenkins
         - unzip
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: needed packages installed (yum-based OSE)
+      yum: update_cache=yes pkg="{{ item }}" state=present
+      with_items:
+        - libguestfs-tools
+        - libffi-devel
+        - openssl-devel
+        - java-1.8.0-openjdk
+        - jenkins
+        - unzip
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+    # https://issues.jenkins-ci.org/browse/JENKINS-35197
+    - name: fix jenkins configuration (yum-based OSE)
+      lineinfile: dest=/etc/sysconfig/jenkins regexp='^(JENKINS_JAVA_OPTIONS=.*)"$' line='\1 -Dhudson.diyChunking=false"' backrefs=yes
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
     - name: jenkins service is up
       service: name=jenkins state=restarted enabled=yes
@@ -90,13 +137,21 @@
         dest=/tmp/packer.zip
         force=no
 
+    - name: setting packer's group (apt-based OSE)
+      set_fact: packer_group="staff"
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: setting packer's group (yum-based OSE)
+      set_fact: packer_group="root"
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
     - name: packer destination directory is ready
       when: need_to_install_packer
       file:
         path=/usr/local/bin
         state=directory
         owner=root
-        group=staff
+        group={{ packer_group }}
         mode=0755
 
     - name: unzip packer
@@ -106,7 +161,7 @@
         dest=/usr/local/bin
         copy=no
         owner=root
-        group=staff
+        group={{ packer_group }}
         mode=0755
 
     - name: pip is installed
