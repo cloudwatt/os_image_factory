@@ -13,9 +13,14 @@ parameters:
     type: string
 
   image_id:
-    default: "185e1975-c9c5-4358-909e-5e329808902e"
-    description: Image ID of the system (default is Cloudwatt's Debian Jessie)
+    default: Debian Jessie
+    description: os type
+    label: Os type
     type: string
+    constraints:
+      - allowed_values:
+          - Debian Jessie
+          - Centos 7.2
 
   flavor_name:
     default: n1.cw.highcpu-2
