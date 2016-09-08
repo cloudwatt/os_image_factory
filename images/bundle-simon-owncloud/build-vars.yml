@@ -1,0 +1,9 @@
+
+---
+bundle:
+  name: bundle-simon-owncloud
+  img_base: 615d6726-4ca7-44ee-b65c-93c9d8967d22
+  properties:
+    img_os: Ubuntu
+    cw_bundle: ownCloud
+    cw_origin: Cloudwatt
