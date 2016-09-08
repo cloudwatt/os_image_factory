@@ -28,7 +28,7 @@
 
     - name: Apache2 DocumentRoot on ownCloud folder
       copy:
-        src=owncloud-apache2.conf
+        src=files/owncloud-apache2.conf
         dest=/etc/apache2/sites-available/000-default.conf
         owner=root
         group=root
