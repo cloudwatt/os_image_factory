@@ -1,0 +1,177 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+- hosts: localhost
+  become: yes
+  vars:
+    zabbix_repo_url: http://repo.zabbix.com/zabbix/3.2/ubuntu/pool/main/z/zabbix-release/zabbix-release_3.2-1+xenial_all.deb
+    host_inventory: |
+      [servers]
+      # put IP and connection information on zabbix slaves here
+
+  tasks:
+
+    - name: add motd
+      copy: src=motd dest=/etc/motd mode=0775
+
+    - name: Set timezone variables
+      copy: content='Europe/Paris'
+            dest=/etc/timezone
+            owner=root
+            group=root
+            mode=0644
+            backup=yes
+
+    - name: update timezone
+      shell: dpkg-reconfigure --frontend noninteractive tzdata
+
+    - name: upgrade
+      apt: update_cache=true upgrade=full
+
+    - name: playbook for enabling
+      apt: deb={{zabbix_repo_url}}
+
+    - name: update
+      apt: update_cache=yes
+
+    - name: install packages
+      apt: pkg={{ item }} state=present
+      with_items:
+        - python-mysqldb
+        - zabbix-server-mysql
+        - zabbix-frontend-php
+        - zabbix-agent
+        - php-bcmath
+        - php-mbstring
+        - php-xmlreader
+        - php-xmlwriter
+
+    - name: install zabbix api python
+      pip: name=zabbix-api
+
+    - name: enable php modules
+      shell: phpenmod bcmath mbstring xmlreader xmlwriter
+
+
+    - name: creating zabbix file
+      copy: src=zabbix.conf.php dest=/etc/zabbix/web/zabbix.conf.php owner=www-data group=www-data mode=0644
+
+
+    - name: Create symlink zabbix file
+      file:  src=/etc/zabbix/web/zabbix.conf.php dest=/usr/share/zabbix/conf/zabbix.conf.php state=link
+
+
+    - name: creating conf zabbix file
+      copy: src=zabbix_apache2.conf dest=/etc/apache2/sites-available/zabbix_apache2.conf owner=root group=root mode=0644
+
+    - name: enable zabbix apache conf
+      shell: |
+             a2dissite 000-default.conf
+             a2ensite zabbix_apache2.conf
+      notify: restart apache2
+
+
+    - name: Create a new database with name 'zabbix'
+      mysql_db: name="zabbix" state=present
+
+    - name: Creates database user 'zabbix' and password 'zabbix' with all database privileges and 'WITH GRANT OPTION'
+      mysql_user: name="zabbix" password=zabbix priv=*.*:ALL,GRANT state=present
+
+
+    - name: zcat databases
+      shell: zcat /usr/share/doc/zabbix-server-mysql/create.sql.gz > /usr/share/doc/zabbix-server-mysql/create.sql
+
+    - name: Import schema mysql
+      mysql_db:
+        name="zabbix"
+        login_user=zabbix
+        login_password=zabbix
+        state=import
+        target="/usr/share/doc/zabbix-server-mysql/create.sql"
+      ignore_errors: True
+
+
+    - name: change DBHost of zabbix-server
+      lineinfile:
+        name=/etc/zabbix/zabbix_server.conf
+          regexp="^\s*DBHost"
+          line="DBHost=localhost"
+
+
+    - name: change DBName of zabbix-server
+      lineinfile:
+        name=/etc/zabbix/zabbix_server.conf
+          regexp="^\s*DBName"
+          line="DBName=zabbix"
+
+
+    - name: change DBUser of zabbix-server
+      lineinfile:
+        name=/etc/zabbix/zabbix_server.conf
+          regexp="^\s*DBUser"
+          line="DBUser=zabbix"
+
+    - name: change DBPassword of zabbix-server
+      lineinfile:
+        name=/etc/zabbix/zabbix_server.conf
+          regexp="^\s*DBPassword"
+          line="DBPassword=zabbix"
+
+
+    - name: enable date.timezone in php.ini
+      lineinfile:
+        name=/etc/apache2/conf-enabled/zabbix.conf
+        regexp=".*date\.timezone.*"
+        line="php_value date.timezone  Europe/Paris"
+      notify: restart apache2
+
+    - name: create /etc/ansible directory
+      file:
+        path=/etc/ansible
+        state=directory
+        owner=root
+        group=root
+        mode=0755
+
+
+    - name: zabbix agent hostname
+      lineinfile:
+        name=/etc/zabbix/zabbix_agentd.conf
+        regexp="^Hostname="
+        line="Hostname= {{ ansible_hostname }}"
+      notify: restart zabbix-agent
+
+
+    - name: generating host inventory
+      copy:
+        force=no
+        content="{{ host_inventory }}"
+        dest=/etc/ansible/hosts
+
+    - name: add servers-monitoring_zabbix.yml
+      copy: src=servers-monitoring_zabbix.yml dest=~cloud/servers-monitoring_zabbix.yml mode=0775
+      notify: restart zabbix-server
+
+
+  handlers:
+
+    - name: restart apache2
+      service:
+        name=apache2
+        state=restarted
+        enabled=yes
+
+    - name: restart zabbix-agent
+      service:
+        name=zabbix-agent
+        state=restarted
+        enabled=yes
+
+    - name: restart zabbix-server
+      service:
+        name=zabbix-server
+        state=restarted
+        enabled=true
