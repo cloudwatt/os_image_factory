@@ -44,7 +44,7 @@
         remote_src: yes
 
     - name: Copie des fichiers de iceHRM dans le bon répertoire
-      shell: rm -rf /var/www/html/* && cp -R /home/cloud/icehrm_v18.0.OS/* /var/www/html/ && rm /root/icehrm.zip && rm -rf /root/icehrm_v18.0.OS
+      shell: rm -rf /var/www/html/* && cp -R /root/icehrm_v18.0.OS/* /var/www/html/ && rm /root/icehrm.zip && rm -rf /root/icehrm_v18.0.OS
 
     - name: Attribution des bons droits sur les fichiers de iceHRM
       file:
