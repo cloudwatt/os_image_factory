@@ -1,0 +1,50 @@
+---
+- hosts: local
+  become: yes
+
+  tasks:
+    - name: Ajout de la configuration de MySQL
+      copy:
+        src: files/my.cnf
+        dest: /etc/mysql/my.cnf
+
+    - name: Création de la base de données icehrmdb
+      mysql_db:
+        name: icehrmdb
+        state: present
+
+    - name: Création de l'utilisateur icehrmuser
+      mysql_user:
+        name: icehrmuser
+        password: "{{sqlpass}}"
+        priv: "*.*:ALL"
+        state: present
+
+    - name: Redémarrage de MySQL et de Apache2
+      service:
+        name: "{{item}}"
+        state: restarted
+      with_items:
+        - mysql
+        - apache2
+
+    - name: Téléchargement du zip de iceHRM
+      get_url:
+        url: https://github.com/gamonoid/icehrm/releases/download/v18.0.OS/icehrm_v18.0.OS.zip
+        dest: /home/cloud/icehrm.zip
+
+    - name: Extraction du zip de iceHRM
+      unarchive:
+        src: /home/cloud/icehrm.zip
+        dest: /home/cloud/
+        remote_src: yes
+
+    - name: Copie des fichiers de iceHRM dans le bon répertoire
+      shell: rm -rf /var/www/html/* && cp -R /home/cloud/icehrm_v18.0.OS/* /var/www/html/
+
+    - name: Attribution des bons droits sur les fichiers de iceHRM
+      file:
+        path: /var/www/html/
+        owner: www-data
+        group: www-data
+        recurse: yes
