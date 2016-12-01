@@ -35,7 +35,7 @@
     - name: Téléchargement du zip de iceHRM
       get_url:
         url: https://github.com/gamonoid/icehrm/releases/download/v18.0.OS/icehrm_v18.0.OS.zip
-        dest: /home/cloud/icehrm.zip
+        dest: /root/icehrm.zip
 
     - name: Extraction du zip de iceHRM
       unarchive:
