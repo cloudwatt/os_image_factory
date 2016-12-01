@@ -18,3 +18,8 @@
         - libapache2-mod-php
         - php7.0-mysql
         - python-mysqldb
+
+    - name: Ajout de la configuration de MySQL
+      copy:
+        src: files/my.cnf
+        dest: /etc/mysql/my.cnf
