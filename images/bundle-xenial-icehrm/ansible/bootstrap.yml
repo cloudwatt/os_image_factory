@@ -23,3 +23,37 @@
       copy:
         src: files/my.cnf
         dest: /etc/mysql/my.cnf
+
+    - name: Redémarrage de MySQL et de Apache2
+      service:
+        name: "{{item}}"
+        state: restarted
+      with_items:
+        - mysql
+        - apache2
+
+    - name: Téléchargement du zip de iceHRM
+      get_url:
+        url: https://github.com/gamonoid/icehrm/releases/download/v18.0.OS/icehrm_v18.0.OS.zip
+        dest: /home/cloud/icehrm.zip
+
+    - name: Extraction du zip de iceHRM
+      unarchive:
+        src: /root/icehrm.zip
+        dest: /root/
+        remote_src: yes
+
+    - name: Copie des fichiers de iceHRM dans le bon répertoire
+      shell: rm -rf /var/www/html/* && cp -R /home/cloud/icehrm_v18.0.OS/* /var/www/html/ && rm /root/icehrm.zip && rm -rf /root/icehrm_v18.0.OS
+
+    - name: Attribution des bons droits sur les fichiers de iceHRM
+      file:
+        path: /var/www/html/
+        owner: www-data
+        group: www-data
+        recurse: yes
+
+    - name: Ajout du playbook à exécuter
+      copy:
+        src: files/config.yml
+        dest: /root/config.yml
