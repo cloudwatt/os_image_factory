@@ -1,0 +1,12 @@
+---
+- hosts: local
+  become: yes
+
+  tasks:
+    - name: Starting MariaDB
+      service:
+        name: mysql
+        state: started
+
+    - name: Adding GlusterFS Client mounting at boot
+      shell: echo "inst1:/gfscluster_icehrm   /var/www/html/app   glusterfs   defaults,_netdev   0   0" >> /etc/fstab

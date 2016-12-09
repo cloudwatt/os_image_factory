@@ -1,0 +1,31 @@
+---
+- hosts: local
+  become: yes
+
+  tasks:
+    - name: Starting MariaDB and creating the cluster
+      shell: service mysql start --wsrep-new-cluster
+
+    - name: Overwriting MariaDB conf
+      shell: cp "/root/mariadb_inst2.cnf" /etc/mysql/conf.d/mariadb.cnf
+
+    - name: Création de la base de données icehrmdb
+      mysql_db:
+        name: icehrmdb
+        state: present
+
+    - name: Création de l'utilisateur icehrmuser
+      mysql_user:
+        name: icehrmuser
+        password: "{{sqlpass}}"
+        priv: "icehrmdb.*:ALL"
+        state: present
+
+    - name: Adding GlusterFS peer
+      shell: gluster peer probe inst2
+
+    - name: Creating and starting GlusterFS cluster 
+      shell: gluster volume create gfscluster_icehrm replica 2 inst1:/srv/icehrm/data inst2:/srv/icehrm/data && gluster volume start gfscluster_icehrm && gluster volume set gfscluster_icehrm network.ping-timeout 2
+
+    - name: Adding GlusterFS Client mounting at boot
+      shell: echo "inst2:/gfscluster_icehrm   /var/www/html/app   glusterfs   defaults,_netdev   0   0" >> /etc/fstab

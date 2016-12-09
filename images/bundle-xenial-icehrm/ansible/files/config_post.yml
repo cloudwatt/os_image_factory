@@ -1,0 +1,31 @@
+---
+- hosts: local
+  become: yes
+
+  tasks:
+    - name: Removing any Apache2 content
+      shell: rm -rf /var/www/html/*
+
+    - name: Creating GlusterFS client directory
+      file:
+        path: /var/www/html/app
+        state: directory
+
+    - name: Mounting GlusterFS client
+      shell: mount -t glusterfs inst1:/gfscluster_icehrm /var/www/html/app
+
+    - name: Extraction du zip de iceHRM
+      unarchive:
+        src: /root/icehrm.zip
+        dest: /root/
+        remote_src: yes
+
+    - name: Copie des fichiers de iceHRM dans le bon répertoire
+      shell: cp -R /root/icehrm_v18.0.OS/* /var/www/html/ && rm /root/icehrm.zip && rm -rf /root/icehrm_v18.0.OS
+
+    - name: Attribution des bons droits sur les fichiers de iceHRM
+      file:
+        path: /var/www/html/
+        owner: www-data
+        group: www-data
+        recurse: yes
