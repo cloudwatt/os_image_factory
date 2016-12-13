@@ -239,8 +239,8 @@ app.controller('ApplicationController', function($scope, $rootScope, $location, 
         //console.log("showDialog: ", $location);
         refreshAuth();
     };
-    
-    $scope.consolePublicUrl = ConsolePublicUrl;	
+
+    $scope.consolePublicUrl = ConsolePublicUrl;
 
     function refreshAuth() {
         $timeout(function() {
@@ -288,8 +288,8 @@ app.factory('AccountsData', function($rootScope, AUTH_EVENTS, $q, authentication
         toCall();
         return x[dataType];
     };
-    
-    
+
+
     /**
      * List all invoices for a given Customer
      */
@@ -345,7 +345,7 @@ app.factory('AccountsData', function($rootScope, AUTH_EVENTS, $q, authentication
             });
         });
     };
-    
+
     function listSubAccounts(customerId, $scope){
     	return getDataAndRegisterCall(customerId, 'children', function() {
             return     	SubAccounts.list({
@@ -360,10 +360,10 @@ app.factory('AccountsData', function($rootScope, AUTH_EVENTS, $q, authentication
             });
         });
     };
-    
+
     /**
      * List all roles for account, need CAP ACCOUNT_ROLES_LIST
-     */ 
+     */
     function getAccountRoles(customerId, $scope){
     	console.log("Getting roles information for "+customerId);
     	return getDataAndRegisterCall(customerId, 'allRoles', function() {
@@ -530,10 +530,10 @@ app.factory('ContactData', function($rootScope, $q, authenticationService, Conta
         });
         return defer.promise;
     }
-    
-    
+
+
     var allKnownUsers = null;
-    
+
     function getAllKnownUsers(scopeToRefresh){
     	if (allKnownUsers!=null){
     		return allKnownUsers;
@@ -545,11 +545,11 @@ app.factory('ContactData', function($rootScope, $q, authenticationService, Conta
             if (scopeToRefresh){
             	 $timeout(function() {
                     scopeToRefresh.$apply();
-                });	
+                });
             }
             return data;
         });
-        return allKnownUsers;    
+        return allKnownUsers;
     };
 
     var promise = null;
@@ -606,7 +606,7 @@ app.controller('ContactController', function($scope, $rootScope, ListOpenstackRo
     $scope.ContactRoles = ContactData.getContactData($scope, function(res) {
         $scope.ContactRoles = res;
     });
-    
+
       $scope.listOpenstackRoles = function(){
     	return ListOpenstackRoles($scope);
     };
@@ -633,13 +633,13 @@ app.controller('ContactController', function($scope, $rootScope, ListOpenstackRo
     $scope.ownedTenants = function(customerId) {
         return AccountsData.ownedTenants(customerId, $scope);
     };
-    
+
 
     $scope.updateAccount = function(account) {
         return AccountsData.updateAccount(account, $scope);
     };
-    
-   
+
+
 
     $scope.tenants = null;
 
@@ -678,15 +678,15 @@ app.controller('ContactController', function($scope, $rootScope, ListOpenstackRo
     $scope.accountDetails = function(customerId) {
         return AccountsData.getAccountDetails(customerId, $scope);
     };
-    
+
     $scope.listSubAccounts = function (customerId){
     	return AccountsData.listSubAccounts(customerId, $scope);
     };
-    
+
      $scope.getAccountRoles = function (customerId) {
     	return AccountsData.getAccountRoles(customerId, $scope);
     };
-    
+
     $scope.listAllUsers = function() {
     	return ContactData.listAllUsers($scope);
     }
@@ -712,13 +712,13 @@ app.controller('AccountDetailController', function($scope, restPublicUrl, authen
 
     var customerId = $routeParams.customerId;
     $scope.customerId = $routeParams.customerId;
-    
+
     $scope.tenantId = $routeParams.tenantId;
 
     $scope.details = function() {
         return AccountsData.getAccountDetails(customerId, $scope);
     };
-    
+
     $scope.listSubAccountsOnCurrentAccount = function (){
     	return AccountsData.listSubAccounts(customerId, $scope);
     };
@@ -730,19 +730,19 @@ app.controller('AccountDetailController', function($scope, restPublicUrl, authen
     $scope.listInvoicesOnCurrentAccount = function() {
         return AccountsData.listInvoices(customerId, $scope);
     };
-    
-    
+
+
 
     $scope.listOwnedTenantsOnCurrentAccount = function() {
     	if ( customerId ) {
     		return AccountsData.ownedTenants(customerId, $scope);
     	} else {
-    		return [];	
+    		return [];
     	}
     };
-    
+
     var myTokens = [];
-    
+
     function getScopedTokenAccess(tenantId) {
         if (myTokens[tenantId]) {
             return myTokens[tenantId];
@@ -767,7 +767,7 @@ app.controller('AccountDetailController', function($scope, restPublicUrl, authen
         }
         return null;
     };
-    
+
     $scope.tenantRoles = null;
 
     function refreshRoles(){
@@ -780,26 +780,26 @@ app.controller('AccountDetailController', function($scope, restPublicUrl, authen
         	});
         });
     }
-    
+
     if ($scope.tenantId){
     	refreshRoles();
-        
+
     };
-    
+
     $scope.roleToAdd = null;
-    
+
     $scope.userToAdd = null;
-    
+
     $scope.listOpenstackRolesToAdd = function(){
     	var daRoles = ListOpenstackRoles($scope);
     	if (daRoles!=null && daRoles.length > 0){
     		if ($scope.roleToAdd == null){
-    			$scope.roleToAdd = daRoles[0].id;	
+    			$scope.roleToAdd = daRoles[0].id;
     		}
     	}
     	return daRoles;
     };
-        
+
     $scope.addRoleToTenant = function(tenantId, userId, roleId){
     		($resource(restPublicUrl + '/openstack/1/tenants/:tenantId/users/:userId/roles/:roleId?region=fr1', {userId: userId, roleId: roleId, tenantId: tenantId}, {
                 'put': {
@@ -825,8 +825,8 @@ app.controller('AccountDetailController', function($scope, restPublicUrl, authen
             }
             );
     };
-    
-    
+
+
 
 });
 
@@ -903,7 +903,7 @@ app.controller("TenantController", function($scope, $resource, $timeout, $routeP
         };
         return null;
     };
-    
+
 
     var myContainers = null;
 
@@ -934,19 +934,19 @@ app.controller("TenantController", function($scope, $resource, $timeout, $routeP
         }
         return new Array();
     };
-    
-    
-    
+
+
+
     if ( !Date.prototype.toISOString ) {
   ( function() {
-    
+
     function pad(number) {
       if ( number < 10 ) {
         return '0' + number;
       }
       return number;
     }
- 
+
     Date.prototype.toISOString = function() {
       return this.getUTCFullYear() +
         '-' + pad( this.getUTCMonth() + 1 ) +
@@ -957,12 +957,12 @@ app.controller("TenantController", function($scope, $resource, $timeout, $routeP
         '.' + (this.getUTCMilliseconds() / 1000).toFixed(3).slice(2, 5)+'Z'
         ;
     };
-  
+
   }() );
 }
-    
+
     var consumption = null;
-    
+
     function setupDefaultDate(){
     	var dx = new Date();
             	dx.setHours(0);
@@ -972,26 +972,26 @@ app.controller("TenantController", function($scope, $resource, $timeout, $routeP
         dx = new Date(dx.getTime() - 24 * 3600000);
         return dx;
     };
-    
+
     $scope.maxDate = new Date();
     $scope.maxDate.setSeconds(0);
     $scope.maxDate.setMilliseconds(0);
-    
+
     $scope.consumptionParams = { page : 0,
                             fromDate: ($routeParams.fromDate == null ? setupDefaultDate() : $routeParams.fromDate),
     						limit: 100 }
-    						
-    
-    
+
+
+
     $scope.invalidateConsumption = function(){
     	consumption = null;
     	$scope.listConsumption();
     	$timeout(function() {
                     $scope.$apply();
                 });
-    };   
-	
-    
+    };
+
+
     $scope.chartObject = {};
 
 
@@ -1010,7 +1010,7 @@ app.controller("TenantController", function($scope, $resource, $timeout, $routeP
         'title': 'Consumption Overview',
         'tooltip': {isHtml: true}
     };
-  
+
   	function recomputeSeries(res){
   	   var data = new Array();
   	   var start;
@@ -1019,7 +1019,7 @@ app.controller("TenantController", function($scope, $resource, $timeout, $routeP
   	   for (var i = 0; i < res.events.length; i++){
   	   	   var event = res.events[i];
   	   	   if (i == 0){
-  	   	      start = event.computeDate;   
+  	   	      start = event.computeDate;
   	   	   }
   	   	   var index = (event.computeDate - start) / 3600000;
   	   	   if (data[index] == null){
@@ -1030,37 +1030,37 @@ app.controller("TenantController", function($scope, $resource, $timeout, $routeP
             {v: 0},
             {v: 0}
         ]};
-  	   	   		
+
   	   	   }
   	   	   if (event.type == 'HourInstanceOpenstackAggregatedMetricEvent'){
   	   	   	   data[index].c[1].v++;
   	   	   } else if (event.type == 'HourMaxFloatingIpsOpenstackAggregatedMetricEvent'){
-  	   	   	   data[index].c[2].v=event.size;   
+  	   	   	   data[index].c[2].v=event.size;
   	   	   } else if (event.type == 'HourObjectOutgoingBytesOpenstackAggregatedMetricEvent'){
   	   	   	   data[index].c[3].v=event.size / 1000000;
-  	   	   	   data[index].c[4].v=event.counter;   
+  	   	   	   data[index].c[4].v=event.counter;
   	   	   }
   	   }
-  	   
-  	   
+
+
   	   $timeout(function() {
   	   		   $scope.chartObject.data["rows"] = data;
                 $scope.$apply();
             });
-  	   
+
   	}
-    
+
 
     $scope.listConsumption = function(){
     	if (consumption){
-    		return consumption;	
+    		return consumption;
     	}
     	var x = getScopedTokenAccess();
         if (x.access) {
             consumption = [];
             var scopedToken = x.access.token.id;
             if ($scope.consumptionParams.page == null || $scope.consumptionParams.page < 0){
-            	$scope.consumptionParams.page = 0;	
+            	$scope.consumptionParams.page = 0;
             }
             if ($scope.consumptionParams.fromDate == null){
             	$scope.consumptionParams.fromDate = setupDefaultDate();
@@ -1092,9 +1092,9 @@ app.controller("TenantController", function($scope, $resource, $timeout, $routeP
         }
         return consumption;
     };
-    
-    
-    
+
+
+
 
 
     listMyTenants();
@@ -1401,40 +1401,41 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
     $scope.heat = null;
 
     $scope.heatTenantId = {id: null, value: []};
-    
+
     var currentKeyPair = null;
-    
+
     function initTenants() {
         ContactData.listTenants().then(function(data) {
             //console.log("allTenant", data);
             var d = data.tenants;
             if ($scope.heatTenantId.id==null){
-				for (var i = 0; i < d.length; i++) {
-					if (d[i].enabled){
-					 // Only setup tenant if tenant is enabled
-					 $scope.heatTenantId.id = d[i].id;
-					 return;
-					}
-				}
-				$timeout(function() {
-					$scope.$apply();
-				});
+							for (var i = 0; i < d.length; i++) {
+								if (d[i].enabled){
+								 // Only setup tenant if tenant is enabled
+								 $scope.heatTenantId.id = d[i].id;
+								 $scope.heatTenantId.name = d[i].name;
+								 return;
+								}
+							}
+							$timeout(function() {
+								$scope.$apply();
+							});
             }
         });
     };
-    
-    
-    
+
+
+
     $scope.stack = $routeParams.stack ;
-    
+
     $scope.myStacks = null;
-    
+
     function loadHeatTemplate() {
     	if (!$scope.stack){
     		$scope.heat = null;
     		return;
     	}
-    	
+
         $resource("stacks/:stack.json", {stack: $scope.stack}).get({}, function(res) {
             $scope.heat = res;
             for (var i in res.guiGroups) {
@@ -1455,7 +1456,7 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
     	initTenants();
 
     };
-    
+
     function getScopedToken( tenantId ){
     	if (tenantId == null || '' == tenantId){
     		return null;
@@ -1470,20 +1471,20 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
     			$timeout(function() {
             	   $scope.$apply();
             	});
-    			
+
     	});
     	return $scope.heatTenantId.value[tenantId];
     };
-    
-    
+
+
     $scope.getScopedToken = getScopedToken;
-    
+
     $scope.canListKeypairs = true;
-    
+
     $scope.myKeypairs = null;
-    
+
     $scope.keypairCreated = null;
-    
+
     $scope.createKeypair = function(name, comment){
     		var theTenantId = $scope.heatTenantId.id;
     	    var s_scopedToken = getScopedToken( theTenantId );
@@ -1517,7 +1518,7 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
             		saveTextAsFile("id_rsa", res.keypair.private_key);
             		//saveTextAsFile("id_rsa_public.txt", res.keypair.public_key);
             }, function(err){
-            		
+
             		console.log("Failed to create keypair", err);
             		if (err.status == 409){
             				alertify.error("Failed to create keypair, this keypair name '"+name+"' already exists!");
@@ -1526,7 +1527,7 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
             		}
             });
     }
-    
+
     function refreshKeypairs(forceRefresh){
     		var theTenantId = $scope.heatTenantId.id;
     		if ($scope.myKeypairs != null){
@@ -1565,7 +1566,7 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
             						}
             					}
             				}
-            				
+
             				$timeout(function() {
             						$scope.$apply();
             				});
@@ -1578,9 +1579,15 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
             			});
             		});
             return $scope.myKeypairs;
-            
+
     };
-    
+
+    function fillValues(value, tenant) {
+        return value.replace('OS_TENANT_ID', tenant.id).
+                replace('OS_TENANT_NAME', tenant.value[tenant.id].access.token.tenant.name).
+                replace('OS_USERNAME', tenant.value[tenant.id].access.user.name);
+    };
+
     function refreshStacks(forceRefresh){
     		var theTenantId = $scope.heatTenantId.id;
     		if ($scope.myStacks != null){
@@ -1588,14 +1595,14 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
     				return $scope.myStacks;
     			}
     		}
-    		
+
     	    var s_scopedToken = getScopedToken( theTenantId );
     		if (s_scopedToken == null){
     			return null;
     		}
     		var access = s_scopedToken.access;
     		if (access == null){
-    			return null;	
+    			return null;
     		}
     		var scopedToken = access.token.id;
     	    var stacksFinder = $resource(restPublicUrl + '/openstack/orchestration/stacks?region=fr1', {}, {
@@ -1611,7 +1618,7 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
             	$scope.myStacks = { stacks:{}, tenantId: theTenantId};
             	$scope.myStacksDetails = {};
             }
-            
+
             stacksFinder.list({}, function(res){
             				// alertify.success("Listing stacks done for "+theTenantId);
             				res.tenantId = theTenantId;
@@ -1621,7 +1628,7 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
             					var s = res.stacks[i];
             					if (s.stack_status == "CREATE_COMPLETE" && !($scope.myStacksDetails[s.id])){
             						console.log("Refreshing stack Details", s.stack_name, s.id);
-            						
+
 								var stacksDetails = $resource(restPublicUrl + '/openstack/orchestration/stacks/:name/:id?region=fr1', {}, {
 												'get': {
 													method: 'GET',
@@ -1637,9 +1644,9 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
 													$scope.$apply();
             								});
 								});
-								
+
 								} else if (s.stack_status == "CREATE_IN_PROGRESS"){
-									shouldRefresh = true;	
+									shouldRefresh = true;
 								}
             				}
             				$timeout(function() {
@@ -1649,14 +1656,14 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
             					// We are still waiting for stack changes, autorefresh in 10secs
             					$timeout(function() {
             						$scope.refreshStacks(true);
-            					}, 10000);	
+            					}, 10000);
             				}
             		}, function(err ){
             			console.log("Cannot list stacks", err);
             			var strErr = "Cannot list the stacks ";
             			if (err){
             				if (err.status){
-            					strErr+= " HTTP "+err.status;	
+            					strErr+= " HTTP "+err.status;
             				}
             				if (err.statusText){
             				    strErr+= " HTTP "+err.statusText;
@@ -1669,11 +1676,11 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
 
             		});
             return $scope.myStacks;
-            
+
     };
     $scope.refreshKeypairs = refreshKeypairs;
     $scope.refreshStacks = refreshStacks;
-    
+
     $scope.extractHeatEndpoint=function(){
     	    var token = $scope.heatTenantId.value[$scope.heatTenantId.id];
     		if (token == null || token.access == null || token.access.serviceCatalog == null)
@@ -1690,10 +1697,10 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
     		}
     		return null;
     };
-    
+
     $scope.stack_name = { value: ('stack' + ($routeParams.stack ? "-"+$routeParams.stack : "")) };
-        
-    $scope.startStack = function(){    		
+
+    $scope.startStack = function(){
     		var s_scopedToken = getScopedToken( $scope.heatTenantId.id);
     		if (s_scopedToken == null){
     			return null;
@@ -1729,7 +1736,7 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
                 refreshStacks(true);
             });
     };
-    
+
     $scope.recompute = function(){
     	if ($scope.heat){
     		var params = {};
@@ -1740,9 +1747,14 @@ app.controller("HeatController", function($window, $location, HMacComputeTempURL
     			  params[input.attributes.name] = input.attributes.value;
     			}
     		}
+            var hiddenParams = $scope.heat.hiddenParams;
+            for (var x in hiddenParams){
+                  var input = hiddenParams[x];
+                  params[input.name] = fillValues(input.value, $scope.heatTenantId);
+            }
     		return {stack_name: $scope.stack_name.value, template: $scope.heat.descriptor, parameters: params};
     	} else {
-    		return { stack_name: $scope.stack_name.value, parameters: {}};	
+    		return { stack_name: $scope.stack_name.value, parameters: {}};
     	}
     };
 
@@ -1762,29 +1774,29 @@ app.factory('PublicApi', function($resource, PublicApiUrl) {
 });
 
 app.controller('BssApiController', function($scope, $timeout, PublicApi, $sce, $anchorScroll, authenticationService, restPublicUrl){
-	
+
 	$scope.publicApi = {};
-	
+
 	$scope.tenantId = null;
-	
+
 	$scope.groupsDescriptions = {
 		account: "Get / Update information about Business Accounts, unscoped token required",
 		auth: "Get information about my Identity and my roles, unscoped token required",
 		"no-auth": "Pubic calls without required authentication",
 		"resource-scoped": "Calls authenticated with scoped tokens on a specific tenant"
 	};
-	
+
 	$scope.trustHtml = function (data){
 		return $sce.trustAsHtml( data );
 	}
-	
+
 	$scope.result = {};
-	
+
 	$scope.scrollTo = function(anchor){
 		$location.hash(anchor);
 		$anchorScroll();
 	};
-	
+
 	$scope.computeCurl = function( op, customerId ){
 		var ret = 'curl -X'+ op.httpMethod +' -H X-Auth-Token:'+authenticationService.getUnscopedToken()+' '+ restPublicUrl;
 		var rep;
@@ -1792,18 +1804,18 @@ app.controller('BssApiController', function($scope, $timeout, PublicApi, $sce, $
 			rep = op.path.substring(7);
 		} else {
 			rep = op.path;
-		} 
+		}
 		if (customerId){
 			rep = rep.replace("{customerId}", customerId);
 			rep = rep.replace("{parentCustomerId}", customerId);
 		}
 		ret+=rep;
 		if (op.httpMethod == 'PUT' || op.httpMethod == 'POST'){
-			ret+=' -H Content-Type:application/json --data \'{}\'';	
+			ret+=' -H Content-Type:application/json --data \'{}\'';
 		}
 		return ret;
 	}
-	
+
 	function fetch(){
 		console.log("Loading public APIs...");
 		PublicApi.list({}, function(data){
@@ -1826,6 +1838,6 @@ app.controller('BssApiController', function($scope, $timeout, PublicApi, $sce, $
                 return data;
 		});
 	};
-		
+
 	fetch();
 });
