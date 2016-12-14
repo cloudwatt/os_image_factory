@@ -1,4 +1,11 @@
 ---
+- name: Waiting for inst1 to continue
+  wait_for:
+     host: inst1
+     port: 4567
+     delay: 1
+     timeout: 300
+
 - name: Starting MariaDB
   service:
     name: mysql

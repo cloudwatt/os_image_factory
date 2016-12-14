@@ -43,21 +43,25 @@
         - /srv/icehrm/data
         - /srv/icehrm/mysql
 
-    # - name: Copying MySQL files
-    #   shell: cp -p -R /var/lib/mysql/* /srv/icehrm/mysql/
+    - name: Copying MySQL files
+      synchronize:
+        src: /var/lib/mysql/
+        dest: /srv/icehrm/mysql/
+        recursive: yes
+        perms: yes
 
-    # - name: Removing old MySQL files
-    #   file:
-    #     path: /var/lib/mysql
-    #     state: absent
+    - name: Removing old MySQL files
+      file:
+        path: /var/lib/mysql
+        state: absent
 
-    # - name: Mounting MySQL folder
-    #   mount:
-    #     opts: bind
-    #     fstype: none
-    #     src: /srv/icehrm/mysql
-    #     name: /var/lib/mysql
-    #     state: mounted
+    - name: Mounting MySQL folder
+      mount:
+        opts: bind
+        fstype: none
+        src: /srv/icehrm/mysql
+        name: /var/lib/mysql
+        state: mounted
 
     - name: Adding mounting at boot
       lineinfile:
