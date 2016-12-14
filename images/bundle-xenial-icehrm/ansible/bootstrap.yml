@@ -32,11 +32,6 @@
         - galera
         - glusterfs-server
 
-    - name: Ajout de la configuration de MySQL
-      copy:
-        src: files/my.cnf
-        dest: /etc/mysql/my.cnf
-
     - name: Téléchargement du zip de iceHRM
       get_url:
         url: https://github.com/gamonoid/icehrm/releases/download/v18.0.OS/icehrm_v18.0.OS.zip
@@ -50,7 +45,7 @@
         - format
         - mariadb_inst1.cnf
         - mariadb_inst2.cnf
-        - config_init.yml
+        - config.yml
         - config_inst1.yml
         - config_inst2.yml
-        - config_post.yml
+        - rc.local

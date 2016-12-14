@@ -126,13 +126,11 @@ resources:
             echo -e "$inst1_ip inst1\n$inst2_ip inst2" >> /etc/cloud/templates/hosts.debian.tmpl
             mkdir /etc/ansible
             echo -e "[local]\n127.0.0.1 ansible_ssh_user=cloud ansible_connection=local" > /etc/ansible/hosts
-            ansible-playbook /root/config_init.yml --extra-vars instance_name="inst1"
-            #sleep 10
-            ansible-playbook /root/config_inst1.yml --extra-vars sqlpass="$sqlpass"
-            ansible-playbook /root/config_post.yml
-            #rm /root/format
-            #rm /root/config_*.yml
-            #rm /root/mariadb_*.cnf
+            ansible-playbook /root/config.yml --extra-vars '{"instance_name":"inst1","sqlpass":"$sqlpass"}'
+            rm /root/format
+            rm /root/config*.yml
+            rm /root/mariadb_*.cnf
+            rm /root/rc.local
 
   inst2:
     type: OS::Nova::Server
@@ -154,13 +152,11 @@ resources:
             echo -e "$inst1_ip inst1\n$inst2_ip inst2" >> /etc/cloud/templates/hosts.debian.tmpl
             mkdir /etc/ansible
             echo -e "[local]\n127.0.0.1 ansible_ssh_user=cloud ansible_connection=local" > /etc/ansible/hosts
-            ansible-playbook /root/config_init.yml --extra-vars instance_name="inst2"
-            ansible-playbook /root/config_inst2.yml
-            #sleep 20
-            ansible-playbook /root/config_post.yml
-            #rm /root/format
-            #rm /root/config_*.yml
-            #rm /root/mariadb_*.cnf
+            ansible-playbook /root/config.yml --extra-vars '{"instance_name":"inst2","sqlpass":"$sqlpass"}'
+            rm /root/format
+            rm /root/config*.yml
+            rm /root/mariadb_*.cnf
+            rm /root/rc.local
 
   inst1_floating_ip_link:
     type: OS::Nova::FloatingIPAssociation

@@ -1,31 +1,43 @@
 ---
-- hosts: local
-  become: yes
+- name: Starting MariaDB and creating the cluster
+  shell: service mysql start --wsrep-new-cluster
 
-  tasks:
-    - name: Starting MariaDB and creating the cluster
-      shell: service mysql start --wsrep-new-cluster
+- name: Disabling Foreign Key checks
+  shell: mysql --execute="SET GLOBAL FOREIGN_KEY_CHECKS=0;"
 
-    - name: Overwriting MariaDB conf
-      shell: cp "/root/mariadb_inst2.cnf" /etc/mysql/conf.d/mariadb.cnf
+- name: Overwriting MariaDB conf
+  copy:
+    remote_src: true
+    src: /root/mariadb_inst2.cnf
+    dest: /etc/mysql/conf.d/mariadb.cnf
 
-    - name: Création de la base de données icehrmdb
-      mysql_db:
-        name: icehrmdb
-        state: present
+- name: Création de la base de données icehrmdb
+  mysql_db:
+    name: icehrmdb
+    state: present
 
-    - name: Création de l'utilisateur icehrmuser
-      mysql_user:
-        name: icehrmuser
-        password: "{{sqlpass}}"
-        priv: "icehrmdb.*:ALL"
-        state: present
+- name: Création de l'utilisateur icehrmuser
+  mysql_user:
+    name: icehrmuser
+    password: "{{sqlpass}}"
+    priv: "icehrmdb.*:ALL"
+    state: present
 
-    - name: Adding GlusterFS peer
-      shell: gluster peer probe inst2
+- name: Waiting for inst2 to continue
+  wait_for:
+     host: inst2
+     port: 24007
+     delay: 1
+     timeout: 300
 
-    - name: Creating and starting GlusterFS cluster 
-      shell: gluster volume create gfscluster_icehrm replica 2 inst1:/srv/icehrm/data inst2:/srv/icehrm/data && gluster volume start gfscluster_icehrm && gluster volume set gfscluster_icehrm network.ping-timeout 2
+- name: Adding GlusterFS peer
+  shell: gluster peer probe inst2
 
-    - name: Adding GlusterFS Client mounting at boot
-      shell: echo "inst2:/gfscluster_icehrm   /var/www/html/app   glusterfs   defaults,_netdev   0   0" >> /etc/fstab
+- name: Creating GlusterFS cluster
+  shell: gluster volume create gfscluster_icehrm replica 2 inst1:/srv/icehrm/data inst2:/srv/icehrm/data
+
+- name: Setting GlusterFS cluster
+  shell: gluster volume set gfscluster_icehrm network.ping-timeout 2
+
+- name: Starting GlusterFS cluster
+  shell: gluster volume start gfscluster_icehrm
