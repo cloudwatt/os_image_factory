@@ -26,7 +26,7 @@
 - name: Waiting for inst2 to continue
   wait_for:
      host: inst2
-     port: 24007
+     port: 4567
      delay: 1
      timeout: 300
 
