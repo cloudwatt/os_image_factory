@@ -1,0 +1,15 @@
+- name: add virtualhost
+  template: src=vhost.conf.j2 dest=/etc/apache2/sites-available/vhost.conf
+
+- name: enable roundcube vhost
+  shell: /usr/sbin/phpenmod mcrypt curl  && /usr/sbin/a2enmod rewrite && /usr/sbin/a2dissite 000-default default-ssl.conf && /usr/sbin/a2ensite vhost.conf
+
+- name: symlink roundcube
+  file: src=/usr/share/roundcube dest=/var/www/cw state=link
+
+- name: config roundcube
+  copy: src=files/config.inc.php  dest=/etc/roundcube/config.inc.php
+
+
+- name: restart apache
+  service: name=apache2 state=restarted

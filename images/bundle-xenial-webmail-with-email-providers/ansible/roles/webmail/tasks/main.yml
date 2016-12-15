@@ -1,0 +1,10 @@
+- name: database
+  include: database.yml
+- name: setup postfix
+  include: postfix.yml
+- name: setup dovecot
+  include: dovecot.yml
+- name: setup roundcube
+  include: roundcube.yml
+- name: setup postfixadmin
+  include: postfixadmin.yml

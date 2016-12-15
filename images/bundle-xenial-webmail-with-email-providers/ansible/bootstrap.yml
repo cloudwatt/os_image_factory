@@ -1,0 +1,78 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+- hosts: local
+  user: cloud
+  become: true
+
+  tasks:
+
+  - name: desired locale are present
+    locale_gen: name="{{ item }}" state=present
+    with_items:
+     - fr_FR.UTF-8
+     - en_US.UTF-8
+
+  - name: apt-get update & upgrade
+    apt:
+     upgrade=full
+     update_cache=yes
+     cache_valid_time=3600
+
+  - name: install required binary packages
+    apt: name={{item}} state=installed update_cache=yes
+    with_items:
+     - apache2
+     - libapache2-mod-php
+     - php
+     - php-imap
+     - php-curl
+     - php
+     - php-mysql
+     - php-mcrypt
+     - postfix
+     - postfix-mysql
+     - sasl2-bin
+     - dovecot-core
+     - dovecot-imapd
+     - dovecot-pop3d
+     - dovecot-lmtpd
+     - dovecot-mysql
+     - mailutils
+     - mysql-server
+     - python-mysqldb
+     - postfix
+     - python
+     - python-dev
+     - python-virtualenv
+     - python-mysqldb
+     - gcc
+     - dialog
+     - libaugeas0
+     - libssl-dev
+     - libffi-dev
+     - ca-certificates
+     - python-pip
+     - git
+     - roundcube
+
+
+  - name: purge Exim installation
+    apt: name={{item}} state=absent purge=yes
+    with_items:
+     - exim4
+     - exim4-base
+     - exim4-config
+     - exim4-daemon-light
+
+  - name: make sure mysql-server is started
+    service: name=mysql enabled=yes state=started
+
+  - name: copy conf.yml
+    copy: src=conf.yml dest=/home/cloud/conf.yml
+
+  - name:  copy directroy
+    copy: src=roles dest=/home/cloud  mode=0777
