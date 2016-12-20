@@ -1,22 +1,22 @@
 ---
+- name: Fixing boot script
+  lineinfile:
+    dest: /etc/rc.local
+    regexp: "^/opt/testmysql INSTANCE_NAME"
+    line: "/opt/testmysql inst2"
+
 - name: Starting MariaDB and creating the cluster
   shell: service mysql start --wsrep-new-cluster
 
 - name: Disabling Foreign Key checks
   shell: mysql --execute="SET GLOBAL FOREIGN_KEY_CHECKS=0;"
 
-- name: Overwriting MariaDB conf
-  copy:
-    remote_src: true
-    src: /root/mariadb_inst2.cnf
-    dest: /etc/mysql/conf.d/mariadb.cnf
-
-- name: Création de la base de données icehrmdb
+- name: Creating iceHRM's database
   mysql_db:
     name: icehrmdb
     state: present
 
-- name: Création de l'utilisateur icehrmuser
+- name: Creating iceHRM's default DB user
   mysql_user:
     name: icehrmuser
     password: "{{sqlpass}}"

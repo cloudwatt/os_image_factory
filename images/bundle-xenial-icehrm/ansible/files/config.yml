@@ -14,7 +14,7 @@
         src: "/root/mariadb_{{instance_name}}.cnf"
         dest: /etc/mysql/conf.d/mariadb.cnf
 
-    - name: Chmod format script
+    - name: Chmoding format script
       file:
         path: /root/format
         state: file
@@ -68,7 +68,31 @@
         dest: /etc/fstab
         line: "/dev/vdb   /srv/icehrm   ext4   defaults   0   0"
 
-    - include: "/root/config_{{instance_name}}.yml"
+    - name: Adding boot script
+      copy:
+        remote_src: true
+        src: /root/rc.local
+        dest: /etc/rc.local
+
+    - name: Adding Galera boot script
+      copy:
+        remote_src: true
+        src: /root/testmysql
+        dest: /opt/testmysql
+
+    - name: Chmoding Galera boot script
+      file:
+        path: /opt/testmysql
+        state: file
+        mode: a+x
+
+    - name: Disabling MySQL at  boot
+      service:
+        name: mysql
+        enabled: no
+
+    - name: Including customs tasks
+      include: "/root/config_{{instance_name}}.yml"
       vars:
         sqlpass: "{{sqlpass}}"
 
@@ -90,22 +114,16 @@
     - name: Mounting GlusterFS client
       shell: mount -t glusterfs inst1:/gfscluster_icehrm /var/www/html/app
 
-    - name: Adding boot script
-      copy:
-        remote_src: true
-        src: /root/rc.local
-        dest: /etc/rc.local
-
-    - name: Extraction du zip de iceHRM
+    - name: Extracting iceHRM's zip file
       unarchive:
         src: /root/icehrm.zip
         dest: /root/
         remote_src: yes
 
-    - name: Copie des fichiers de iceHRM dans le bon répertoire
+    - name: Moving iceHRM's files in the right folder
       shell: cp -R /root/icehrm_v18.0.OS/* /var/www/html/ && rm /root/icehrm.zip && rm -rf /root/icehrm_v18.0.OS
 
-    - name: Attribution des bons droits sur les fichiers de iceHRM
+    - name: Changing owner of iceHRM's files
       file:
         path: /var/www/html/
         owner: www-data

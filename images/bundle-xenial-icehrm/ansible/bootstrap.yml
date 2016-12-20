@@ -49,3 +49,4 @@
         - config_inst1.yml
         - config_inst2.yml
         - rc.local
+        - testmysql

@@ -1,4 +1,10 @@
 ---
+- name: Fixing boot script
+  lineinfile:
+    dest: /etc/rc.local
+    regexp: "^/opt/testmysql INSTANCE_NAME"
+    line: "/opt/testmysql inst1"
+
 - name: Waiting for inst1 to continue
   wait_for:
      host: inst1
@@ -10,6 +16,3 @@
   service:
     name: mysql
     state: started
-
-# - name: Adding GlusterFS Client mounting at boot
-#   shell: echo "inst2:/gfscluster_icehrm   /var/www/html/app   glusterfs   defaults,_netdev   0   0" >> /etc/fstab

@@ -14,4 +14,6 @@
 gluster volume start gfscluster_icehrm force
 mount -t glusterfs localhost:/gfscluster_icehrm /var/www/html/app
 
+/opt/testmysql INSTANCE_NAME
+
 exit 0
