@@ -95,21 +95,11 @@ resources:
         properties:
           server_id: { get_resource: inst2 }
 
-  inst1_floating_ip:
-    type: OS::Neutron::FloatingIP
-    properties:
-      floating_network_id: 6ea98324-0f14-49f6-97c0-885d1b8dc517
-
-  inst2_floating_ip:
-    type: OS::Neutron::FloatingIP
-    properties:
-      floating_network_id: 6ea98324-0f14-49f6-97c0-885d1b8dc517
-
   inst1:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: keypair_name }
-      image: img_icehrm
+      image: 2dc27f39-b7e1-4282-ac84-5aeefadc8466
       flavor: { get_param: flavor_name }
       networks:
         - port: { get_resource: inst1_port }
@@ -127,16 +117,13 @@ resources:
             mkdir /etc/ansible
             echo -e "[local]\n127.0.0.1 ansible_ssh_user=cloud ansible_connection=local" > /etc/ansible/hosts
             ansible-playbook /root/config.yml --extra-vars '{"instance_name":"inst1","sqlpass":"$sqlpass"}'
-            rm /root/format
-            rm /root/config*.yml
-            rm /root/mariadb_*.cnf
-            rm /root/rc.local
+            rm /root/{format,config*.yml,mariadb_*.cnf,rc.local,testmysql}
 
   inst2:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: keypair_name }
-      image: img_icehrm
+      image: 2dc27f39-b7e1-4282-ac84-5aeefadc8466
       flavor: { get_param: flavor_name }
       networks:
         - port: { get_resource: inst2_port }
@@ -153,22 +140,7 @@ resources:
             mkdir /etc/ansible
             echo -e "[local]\n127.0.0.1 ansible_ssh_user=cloud ansible_connection=local" > /etc/ansible/hosts
             ansible-playbook /root/config.yml --extra-vars '{"instance_name":"inst2","sqlpass":"$sqlpass"}'
-            rm /root/format
-            rm /root/config*.yml
-            rm /root/mariadb_*.cnf
-            rm /root/rc.local
-
-  inst1_floating_ip_link:
-    type: OS::Nova::FloatingIPAssociation
-    properties:
-      floating_ip: { get_resource: inst1_floating_ip }
-      server_id: { get_resource: inst1 }
-
-  inst2_floating_ip_link:
-    type: OS::Nova::FloatingIPAssociation
-    properties:
-      floating_ip: { get_resource: inst2_floating_ip }
-      server_id: { get_resource: inst2 }
+            rm /root/{format,config*.yml,mariadb_*.cnf,rc.local,testmysql}
 
   lbaas_vip_port:
     type: OS::Neutron::Port
@@ -199,7 +171,7 @@ resources:
       lb_method: ROUND_ROBIN
       vip:
         name: lbaas_front_vip
-        description: Front-end VIP
+        description: iceHRM Front-end VIP
         protocol_port: 80
 
   lbaas:
@@ -211,7 +183,7 @@ resources:
 
 outputs:
   lbaas_floating_ip:
-    description: LBaas Floating IP
+    description: iceHRM LBaas Floating IP
     value:
       str_replace:
          template: http://$floating_ip
