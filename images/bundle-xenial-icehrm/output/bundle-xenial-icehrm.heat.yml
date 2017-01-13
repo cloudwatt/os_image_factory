@@ -1,4 +1,4 @@
-heat_template_version: 2013-05-23
+heat_template_version: 2015-04-30
 
 
 description: All-in-one iceHRM stack
@@ -17,8 +17,6 @@ parameters:
     label: Type instance - Instance Type (Flavor)
     constraints:
       - allowed_values:
-          - t1.cw.tiny
-          - s1.cw.small-1
           - n1.cw.standard-1
           - n1.cw.standard-2
           - n1.cw.standard-4
@@ -52,8 +50,13 @@ resources:
     type: OS::Neutron::SecurityGroup
     properties:
       rules:
-        - { direction: ingress, protocol: TCP, port_range_min: 1, port_range_max: 65535 }
-        - { direction: ingress, protocol: UDP, port_range_min: 1, port_range_max: 65535 }
+        - { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
+        - { direction: ingress, protocol: TCP, port_range_min: 80, port_range_max: 80 }
+        - { direction: ingress, protocol: TCP, port_range_min: 3306, port_range_max: 3306 }
+        - { direction: ingress, protocol: TCP, port_range_min: 4444, port_range_max: 4444 }
+        - { direction: ingress, protocol: TCP, port_range_min: 4567, port_range_max: 4567 }
+        - { direction: ingress, protocol: TCP, port_range_min: 24007, port_range_max: 24007 }
+        - { direction: ingress, protocol: TCP, port_range_min: 49152, port_range_max: 49152 }
         - { direction: ingress, protocol: ICMP }
         - { direction: egress, protocol: ICMP }
         - { direction: egress, protocol: TCP }
