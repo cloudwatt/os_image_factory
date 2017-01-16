@@ -26,9 +26,6 @@
             "type": "shell",
             "inline": [
                 "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" purge python-pip -y",
-                "sudo apt-get update",
-                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" upgrade -y",
-                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" install aptitude git gcc libffi-dev libssl-dev python-dev python-pip -y",
                 "sudo pip install -U pip ansible"
 
             ]
