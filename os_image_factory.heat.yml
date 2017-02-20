@@ -115,8 +115,8 @@ resources:
         echo -e "[local]\n127.0.0.1 ansible_connection=local ansible_ssh_user=cloud" > /etc/ansible/hosts
 
         git clone https://github.com/cloudwatt/os_image_factory.git /root/os_image_factory
-        cd /root/os_image_factory && git checkout master
-        /usr/local/bin/ansible-playbook /root/os_image_factory/setup/os_image_factory.playbook.yml -vvv > /var/log/os_image_factory.setup.log 2>&1
+        cd /root/os_image_factory && git checkout v1.5
+        /usr/local/bin/ansible-playbook /root/os_image_factory/os_image_factory.playbook.yml -vvv > /var/log/os_image_factory.setup.log 2>&1
 
   jenkins_profile:
     type: OS::Heat::CloudConfig
