@@ -8,6 +8,19 @@ heat_template_version: 2013-05-23
 description: Openstack Image Factory
 
 parameters:
+  OS_USERNAME:
+    description: OS_Username for OpenStack
+    type: string
+
+  OS_PASSWORD:
+    description: OS_Password for OpenStack
+    type: string
+    hidden: true
+
+  OS_TENANT_NAME:
+    description: OS_TENANT_NAME for OpenStack
+    type: string
+
   keypair_name:
     description: Keypair to inject in instances
     type: string
@@ -20,7 +33,6 @@ parameters:
     constraints:
       - allowed_values:
           - Debian Jessie
-          - Centos 7.2
 
   flavor_name:
     default: n1.cw.highcpu-2
@@ -94,10 +106,7 @@ resources:
 
         apt-get update
         apt-get -o Dpkg::Options::="--force-confold" upgrade -y
-        apt-get -o Dpkg::Options::="--force-confold" remove python-pip --purge -y
-        apt-get -o Dpkg::Options::="--force-confold" install aptitude git python-dev python-setuptools build-essential -y
-
-        for i in 1 2 3 4 5; do easy_install pip && break || sleep 2; done
+        apt-get -o Dpkg::Options::="--force-confold" install aptitude git python-dev python-setuptools build-essential python-pip -y
 
         pip install -U pyopenssl ndg-httpsclient pyasn1
         pip install -U pip ansible
@@ -106,6 +115,7 @@ resources:
         echo -e "[local]\n127.0.0.1 ansible_connection=local ansible_ssh_user=cloud" > /etc/ansible/hosts
 
         git clone https://github.com/cloudwatt/os_image_factory.git /root/os_image_factory
+        cd /root/os_image_factory && git checkout master
         /usr/local/bin/ansible-playbook /root/os_image_factory/setup/os_image_factory.playbook.yml -vvv > /var/log/os_image_factory.setup.log 2>&1
 
   jenkins_profile:
@@ -120,10 +130,9 @@ resources:
               str_replace:
                 template: |
                   # Set with your own tenant values
-                  export OS_USERNAME=""
-                  export OS_TENANT_NAME=""
-                  export OS_TENANT_ID=""
-                  export OS_PASSWORD=""
+                  export OS_USERNAME="{ get_param: OS_USERNAME }"
+                  export OS_TENANT_NAME="{ get_param: OS_TENANT_NAME }"
+                  export OS_PASSWORD="{ get_param: OS_PASSWORD }"
 
                   export OS_REGION_NAME="fr1"
                   export OS_AUTH_URL="https://identity.fr1.cloudwatt.com/v2.0"

@@ -10,14 +10,17 @@
   vars:
     os_image_factory:
       packer:
-        version: "0.8.6"
-        zip_url: "https://releases.hashicorp.com/packer/0.8.6/packer_0.8.6_linux_amd64.zip"
+        version: "0.12.2"
+        zip_url: "https://releases.hashicorp.com/packer/0.12.2/packer_0.12.2_linux_amd64.zip"
       jenkins:
         local_url: "http://127.0.0.1:8080"
         repository: "deb http://pkg.jenkins-ci.org/debian binary/"
         repo_key: "http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key"
 
   tasks:
+    - name: system upgrade
+          apt: update_cache=yes upgrade=full
+
     - name: toolkit packages present
       apt: pkg="{{ item }}" state=present
       with_items:
@@ -25,28 +28,28 @@
         - git
         - python-dev
         - python-setuptools
-
-    - name: apt package pip is absent
-      apt: pkg=python-pip state=absent purge=yes
-
-    - name: system upgrade
-      apt: update_cache=yes upgrade=full
-
-    - name: jenkins key server is known
-      apt_key: url="{{ os_image_factory.jenkins.repo_key }}" state=present
-
-    - name: jenkins apt server is known
-      apt_repository: repo="{{ os_image_factory.jenkins.repository }}" state=present
-
-    - name: needed packages installed
-      apt: update_cache=yes pkg="{{ item }}" state=present
-      with_items:
+        - build-essentia
+        - libssl-dev
+        - libffi-dev
+        - python-dev
+        - libxml2-dev
+        - libxslt1-dev
+        - vim
+        - git
+        - wget
         - libguestfs-tools
         - libffi-dev
         - python-cffi
         - libssl-dev
         - jenkins
         - unzip
+        - python-pip
+
+    - name: jenkins key server is known
+      apt_key: url="{{ os_image_factory.jenkins.repo_key }}" state=present
+
+    - name: jenkins apt server is known
+      apt_repository: repo="{{ os_image_factory.jenkins.repository }}" state=present
 
     - name: jenkins service is up
       service: name=jenkins state=restarted enabled=yes
@@ -109,10 +112,7 @@
         group=staff
         mode=0755
 
-    - name: pip is installed
-      easy_install: name=pip
-
-    - name: openstack CLI is installed
+    - name: openstack CLI dep
       pip: name="{{ item }}" state=latest
       with_items:
         - pyopenssl
@@ -141,23 +141,5 @@
       retries: 3
       delay: 2
 
-    - name: download jenkins CLI jar file
-      get_url:
-        url="{{ os_image_factory.jenkins.local_url }}/jnlpJars/jenkins-cli.jar"
-        dest=/root/jenkins-cli.jar
-        force=no
-      register: cli_download
-      until: cli_download|success
-      retries: 10
-      delay: 6
-
-    - name: get jenkins plugin list
-      shell: "java -jar /root/jenkins-cli.jar -s {{ os_image_factory.jenkins.local_url }} list-plugins | grep -e ')$' | awk '{ print $1 }' | tr \"\n\" \" \""
-      register: jenkins_plugins
-
-    - name: install jenkins git plugin and update all installed plugins
-      when: jenkins_plugins.stdout
-      shell: "java -jar /root/jenkins-cli.jar -s {{ os_image_factory.jenkins.local_url }} install-plugin {{ jenkins_plugins.stdout }} git-client git"
-
-    - name: safe-restart jenkins to apply plugins updates
-      shell: "java -jar /root/jenkins-cli.jar -s {{ os_image_factory.jenkins.local_url }} safe-restart"
+    - name: jenkins service is up
+      service: name=jenkins state=restarted enabled=yes
