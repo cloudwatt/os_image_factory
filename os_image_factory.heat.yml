@@ -106,7 +106,10 @@ resources:
 
         apt-get update
         apt-get -o Dpkg::Options::="--force-confold" upgrade -y
-        apt-get -o Dpkg::Options::="--force-confold" install aptitude git python-dev python-setuptools build-essential python-pip -y
+        apt-get -o Dpkg::Options::="--force-confold" remove python-pip --purge -y
+        apt-get -o Dpkg::Options::="--force-confold" install aptitude git python-dev python-setuptools build-essential -y
+
+        for i in 1 2 3 4 5; do easy_install pip && break || sleep 2; done
 
         pip install -U pyopenssl ndg-httpsclient pyasn1
         pip install -U pip ansible
@@ -116,7 +119,8 @@ resources:
 
         git clone https://github.com/cloudwatt/os_image_factory.git /root/os_image_factory
         cd /root/os_image_factory && git checkout v1.5
-        /usr/local/bin/ansible-playbook /root/os_image_factory/os_image_factory.playbook.yml -vvv > /var/log/os_image_factory.setup.log 2>&1
+        /usr/local/bin/ansible-playbook /root/os_image_factory/os_image_factory.playbook.yml -vvvv > /var/log/os_image_factory.setup.log 2>&1
+
 
   jenkins_profile:
     type: OS::Heat::CloudConfig

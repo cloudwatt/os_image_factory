@@ -18,9 +18,6 @@
         repo_key: "http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key"
 
   tasks:
-    - name: system upgrade
-          apt: update_cache=yes upgrade=full
-
     - name: toolkit packages present
       apt: pkg="{{ item }}" state=present
       with_items:
@@ -28,28 +25,35 @@
         - git
         - python-dev
         - python-setuptools
-        - build-essentia
-        - libssl-dev
-        - libffi-dev
-        - python-dev
-        - libxml2-dev
-        - libxslt1-dev
-        - vim
-        - git
-        - wget
-        - libguestfs-tools
-        - libffi-dev
-        - python-cffi
-        - libssl-dev
-        - jenkins
-        - unzip
-        - python-pip
+      retries: 3
+
+    - name: apt package pip is absent
+      apt: pkg=python-pip state=absent purge=yes
+
+    - name: system upgrade
+      apt: update_cache=yes upgrade=full
 
     - name: jenkins key server is known
       apt_key: url="{{ os_image_factory.jenkins.repo_key }}" state=present
 
     - name: jenkins apt server is known
       apt_repository: repo="{{ os_image_factory.jenkins.repository }}" state=present
+
+    - name: needed packages installed
+      apt: update_cache=yes pkg="{{ item }}" state=present
+      with_items:
+        - libguestfs-tools
+        - libffi-dev
+        - python-cffi
+        - libssl-dev
+        - openjdk-7-jdk
+        - openjdk-7-jre
+        - unzip
+
+    - name: Install Jenkins
+      apt: update_cache=yes pkg="{{ item }}" state=present
+      with_items:
+        - jenkins
 
     - name: jenkins service is up
       service: name=jenkins state=restarted enabled=yes
@@ -112,7 +116,10 @@
         group=staff
         mode=0755
 
-    - name: openstack CLI dep
+    - name: pip is installed
+      easy_install: name=pip
+
+    - name: openstack CLI is installed
       pip: name="{{ item }}" state=latest
       with_items:
         - pyopenssl
