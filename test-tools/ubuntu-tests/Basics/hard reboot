@@ -1,0 +1,30 @@
+#!/bin/sh
+
+. ../env.sh
+. ../functions.sh
+
+uptime_before=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$IP" "cat /proc/uptime" | awk '{print $1}' | sed "s/\..*//g")
+
+nova reboot --hard $VM_ID
+
+sleep $TIMEOUT
+
+# Take sleep into account
+uptime_before=$(( $uptime_before + 180 ))
+
+if wait_to_boot $VM_ID $IP; then
+    uptime_after=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$IP" "cat /proc/uptime" | awk '{print $1}' | sed "s/\..*//g")
+
+    echo "Uptime Before: $uptime_before"
+    echo "Uptime After:  $uptime_after"
+
+    if [ "$uptime_before" -gt "$uptime_after" ]; then
+        echo "TEST hard reboot  : OK"
+        exit 0
+    else
+        echo "TEST hard reboot  : KO"
+        exit 1
+    fi
+fi
+
+exit 1

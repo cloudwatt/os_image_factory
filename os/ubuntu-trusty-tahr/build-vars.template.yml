@@ -1,0 +1,13 @@
+---
+bundle_target_name: B_TARGET_NAME
+packer_file: "build.packer.json"
+bundle:
+  name: ubuntu-14.04
+  img_base: TMP_IMAGE_ID
+  path: ubuntu-trusty-tahr
+  properties:
+    cw_os: Ubuntu
+    cw_origin: Cloudwatt
+    hw_rng_model: virtio
+    cw_cat: open_source
+    cw_logo: lin-ubuntu.png

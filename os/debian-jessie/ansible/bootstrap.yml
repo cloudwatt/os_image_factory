@@ -1,0 +1,46 @@
+- hosts: local
+  user: cloud
+  become: yes
+
+  tasks:
+
+
+    - name: apt-get update & upgrade
+      apt:
+        upgrade=full
+        update_cache=yes
+        cache_valid_time=3600
+
+    - name: packages installed
+      apt:
+        pkg={{ item }}
+        state=present
+      with_items:
+        - haveged
+        - curl
+        - bzip2
+        - unzip
+
+    - name: debian user removed
+      user:
+        name=debian
+        state=absent
+        remove=yes
+
+
+    - name: Mr Clean
+      shell: rm -rf {{ item }}
+      with_items:
+        - "/var/log/*-????????"
+        - "/var/log/*.gz"
+        - "/var/log/dmesg.old"
+        - "/var/log/anaconda"
+        - "/tmp/*"
+        - "/var/tmp/*"
+        - "~root/.bash_history"
+        - "~root/.ssh/"
+        - "~root/anaconda-ks.cfg"
+        - "~cloud/.bash_history"
+        - "~cloud/.ssh/"
+        - "~cloud/anaconda-ks.cfg"
+      ignore_errors: true

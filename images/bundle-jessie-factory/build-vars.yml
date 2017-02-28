@@ -1,0 +1,9 @@
+
+---
+bundle:
+  name: bundle-jessie-factory
+  img_base: 185e1975-c9c5-4358-909e-5e329808902e
+  properties:
+    img_os: Debian
+    cw_bundle: Factory
+    cw_origin: Cloudwatt

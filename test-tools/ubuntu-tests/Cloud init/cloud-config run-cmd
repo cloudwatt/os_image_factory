@@ -1,0 +1,13 @@
+#!/bin/sh
+
+. ../env.sh
+. ../functions.sh
+
+out=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$IP" "sudo ls /root/" 2>&1)
+
+if [ "`echo $out | grep cloud-init.txt`" ]; then
+    exit 0
+else
+    print $out
+    exit 1
+fi

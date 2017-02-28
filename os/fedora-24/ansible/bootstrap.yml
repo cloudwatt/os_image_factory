@@ -1,0 +1,69 @@
+- hosts: local
+  remote_user: cloud
+  sudo: true
+
+  tasks:
+
+
+    - name: haveged installed
+      dnf:
+        name=haveged
+        state=present
+
+
+    - name: haveged always running
+      service:
+        name=haveged
+        state=started
+        enabled=yes
+
+
+    - name: add zeroconf
+      lineinfile:
+        dest=/etc/sysconfig/network
+        line="NOZEROCONF=yes"
+
+
+
+    - name: packages installed
+      dnf:
+        name={{ item }}
+        state=present
+      with_items:
+        - cloud-utils
+        - cloud-init
+        - parted
+
+
+    - name: install linux-rootfs-resize
+      dnf: name=ftp://195.220.108.108/linux/fedora/linux/releases/24/Everything/i386/os/Packages/r/rootfs-resize-2.0-7.fc24.noarch.rpm state=present
+
+
+    - name: /etc/fstab contains /dev/vda1 rather than UUID
+      replace:
+        dest=/etc/fstab
+        regexp='^UUID=.*?\s'
+        replace='/dev/vda1 '
+
+    - name: /boot/grub/menu.lst contains /dev/vda1 rather than UUID
+      replace:
+        dest=/boot/grub/menu.lst
+        regexp='UUID=.*?\s'
+        replace='/dev/vda1 '
+
+
+    - name: Mr Clean
+      shell: rm -rf {{ item }}
+      with_items:
+        - "/var/log/*-????????"
+        - "/var/log/*.gz"
+        - "/var/log/anaconda"
+        - "/tmp/*"
+        - "/var/tmp/*"
+        - "~root/.bash_history"
+        - "~root/.ssh/"
+        - "~root/anaconda-ks.cfg"
+        - "~cloud/.ssh/"
+        - "/var/log/cloud-init-*"
+        - "/home/cloud/known_hosts/"
+      ignore_errors: true

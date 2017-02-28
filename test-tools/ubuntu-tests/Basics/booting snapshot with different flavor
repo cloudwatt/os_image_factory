@@ -1,0 +1,60 @@
+#!/bin/sh
+
+. ../env.sh
+. ../functions.sh
+
+S_NAME="snapshot-"$RANDOM
+
+nova image-create $VM_ID $S_NAME >> $LOG_FILE 2>&1
+
+S_ID=`glance image-list | grep $S_NAME | awk '{print $2}'`
+
+echo "Snapshoting vm $S_ID"
+
+S_STATUS=`glance image-show $S_ID | grep " status " | awk '{print $4}'`
+
+while [ "$S_STATUS" != "active" ]; do
+    echo "Waiting for snapshot $S_ID to be in active state"
+    sleep $SMALL_SLEEP
+    S_STATUS=`glance image-show $S_ID | grep " status " | awk '{print $4}'`
+done
+
+echo "Snapshot status is active"
+
+VM_S_NAME="vm-"$RANDOM
+
+VM_S_ID=$(boot_vm $SG $VM_NAME $KEYPAIR $S_ID $FLAVOR_ALT)
+
+echo "Instance from snapshot $VM_S_ID started"
+
+S_IP=$(create_floating_ip)
+
+associate_floating_to_vm $S_IP $VM_S_ID
+
+if wait_to_boot $VM_S_ID $S_IP; then
+    DISK_SIZE="$(nova flavor-list  | grep " $FLAVOR_ALT " | awk '{print $8}')G"
+
+    out=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$S_IP" "df -h | grep /dev/vda1" | awk '{print $2}')
+
+    if [ "$out" = "$DISK_SIZE" ]
+    then
+        echo "TEST change flavor for snapshot : OK"
+
+        delete_vm $VM_S_ID
+        delete_floating_ip $S_IP
+        glance image-delete $S_ID >> $LOG_FILE 2>&1
+        exit 0
+    else
+        echo "TEST change flavor for snapshot : KO"
+
+    fi
+fi
+
+echo "-> delete_vm $VM_S_ID"
+delete_vm $VM_S_ID
+echo "-> delete_floating_ip $S_IP"
+delete_floating_ip $S_IP
+echo "-> glance image-delete $S_ID >> $LOG_FILE 2>&1"
+glance image-delete $S_ID >> $LOG_FILE 2>&1
+
+exit 1

@@ -1,0 +1,43 @@
+- hosts: local
+  remote_user: cloud
+  sudo: true
+
+  tasks:
+    - name: update system
+      yum:
+        name=*
+        state=latest
+        update_cache=yes
+
+    - name: add epel repository
+      shell: rpm -Uvh http://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+
+    - name: add zeroconf
+      lineinfile:
+        dest=/etc/sysconfig/network
+        line="NOZEROCONF=yes"
+
+    - lineinfile:
+        dest=/etc/sudoers
+        state=present
+        regexp='Defaults *requiretty$'
+        line='# Defaults requiretty'
+        validate='visudo -cf %s'
+
+    - name: haveged installed
+      yum:
+        name="{{ item }}"
+        state=present
+        update_cache=yes
+      with_items:
+        - haveged
+        - net-tools
+
+    - name: haveged installed
+      service:
+        name=haveged
+        state=started
+        enabled=yes
+
+    - name: haveged unmasked
+      shell: systemctl unmask haveged.service

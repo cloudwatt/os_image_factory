@@ -1,0 +1,8 @@
+#!/bin/sh
+
+. ../env.sh
+. ../functions.sh
+
+out=$(ssh_vm_execute_cmd $PRIVATE_KEY "root@$IP" "ls")
+
+[ "`echo $out | grep 'Please login as the user'`" ] || [ "`echo $out | grep 'Permission denied'`" ]

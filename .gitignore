@@ -4,3 +4,4 @@
 .vagrant
 Vagrantfile
 silo*
+.DS_Store

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+. ../env.sh
+. ../functions.sh
+
+out=`nova get-spice-console $VM_ID spice-html5 2>&1`
+
+[ "`echo $out  | grep \"https://\"`" ]

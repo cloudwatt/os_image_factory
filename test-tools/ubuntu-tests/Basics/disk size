@@ -1,0 +1,19 @@
+#!/bin/sh
+
+. ../env.sh
+. ../functions.sh
+
+echo "-> DISK_SIZE=\"\$(nova flavor-list  | grep \" $FLAVOR_STD \" | awk '{print \$8}')G\""
+DISK_SIZE="$(nova flavor-list  | grep " $FLAVOR_STD " | awk '{print $8}')G"
+echo "DISK_SIZE=$DISK_SIZE"
+
+echo "-> ssh_vm_execute_cmd $PRIVATE_KEY \"$SSH_USER@$IP\" \"df -h | grep /dev/vda1\" | awk '{print \$2}'"
+out=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$IP" "df -h | grep /dev/vda1" | awk '{print $2}')
+echo "$out"
+
+if [ "$out" = "$DISK_SIZE" ]; then
+    exit 0
+else
+    echo "/dev/vda1 size issue: expected $DISK_SIZE but was $out"
+    exit 1
+fi

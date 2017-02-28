@@ -23,27 +23,9 @@
     ],
     "provisioners": [
         {
-            "type": "shell",
-            "inline": [
-                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" purge python-pip -y",
-                "sudo pip install -U pip ansible"
-
-            ]
-        },
-        {
-            "type": "ansible-local",
-            "extra_arguments": ["-vvv"],
-            "playbook_dir": "{{ user `bundle_path` }}/ansible",
-            "playbook_file": "{{ user `bundle_path` }}/ansible/bootstrap.yml",
-            "inventory_file": "ansible_local_inventory"
-        },
-        {
-            "type": "shell",
-            "inline": [
-                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" autoremove -y",
-                "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" clean -y",
-                "sudo sync"
-            ]
+        "type": "ansible",
+        "playbook_file": "{{ user `bundle_path` }}/ansible/bootstrap.yml"
         }
     ]
+
 }
