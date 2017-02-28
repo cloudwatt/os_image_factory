@@ -1,0 +1,158 @@
+{
+  "descriptor" : {
+    "heat_template_version" : "2013-05-23",
+    "description" : "All-in-one WordPress stack",
+    "parameters" : {
+      "keypair_name" : {
+        "type" : "string",
+        "label" : "Paire de cles SSH - SSH Keypair",
+        "description" : "Paire de cles a injecter dans instance - Keypair to inject in instance",
+        "hidden" : false,
+        "constraints" : [ ],
+        "default" : null
+      },
+      "flavor_name" : {
+        "type" : "string",
+        "label" : "Type instance - Instance Type (Flavor)",
+        "description" : "Type instance a deployer - Flavor to use for the deployed instance",
+        "hidden" : false,
+        "constraints" : [ {
+          "allowed_values" : [ "t1.cw.tiny", "s1.cw.small-1", "n1.cw.highcpu-2", "n1.cw.highcpu-4", "n1.cw.highcpu-8", "n1.cw.standard-1", "n1.cw.standard-2", "n1.cw.standard-4", "n1.cw.standard-8", "n1.cw.standard-12", "n1.cw.standard-16", "n1.cw.highmem-2", "n1.cw.highmem-4", "n1.cw.highmem-8", "n1.cw.highmem-12" ]
+        } ],
+        "default" : "s1.cw.small-1"
+      }
+    },
+    "resources" : {
+      "network" : {
+        "type" : "OS::Neutron::Net"
+      },
+      "subnet" : {
+        "type" : "OS::Neutron::Subnet",
+        "properties" : {
+          "network_id" : {
+            "get_resource" : "network"
+          },
+          "ip_version" : 4,
+          "cidr" : "10.0.3.0/24",
+          "allocation_pools" : [ {
+            "start" : "10.0.3.100",
+            "end" : "10.0.3.199"
+          } ]
+        }
+      },
+      "security_group" : {
+        "type" : "OS::Neutron::SecurityGroup",
+        "properties" : {
+          "rules" : [ {
+            "direction" : "ingress",
+            "protocol" : "TCP",
+            "port_range_min" : 22,
+            "port_range_max" : 22
+          }, {
+            "direction" : "ingress",
+            "protocol" : "TCP",
+            "port_range_min" : 80,
+            "port_range_max" : 80
+          }, {
+            "direction" : "ingress",
+            "protocol" : "TCP",
+            "port_range_min" : 443,
+            "port_range_max" : 443
+          }, {
+            "direction" : "ingress",
+            "protocol" : "ICMP"
+          }, {
+            "direction" : "egress",
+            "protocol" : "ICMP"
+          }, {
+            "direction" : "egress",
+            "protocol" : "TCP"
+          }, {
+            "direction" : "egress",
+            "protocol" : "UDP"
+          } ]
+        }
+      },
+      "floating_ip" : {
+        "type" : "OS::Neutron::FloatingIP",
+        "properties" : {
+          "floating_network_id" : "6ea98324-0f14-49f6-97c0-885d1b8dc517"
+        }
+      },
+      "server" : {
+        "type" : "OS::Nova::Server",
+        "properties" : {
+          "key_name" : {
+            "get_param" : "keypair_name"
+          },
+          "image" : "ffbd043f-682d-4866-afe6-41ce5eac3306",
+          "flavor" : {
+            "get_param" : "flavor_name"
+          },
+          "networks" : [ {
+            "network" : {
+              "get_resource" : "network"
+            }
+          } ],
+          "security_groups" : [ {
+            "get_resource" : "security_group"
+          } ],
+          "user_data_format" : "RAW",
+          "user_data" : "#!/bin/bash\nmkdir /etc/ansible\necho \"[local]\" >> /etc/ansible/hosts\necho \"127.0.0.1 ansible_connection=local\" >> /etc/ansible/hosts\ncd /root && git clone https://github.com/cloudwatt/applications.git cw-app\nansible-playbook /root/cw-app/bundle-trusty-wordpress/seed-mysql.yml\nrm -rf /root/cw-app\n"
+        }
+      },
+      "floating_ip_link" : {
+        "type" : "OS::Nova::FloatingIPAssociation",
+        "properties" : {
+          "floating_ip" : {
+            "get_resource" : "floating_ip"
+          },
+          "server_id" : {
+            "get_resource" : "server"
+          }
+        }
+      }
+    },
+    "outputs" : {
+      "floating_ip_url" : {
+        "description" : "Wordpress URL",
+        "value" : {
+          "str_replace" : {
+            "template" : "http://$floating_ip/",
+            "params" : {
+              "$floating_ip" : {
+                "get_attr" : [ "floating_ip", "floating_ip_address" ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "yaml" : "!!com.cloudwatt.bss.horse.heat.descriptor.HeatDescriptor\ndescription: All-in-one WordPress stack\nheat_template_version: '2013-05-23'\noutputs:\n  floating_ip_url:\n    description: Wordpress URL\n    value:\n      str_replace:\n        template: http://$floating_ip/\n        params:\n          $floating_ip:\n            get_attr: [floating_ip, floating_ip_address]\nparameter_groups: []\nparameters:\n  keypair_name:\n    constraints: []\n    default: null\n    description: Paire de cles a injecter dans instance - Keypair to inject in instance\n    hidden: false\n    label: Paire de cles SSH - SSH Keypair\n    type: string\n  flavor_name:\n    constraints:\n    - allowed_values: [t1.cw.tiny, s1.cw.small-1, n1.cw.highcpu-2, n1.cw.highcpu-4,\n        n1.cw.highcpu-8, n1.cw.standard-1, n1.cw.standard-2, n1.cw.standard-4, n1.cw.standard-8,\n        n1.cw.standard-12, n1.cw.standard-16, n1.cw.highmem-2, n1.cw.highmem-4, n1.cw.highmem-8,\n        n1.cw.highmem-12]\n    default: s1.cw.small-1\n    description: Type instance a deployer - Flavor to use for the deployed instance\n    hidden: false\n    label: Type instance - Instance Type (Flavor)\n    type: string\nresources:\n  network:\n    deletion_policy: null\n    depends_on: []\n    metadata: null\n    properties: {}\n    type: OS::Neutron::Net\n    update_policy: null\n  subnet:\n    deletion_policy: null\n    depends_on: []\n    metadata: null\n    properties:\n      network_id: {get_resource: network}\n      ip_version: 4\n      cidr: 10.0.3.0/24\n      allocation_pools:\n      - {start: 10.0.3.100, end: 10.0.3.199}\n    type: OS::Neutron::Subnet\n    update_policy: null\n  security_group:\n    deletion_policy: null\n    depends_on: []\n    metadata: null\n    properties:\n      rules:\n      - {direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22}\n      - {direction: ingress, protocol: TCP, port_range_min: 80, port_range_max: 80}\n      - {direction: ingress, protocol: TCP, port_range_min: 443, port_range_max: 443}\n      - {direction: ingress, protocol: ICMP}\n      - {direction: egress, protocol: ICMP}\n      - {direction: egress, protocol: TCP}\n      - {direction: egress, protocol: UDP}\n    type: OS::Neutron::SecurityGroup\n    update_policy: null\n  floating_ip:\n    deletion_policy: null\n    depends_on: []\n    metadata: null\n    properties: {floating_network_id: 6ea98324-0f14-49f6-97c0-885d1b8dc517}\n    type: OS::Neutron::FloatingIP\n    update_policy: null\n  server:\n    deletion_policy: null\n    depends_on: []\n    metadata: null\n    properties:\n      key_name: {get_param: keypair_name}\n      image: ffbd043f-682d-4866-afe6-41ce5eac3306\n      flavor: {get_param: flavor_name}\n      networks:\n      - network: {get_resource: network}\n      security_groups:\n      - {get_resource: security_group}\n      user_data_format: RAW\n      user_data: |\n        #!/bin/bash\n        mkdir /etc/ansible\n        echo \"[local]\" >> /etc/ansible/hosts\n        echo \"127.0.0.1 ansible_connection=local\" >> /etc/ansible/hosts\n        cd /root && git clone https://github.com/cloudwatt/applications.git cw-app\n        ansible-playbook /root/cw-app/bundle-trusty-wordpress/seed-mysql.yml\n        rm -rf /root/cw-app\n    type: OS::Nova::Server\n    update_policy: null\n  floating_ip_link:\n    deletion_policy: null\n    depends_on: []\n    metadata: null\n    properties:\n      floating_ip: {get_resource: floating_ip}\n      server_id: {get_resource: server}\n    type: OS::Nova::FloatingIPAssociation\n    update_policy: null\n",
+  "guiGroups" : [ {
+    "label" : "Generic Parameters",
+    "description" : "All remaining parameters needed for the Heat Template",
+    "inputs" : [ {
+      "nodeType" : "input",
+      "attributes" : {
+        "name" : "keypair_name",
+        "description" : "Paire de cles a injecter dans instance - Keypair to inject in instance",
+        "id" : "keypair_name",
+        "label" : "Paire de cles SSH - SSH Keypair",
+        "type" : "text"
+      }
+    }, {
+      "nodeType" : "select",
+      "attributes" : {
+        "name" : "flavor_name",
+        "description" : "Type instance a deployer - Flavor to use for the deployed instance",
+        "id" : "flavor_name",
+        "label" : "Type instance - Instance Type (Flavor)",
+        "type" : "text",
+        "value" : "s1.cw.small-1"
+      },
+      "possibleValues" : [ "t1.cw.tiny", "s1.cw.small-1", "n1.cw.highcpu-2", "n1.cw.highcpu-4", "n1.cw.highcpu-8", "n1.cw.standard-1", "n1.cw.standard-2", "n1.cw.standard-4", "n1.cw.standard-8", "n1.cw.standard-12", "n1.cw.standard-16", "n1.cw.highmem-2", "n1.cw.highmem-4", "n1.cw.highmem-8", "n1.cw.highmem-12" ]
+    } ]
+  } ]
+}
