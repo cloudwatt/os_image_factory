@@ -27,7 +27,6 @@
             "inline": [
                 "sudo yum erase python-pip -y",
                 "sudo yum update -y",
-                "sudo yum upgrade -y",
                 "sudo yum install gcc python-devel git -y",
                 "for i in 1 2 3 4 5; do sudo easy_install pip && break || sleep 2; done",
                 "sudo ln -s /usr/local/bin/pip /usr/bin/pip",

@@ -1,0 +1,173 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+- hosts: all
+  become: yes
+
+  vars:
+    os_image_factory:
+      packer:
+        version: "0.12.2"
+        zip_url: "https://releases.hashicorp.com/packer/0.12.2/packer_0.12.2_linux_amd64.zip"
+      jenkins:
+        local_url: "http://127.0.0.1:8080"
+        repository: "deb http://pkg.jenkins-ci.org/debian binary/"
+        repo_key: "http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key"
+
+  tasks:
+    - name: toolkit packages present
+      apt: pkg="{{ item }}" state=present
+      with_items:
+        - aptitude
+        - git
+        - python-dev
+        - python-setuptools
+        - build-essential
+
+      retries: 3
+
+    - name: apt package pip is absent
+      apt: pkg=python-pip state=absent purge=yes
+
+    - name: system upgrade
+      apt: update_cache=yes upgrade=full
+
+    - name: jenkins key server is known
+      apt_key: url="{{ os_image_factory.jenkins.repo_key }}" state=present
+
+    - name: jenkins apt server is known
+      apt_repository: repo="{{ os_image_factory.jenkins.repository }}" state=present
+
+    - name: needed packages installed
+      apt: update_cache=yes pkg="{{ item }}" state=present
+      with_items:
+        - libguestfs-tools
+        - libffi-dev
+        - python-cffi
+        - libssl-dev
+        - openjdk-7-jdk
+        - openjdk-7-jre
+        - unzip
+
+    - name: Install Jenkins
+      apt: update_cache=yes pkg="{{ item }}" state=present
+      with_items:
+        - jenkins
+
+    - name: jenkins service is up
+      service: name=jenkins state=restarted enabled=yes
+
+    - name: jenkins is kvm member
+      user: name=jenkins groups=kvm append=yes
+
+    - name: common aliases
+      copy:
+        dest=/etc/profile.d/aliases.sh
+        content="alias ll=\"ls -aul\""
+        owner=root
+        group=root
+        mode=0644
+
+    - name: default sh is bash
+      file: src=/bin/bash dest=/bin/sh state=link
+
+    - name: check packer is installed
+      stat: path=/usr/local/bin/packer
+      register: packer_bin_check
+
+    - name: setting fact packer_installed
+      set_fact:
+        packer_installed="{{ packer_bin_check.stat.exists }}"
+
+    - name: checking installed packer version
+      when: packer_installed
+      shell: "/usr/local/bin/packer --version"
+      ignore_errors: true
+      register: packer_version
+
+    - name: setting fact need_to_install_packer
+      set_fact:
+        need_to_install_packer="{{ (not packer_installed) or (packer_version.stdout != os_image_factory.packer.version) }}"
+
+    - name: packer download
+      when: need_to_install_packer
+      get_url:
+        url="{{ os_image_factory.packer.zip_url }}"
+        dest=/tmp/packer.zip
+        force=no
+
+    - name: packer destination directory is ready
+      when: need_to_install_packer
+      file:
+        path=/usr/local/bin
+        state=directory
+        owner=root
+        group=staff
+        mode=0755
+
+    - name: unzip packer
+      when: need_to_install_packer
+      unarchive:
+        src=/tmp/packer.zip
+        dest=/usr/local/bin
+        copy=no
+        owner=root
+        group=staff
+        mode=0755
+
+    - name: pip is installed
+      easy_install: name=pip
+
+    - name: openstack CLI is installed
+      pip: name="{{ item }}" state=latest
+      with_items:
+        - ndg-httpsclient
+        - pip
+      register: result
+      until: result|success
+      retries: 3
+      delay: 2
+
+    - name: openstack CLI is installed
+      pip: name="{{ item.name }}" version="{{ item.version }}"
+      with_items:
+        - { name: keystoneauth1, version: 2.9.0}
+        - { name: os-client-config, version: 1.7.5 }
+        - { name: python-glanceclient, version: 2.1.0 }
+        - { name: python-novaclient, version: 4.1.0 }
+        - { name: python-keystoneclient, version: 3.2.0 }
+        - { name: python-neutronclient, version: 4.2.0 }
+        - { name: python-heatclient, version: 1.3.0 }
+        - { name: python-openstackclient, version: 1.7.0 }
+        - { name: python-cinderclient, version: 1.8.0 }
+        - { name: python-swiftclient, version: 3.0.0 }
+      register: result
+      until: result|success
+      retries: 3
+      delay: 2
+
+
+    - name: Dependance Python
+      pip: name="{{ item.name }}" version="{{ item.version }}"
+      with_items:
+        - { name: monotonic, version: 1.1 }
+        - { name: msgpack-python, version: 0.4.7 }
+        - { name: netaddr, version: 0.7.18 }
+        - { name: netifaces, version: 0.10.4 }
+        - { name: pyOpenSSL, version: 16.0.0 }
+        - { name: requests, version: 2.10.0 }
+        - { name: requestsexceptions, version: 1.1.3 }
+        - { name: six, version: 1.10.0}
+        - { name: nose, version: 1.3.7 }
+        - { name: paramiko, version: 2.0.2 }
+        - { name: python-dateutil, version: 2.6.0 }
+      register: result
+      until: result|success
+      retries: 3
+      delay: 2
+
+    - name: jenkins service is up
+      service: name=jenkins state=restarted enabled=yes

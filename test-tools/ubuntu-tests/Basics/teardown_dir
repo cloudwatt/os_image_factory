@@ -1,0 +1,15 @@
+#!/bin/sh
+
+. ../env.sh
+. ../functions.sh
+
+echo "delete_vm \$VM_ID ($VM_ID)"
+delete_vm $VM_ID
+echo "sleep 30"
+sleep 30
+echo "delete_test_sg \$SG ($SG)"
+delete_test_sg $SG
+echo "delete_floating_ip \$IP ($IP)"
+delete_floating_ip $IP
+
+rm $TESTENV

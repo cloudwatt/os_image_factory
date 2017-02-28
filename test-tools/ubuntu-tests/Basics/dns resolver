@@ -1,0 +1,17 @@
+#!/bin/sh
+
+. ../env.sh
+. ../functions.sh
+
+out=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$IP" "(time host -t A $HOST) 2>&1")
+prev="aa"
+for i in $out; do
+    if [ "$prev" == "real" ]; then
+        time=`echo $i | sed "s/\r//g"`
+        break
+    else
+        prev=$i
+    fi
+done
+
+[ ! "`echo $out | grep \"Host $HOST not found\"`" ]

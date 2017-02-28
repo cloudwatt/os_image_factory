@@ -1,0 +1,18 @@
+#!/bin/sh
+
+. ../env.sh
+. ../functions.sh
+
+SG="$(create_test_sg)"
+VM_NAME="urchin-$RANDOM"
+VM_ID="$(boot_vm $SG $VM_NAME $KEYPAIR $IMAGE $FLAVOR_STD)"
+IP="$(create_floating_ip)"
+
+associate_floating_to_vm $IP $VM_ID
+
+wait_to_boot $VM_ID $IP
+
+echo "SG=$SG" > $TESTENV
+echo "VM_NAME=$VM_NAME" >> $TESTENV
+echo "VM_ID=$VM_ID" >> $TESTENV
+echo "IP=$IP" >> $TESTENV

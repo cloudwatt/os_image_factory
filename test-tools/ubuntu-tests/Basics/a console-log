@@ -1,0 +1,14 @@
+#!/bin/sh
+
+. ../env.sh
+. ../functions.sh
+
+sleep $SMALL_SLEEP
+
+echo "-> openstack console log show $VM_ID"
+openstack console log show $VM_ID 2>&1
+echo "<-"
+
+out="$(openstack console log show $VM_ID | grep -i cloud-init)"
+
+[ "$out" ]

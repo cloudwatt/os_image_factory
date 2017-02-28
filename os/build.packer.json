@@ -1,0 +1,53 @@
+{
+    "variables": {
+        "source_image": "unknown",
+        "image_name": "unknown",
+        "build_flavor": "43",
+        "factory_network": "{{ env `FACTORY_NETWORK_ID` }}",
+        "factory_security_group_name": "{{ env `FACTORY_SECURITY_GROUP_NAME` }}",
+        "bundle_path": "unknown"
+    },
+    "builders": [
+        {
+            "type": "openstack",
+            "ssh_username": "cloud",
+            "flavor": "{{ user `build_flavor` }}",
+            "image_name": "{{ user `image_name` }}",
+            "source_image": "{{ user `source_image` }}",
+            "security_groups": ["{{ user `factory_security_group_name` }}"],
+            "networks": "{{ user `factory_network` }}",
+            "communicator": "ssh",
+            "ssh_pty": true,
+            "ssh_timeout": "10m"
+        }
+    ],
+    "provisioners": [
+
+      {
+        "type": "shell",
+         "inline": [
+                    "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" install aptitude git gcc python-dev python-setuptools libssl-dev libffi-dev -y"
+                 ]
+
+
+      },
+
+
+        {
+        "type": "ansible",
+        "playbook_file": "{{ user `bundle_path` }}/ansible/bootstrap.yml",
+        "host_alias": "local"
+
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "sudo rm -rf /home/cloud/.ssh/authorized_keys",
+                "sudo rm -rf /var/log/cloud-init*",
+                "sudo rm -rf /home/cloud/known_hosts/",
+                "sudo rm -rf /home/cloud/.ansible",
+                "sudo sync"
+            ]
+        }
+    ]
+}

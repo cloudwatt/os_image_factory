@@ -1,0 +1,72 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+- hosts: local
+
+  vars:
+    bundle:
+      name: NAME_ME
+      img_base: IMG_BASE
+
+    final_glance_options: "--min-disk 20"
+    vm_flavor: "16"
+    bundle_target_name: "{{ bundle.name }}-{{ ansible_date_time.date }}{{ ansible_date_time.hour }}{{ ansible_date_time.minute }}"
+    packer_file: "build.packer.json"
+    bundle_path: "{{ bundle.path|default(bundle.name) }}"
+
+  tasks:
+
+    - name: prepare target repository
+      file: path=target/{{ bundle_path }} state=directory
+
+    - name: use packer to build server image
+      shell: "packer build -var 'bundle_path={{ bundle_path }}' -var 'source_image={{ bundle.img_base }}' -var 'image_name={{ bundle_target_name }}' -var 'build_flavor={{ vm_flavor }}' {{ packer_file }} > target/{{ bundle_path }}/packer.{{ bundle_target_name }}.log 2>&1"
+      register: packer_build
+      ignore_errors: true
+
+    - name: drag latest log in the light
+      shell: cp -f target/{{ bundle_path }}/packer.{{ bundle_target_name }}.log ../packer.latest.log
+      failed_when: packer_build|failed
+
+    - name: retrieve built image id
+      shell: openstack image list --private | grep {{ bundle_target_name }} | tr "|" " " | tr -s " " | cut -d " " -f2
+      register: sh_img_id
+      failed_when: sh_img_id.stdout | trim == ''
+
+    - name: fact setting - image built
+      set_fact:
+       result_img_id: "{{ sh_img_id.stdout }}"
+
+    - name: build remove-property string for image cleanup
+      shell: openstack image show -f value -c properties {{ result_img_id }} | tr ", " "\n" | grep -v "^$" | cut -d"=" -f1 | grep -v -E "(cw_os|cw_origin|hw_rng_model)" | sed 's/^/--remove-property /g' | tr "\n" " "
+      register: sh_purge_props
+
+    - name: remove useless properties from built image
+      shell: "glance image-update {{ sh_purge_props.stdout }} {{ result_img_id }}"
+
+    - name: set expected properties
+      shell: "glance image-update --property {{ item.key }}='{{ item.value }}' {{ result_img_id }}"
+      with_dict: "{{ bundle.properties }}"
+      when: bundle.properties is defined
+
+    - name: apply final glance options
+      shell: "glance image-update {{ final_glance_options }} {{ result_img_id }}"
+      when: not((final_glance_options is undefined) or (final_glance_options is none) or (final_glance_options|trim == ''))
+
+    - name: prepare template target repository
+      file: path=target/{{ bundle_path }}/output state=directory
+
+    - name: check if output is expected
+      stat: path="{{ bundle_path }}/output"
+      register: expected_output
+
+   # - name: generate outputs
+   #   when: expected_output.stat.exists
+   #   template: src={{ item }} dest=target/{{ item | replace('.j2', '') }}
+   #   with_lines: "find {{ bundle_path }}/output -name '*.j2'"
+
+    - name: yell the success of the build process. May the Great Coder be praised.
+      debug: msg="Image build is a success. The image {{ result_img_id }} is now in your glance images."

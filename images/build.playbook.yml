@@ -54,6 +54,10 @@
       shell: "glance image-update {{ final_glance_options }} {{ result_img_id }}"
       when: not((final_glance_options is undefined) or (final_glance_options is none) or (final_glance_options|trim == ''))
 
+    - name: apply final glance options
+      shell: "glance image-update {{ final_glance_options }} {{ result_img_id }}"
+      when: not((final_glance_options is undefined) or (final_glance_options is none) or (final_glance_options|trim == ''))
+
     - name: prepare template target repository
       file: path=target/{{ bundle.name }}/output state=directory
 

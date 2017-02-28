@@ -1,0 +1,13 @@
+#!/bin/sh
+
+. ../env.sh
+. ../functions.sh
+
+out=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$IP" "emacs --version" 2>&1)
+
+if [ "`echo $out | grep \"GNU Emacs\"`" ]; then
+    exit 0
+else
+    echo $out
+    exit 1
+fi

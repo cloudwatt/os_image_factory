@@ -1,0 +1,80 @@
+#!/bin/sh
+
+. ../env.sh
+. ../functions.sh
+
+out=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$IP" "touch rescue.txt")
+out=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$IP" "sync")
+
+out=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$IP" ls)
+if [ "`echo $out | grep \"rescue.txt\"`" ]; then
+    echo "Touched file in place"
+else
+    echo "Touched file not in place"
+    exit 1
+fi
+
+out=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$IP" "ls /boot")
+if [ "`echo $out | grep \"extlinux\"`" ]; then
+    FILE_LIST="/etc/fstab /boot/extlinux/extlinux.conf"
+else
+    FILE_LIST="/etc/fstab /boot/grub/menu.lst /boot/grub/grub.cfg /boot/grub2/grub.cfg"
+fi
+
+for F in $FILE_LIST; do
+
+    out=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$IP" "sudo cat $F" 2>&1)
+
+    if [ "`echo $out | grep 'No such file'`" ]; then
+        continue
+    fi
+
+    if [ "`echo $out | grep \"/dev/vda1\"`" ]; then
+        echo "TEST /dev/vda1 path in $F : OK"
+    else
+        echo "TEST /dev/vda1 path in $F not found: KO"
+        exit 1
+    fi
+
+    if [ "`echo $out | grep LABEL`" ]
+    then
+        echo "TEST found LABEL reference in $F : KO"
+        exit 1
+    else
+        echo "TEST no LABEL reference in $F : OK"
+    fi
+
+    if [ "`echo $out | grep UUID`" ]
+    then
+        echo "TEST found UUID reference in $F : KO"
+        exit 1
+    else
+        echo "TEST no UUID reference in $F : OK"
+    fi
+done
+
+nova rescue $VM_ID >> $LOG_FILE 2>&1
+
+echo "Instance $VM_ID rescued"
+
+sleep $TIMEOUT
+
+if wait_to_boot $VM_ID $IP; then
+    mount=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$IP" "sudo mkdir /mnt/disk"  2>&1)
+    mount=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$IP" "sudo mount -o nouuid /dev/vdb1 /mnt/disk" 2>&1)
+    if [ "`echo $mount | grep 'wrong fs type'`" ]; then
+        mount=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$IP" "sudo mount /dev/vdb1 /mnt/disk" 2>&1)
+    fi
+
+    sleep $SMALL_SLEEP
+
+    out=$(ssh_vm_execute_cmd $PRIVATE_KEY "$SSH_USER@$IP" "ls /mnt/disk/home/$SSH_USER/" 2>&1 )
+
+    if [ "`echo $out | grep rescue.txt`" ]; then
+        echo "TEST rescue : OK"
+        exit 0
+    else
+        echo "TEST rescue : KO"
+        exit 1
+    fi
+fi

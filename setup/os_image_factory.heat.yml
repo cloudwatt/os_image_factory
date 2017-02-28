@@ -8,19 +8,22 @@ heat_template_version: 2013-05-23
 description: Openstack Image Factory
 
 parameters:
+  openstack_username:
+    description: OS_Username for OpenStack
+    type: string
+
+  openstack_password:
+    description: OS_Password for OpenStack
+    type: string
+    hidden: true
+
+  tenant_name:
+    description: OS_TENANT_NAME for OpenStack
+    type: string
+
   keypair_name:
     description: Keypair to inject in instances
     type: string
-
-  image_id:
-    default: Debian Jessie
-    description: os type
-    label: Os type
-    type: string
-    constraints:
-      - allowed_values:
-          - Debian Jessie
-          - Centos 7.2
 
   flavor_name:
     default: n1.cw.highcpu-2
@@ -85,29 +88,6 @@ resources:
     properties:
       floating_network_id: 6ea98324-0f14-49f6-97c0-885d1b8dc517
 
-  system_bootstrap:
-    type: OS::Heat::SoftwareConfig
-    properties:
-      config: |
-        #!/bin/bash
-        export DEBIAN_FRONTEND=noninteractive
-
-        apt-get update
-        apt-get -o Dpkg::Options::="--force-confold" upgrade -y
-        apt-get -o Dpkg::Options::="--force-confold" remove python-pip --purge -y
-        apt-get -o Dpkg::Options::="--force-confold" install aptitude git python-dev python-setuptools build-essential -y
-
-        for i in 1 2 3 4 5; do easy_install pip && break || sleep 2; done
-
-        pip install -U pyopenssl ndg-httpsclient pyasn1
-        pip install -U pip ansible
-
-        mkdir /etc/ansible
-        echo -e "[local]\n127.0.0.1 ansible_connection=local ansible_ssh_user=cloud" > /etc/ansible/hosts
-
-        git clone https://github.com/cloudwatt/os_image_factory.git /root/os_image_factory
-        /usr/local/bin/ansible-playbook /root/os_image_factory/setup/os_image_factory.playbook.yml -vvv > /var/log/os_image_factory.setup.log 2>&1
-
   jenkins_profile:
     type: OS::Heat::CloudConfig
     properties:
@@ -120,10 +100,12 @@ resources:
               str_replace:
                 template: |
                   # Set with your own tenant values
-                  export OS_USERNAME=""
-                  export OS_TENANT_NAME=""
-                  export OS_TENANT_ID=""
-                  export OS_PASSWORD=""
+                  export OS_USERNAME=$OS_USERNAME$
+                  export OS_TENANT_NAME=$OS_TENANT_NAME$
+                  export OS_PASSWORD=$OS_PASSWORD$
+                  export OS_ENDPOINT_TYPE=publicURL
+                  export OS_INTERFACE=public
+                  export OS_IDENTITY_API_VERSION=2
 
                   export OS_REGION_NAME="fr1"
                   export OS_AUTH_URL="https://identity.fr1.cloudwatt.com/v2.0"
@@ -132,26 +114,38 @@ resources:
                   export FACTORY_SECURITY_GROUP_ID=$security_group_id$
 
                   if [ ! -z "$OS_USERNAME" -a ! -z "$OS_PASSWORD" ]; then
-                    if [ ! -z "$OS_TENANT_NAME" -a ! -z "$OS_TENANT_ID" ]; then
+                    if [ ! -z "$OS_TENANT_NAME" ]; then
                       export FACTORY_SECURITY_GROUP_NAME="$(neutron security-group-show $FACTORY_SECURITY_GROUP_ID | grep name | cut -d"|" -f3 | tr -d " ")"
+                      export OS_TENANT_ID="$(openstack project show $OS_TENANT_NAME$ | grep  "id" | awk '{print $4}')"
                     fi
                   fi
                 params:
                   $network_id$: { get_resource: dmz }
                   $security_group_id$: { get_resource: sg }
+                  $OS_USERNAME$: {get_param: openstack_username}
+                  $OS_PASSWORD$: {get_param: openstack_password}
+                  $OS_TENANT_NAME$: {get_param: tenant_name}
+
+  jenkins_restart:
+      type: OS::Heat::SoftwareConfig
+      properties:
+        config: |
+          #!/bin/bash
+          systemctl restart jenkins
+
 
   init_server:
     type: OS::Heat::MultipartMime
     properties:
       parts:
-      - config: { get_resource: system_bootstrap }
       - config: { get_resource: jenkins_profile }
+      - config: { get_resource: jenkins_restart }
 
   server:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: keypair_name }
-      image: { get_param: image_id }
+      image: dc32060d-dde7-4e6f-81eb-bd671f660d15
       flavor: { get_param: flavor_name }
       networks:
         - { network: { get_resource: dmz } }

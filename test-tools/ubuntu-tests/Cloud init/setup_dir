@@ -1,0 +1,23 @@
+#!/bin/sh
+
+. ../env.sh
+. ../functions.sh
+
+SG=$(create_test_sg)
+PORT_ID=$(create_port $NETWORK $SG)
+IP=$(create_floating_ip)
+IP_ID=$(get_floatingip_id $IP)
+
+associate_floating_to_port $IP_ID $PORT_ID
+
+VM_NAME="vm-"$RANDOM
+VM_ID=$(boot_vm_with_port_and_userdata $SG $VM_NAME $KEYPAIR $IMAGE $FLAVOR_STD $PORT_ID $USER_DATA_FILE)
+echo "Instance $VM_ID started"
+
+wait_to_boot $VM_ID $IP
+
+echo "SG=$SG" > $TESTENV
+echo "VM_NAME=$VM_NAME" >> $TESTENV
+echo "VM_ID=$VM_ID" >> $TESTENV
+echo "IP=$IP" >> $TESTENV
+echo "PORT_ID=$PORT_ID" >> $TESTENV
