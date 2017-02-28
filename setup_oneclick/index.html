@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-US" ng-app="dashboardApp">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="logo" type="image/svg" href="http://www.cloudwatt.com/fr/images/logos/cloudatt-logo.svg">
+  <link rel="icon" type="image/x-icon" href="http://www.cloudwatt.com/fr/favicon.ico">
+  <title>One-Click Cloudwatt</title>
+
+  <link rel="stylesheet" type="text/css" href="css/alertify.core.css" />
+  <link rel="stylesheet" type="text/css" href="css/alertify.default.css" />
+  <link rel="stylesheet" type="text/css" href="css/main2.css" />
+  <link rel="stylesheet" href="css/layout.css" type="text/css" />
+  <link rel="stylesheet" href="css/main.css" type="text/css" />
+  <link rel="stylesheet" href="css/shortcodes.css" type="text/css" />
+  <link rel="stylesheet" href="css/responsive.css" type="text/css" />
+  <link rel="stylesheet" href="css/cloudwatt.css" type="text/css" />
+  <style>
+  html 
+  {
+    background: url('https://www.cloudwatt.com/fr/images/evolution/abstract-octobre2014.jpg') !important;
+    background-size: 100% 100% !important;
+    background-repeat: no-repeat !important;
+  }
+
+  body 
+  {
+    background: transparent !important;
+  }
+  </style>
+  
+    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular-resource.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular-cookies.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular-route.min.js"></script>
+    <script type="text/javascript" src="js/alertify.min.js"></script>
+    <script type="text/javascript" src="js/i18n/2.7.2/angular-translate.js"></script>
+    <script type="text/javascript" src="js/i18n/2.7.2/angular-translate-loader-url.js"></script>
+    <script type="text/javascript" src="js/i18n/2.7.2/angular-translate-loader-static-files.js"></script>
+    
+    <script type="text/javascript" src="js/sha.js"></script>
+    <!-- charts -->
+    <script type="text/javascript" src="js/charts/ng-google-chart.min.js"></script>
+    
+    <script type="text/javascript" src="js/angular-filters.min.js"></script>
+    <script type="text/javascript" src="bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/i18n/angular-locale_fr-fr.js"></script>
+  </head>
+
+  <body data-spy="scroll" data-target=".bs-docs-sidebar" ng-controller="ApplicationController">
+
+    <div class="view-container container">
+      <div class="view-frame" ng-view></div>
+    </div>
+    <!--script src="js/angular-ui-router.min.js"></script-->
+    <script type="text/javascript">
+    'use strict';
+    var app = angular.module('dashboardApp', [
+      'ngCookies',
+      'ngResource',
+      'ngSanitize',
+      'ngRoute',
+      'angular-filters',
+      'pascalprecht.translate',
+      'googlechart'
+      ]);
+    </script>
+    <script type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/auth.js"></script>
+    <script type="text/javascript" src="js/routes.js"></script>
+    <script type="text/javascript" src="js/controller.js"></script>
+  </body>
+
+  </html>
