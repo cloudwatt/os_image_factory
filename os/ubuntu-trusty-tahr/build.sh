@@ -84,7 +84,7 @@ export NOSE_SG_ID=$FACTORY_SECURITY_GROUP_ID
 
 pushd ../test-tools/pytesting_os/
 
-#nosetests --nologcapture
+nosetests --nologcapture
 
 popd
 
