@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 BASENAME="ubuntu-14.04"
 BUILDMARK="$(date +%Y-%m-%d-%H%M)"
