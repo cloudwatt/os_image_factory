@@ -11,7 +11,8 @@ s3 list | grep $1 > /dev/null 2>&1
 bucket_ret=$?
   if [ $bucket_ret -ne 0 ] ; then
     echo "------- could not find $1"
-    echo "------- Exiting"
+    echo "------- create the bucket $1"
+    s3 create $1
   else
     echo "------- found $1"
   fi
@@ -55,6 +56,8 @@ else
 fi
 
 s3 put $BUCKET/$IMAGE_NAME.qcow2 filename=current.qcow2 >& /dev/null
+
+rm -rf current.qcow2
 
 TOKEN=$(curl -i -k $OS_AUTH_URL/auth/tokens -H "Content-type: application/json" -X POST -d @<(cat <<EOF
 {
