@@ -96,3 +96,5 @@ echo "======= Listing deprecated images"
 openstack image list | grep -E "$BASENAME-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{4}" | tr "|" " " | tr -s " " | cut -d " " -f 3 | sort -r | awk 'NR>5' # | xargs -r openstack image delete
 
 glance image-show $IMG_ID
+
+./cloudwattToFe.sh $IMG_NAME $IMG_NAME "CentOS 6.6 64bit"
