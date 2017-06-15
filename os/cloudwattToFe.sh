@@ -25,14 +25,11 @@ OS_VERSION=$3
 MINDISK=40
 BUCKET=images
 
-IDLIST=$(openstack --os-image-api-version 1 image list --property name="$1") || exit 1
-IMG_ID=$(echo $(echo "$IDLIST" | grep "$1" | awk '{print $2}'))
-
+IMG_ID=$(openstack image list | grep "$1" | awk {'print $2'})
 
 echo "======= Download image to local disk"
 
 glance image-download --file current.qcow2 $IMG_ID || exit 1
-
 
 unset OS_USERNAME
 unset OS_PASSWORD
@@ -57,7 +54,7 @@ else
   echo "exist"
 fi
 
-s3 put $BUCKET/$IMAGE_NAME.qcow2 filename=current.qcow2
+s3 put $BUCKET/$IMAGE_NAME.qcow2 filename=current.qcow2 >& /dev/null
 
 TOKEN=$(curl -i -k $OS_AUTH_URL/auth/tokens -H "Content-type: application/json" -X POST -d @<(cat <<EOF
 {
@@ -78,3 +75,18 @@ curl -sS https://ims.eu-west-0.prod-cloud-ocb.orange-business.com/v2/cloudimages
 EOF
 )
 
+ID=$(openstack image list | grep "$1" | awk {'print $2'})
+
+status=$(glance image-show $ID | grep status |awk {'print $4'})
+
+while [ "$status" != "active" ]
+do
+status=$(glance image-show $ID | grep status |awk {'print $4'})
+
+sleep 80
+
+done
+
+echo "===================Finished the image ID on Fe is : "
+echo $ID
+echo "===================================================="
