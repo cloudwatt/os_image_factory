@@ -78,7 +78,7 @@ curl -sS https://ims.eu-west-0.prod-cloud-ocb.orange-business.com/v2/cloudimages
 EOF
 )
 
-ID=$(openstack image list | grep "$1" | awk {'print $2'})
+ID=$(openstack image list | grep $1 | awk {'print $2'})
 
 status=$(glance image-show $ID | grep status |awk {'print $4'})
 
@@ -92,4 +92,3 @@ done
 
 echo "===================Finished the image ID on Fe is : "
 echo $ID
-echo "===================================================="

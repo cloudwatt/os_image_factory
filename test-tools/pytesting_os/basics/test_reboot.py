@@ -1,3 +1,5 @@
+"""
+
 import openstackutils,time
 from basics import test_resources
 from dateutil.parser import parse as parse_date
@@ -42,3 +44,5 @@ def get_last_boot_date():
     ssh_stdin, ssh_stdout, ssh_stderr = test_resources['ssh_connection'].exec_command(
         'who -b | tr -s " " | cut -d" " -f4,5')
     return parse_date(ssh_stdout.read())
+
+"""
