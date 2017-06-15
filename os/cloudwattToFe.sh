@@ -78,9 +78,18 @@ curl -sS https://ims.eu-west-0.prod-cloud-ocb.orange-business.com/v2/cloudimages
 EOF
 )
 
-ID=$(openstack image list | grep $1 | awk {'print $2'})
+ID=$(openstack image list | grep $IMAGE_NAME | awk {'print $2'})
+
+if [ -z "$ID" ] ;then
+exit 1
+fi
 
 status=$(glance image-show $ID | grep status |awk {'print $4'})
+
+if [ -z "$status" ] ;then
+exit 1
+fi
+
 
 while [ "$status" != "active" ]
 do
