@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 #sudo apt-get install libs3-2
 # ./cloudwattToFe.sh image_cloudwatt_name image_fe_name os_version
