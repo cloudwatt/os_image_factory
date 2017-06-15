@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 #sudo apt-get install libs3-2
 # ./cloudwattToFe.sh image_cloudwatt_name image_fe_name os_version
@@ -78,6 +78,8 @@ curl -sS https://ims.eu-west-0.prod-cloud-ocb.orange-business.com/v2/cloudimages
 EOF
 )
 
+sleep 20
+
 ID=$(openstack image list | grep $IMAGE_NAME | awk {'print $2'})
 
 if [ -z "$ID" ] ;then
@@ -90,13 +92,12 @@ if [ -z "$status" ] ;then
 exit 1
 fi
 
-
 while [ "$status" != "active" ]
 do
+
+echo "===========Wait for image will be active==========="
+sleep 40
 status=$(glance image-show $ID | grep status |awk {'print $4'})
-
-sleep 80
-
 done
 
 echo "===================Finished the image ID on Fe is : "
