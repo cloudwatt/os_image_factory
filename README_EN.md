@@ -145,6 +145,13 @@ If you looked at the `build.sh` script in each OS directory, you might have noti
 This is written in Python and you will find all the scripts in the **test-tools / pytesting_os** directory.
 For information nothing prevents you from adding your own test or modifying our own if necessary.
 
+If you would like to create the image in both ```Cloudwatt``` and ```OCB Flexible Engine```, first
+Add your credentials ```OCB Flexible Engine``` in the ```/var/lib/jenkins/honey.sh``` file, and run the following command:
+
+```
+make build-os os=$OS_DIR_NAME fe=true
+```
+
 ## The Workspace
 
 After a build, three outputs are expected:

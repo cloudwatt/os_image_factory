@@ -1,5 +1,5 @@
 #!/bin/sh
-
+fe=$(echo $1 | tr '[:upper:]' '[:lower:]')
 BASENAME="Fedora-24"
 # TENANT_ID="772be1ffb32e42a28ac8e0205c0b0b90"
 BUILDMARK="$(date +%Y-%m-%d-%H%M)"
@@ -99,6 +99,9 @@ openstack image list | grep -E "$BASENAME-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{4}" |
 
 glance image-show $IMG_ID
 
-
+if [ $fe = true ] ; then
 
 ./cloudwattToFe.sh $IMG_NAME $IMG_NAME "Fedora 24 64bit"
+
+fi
+

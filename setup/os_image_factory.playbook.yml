@@ -25,6 +25,7 @@
         - git
         - python-dev
         - python-setuptools
+        - libs3-2
       retries: 3
 
     - name: apt package pip is absent

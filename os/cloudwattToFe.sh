@@ -2,7 +2,7 @@
 
 #sudo apt-get install libs3-2
 # ./cloudwattToFe.sh image_cloudwatt_name image_fe_name os_version
-# os_version "Ubuntu 16.04 server 64bit" ,"Ubuntu 14.04 server 64bit", "CentOS 7.3 64bit" ...
+# os_version is "Ubuntu 16.04 server 64bit" ,"Ubuntu 14.04 server 64bit", "CentOS 7.3 64bit" ... juste the os_version was accepted by Flexible Engine
 
 
 function check_bucket {
