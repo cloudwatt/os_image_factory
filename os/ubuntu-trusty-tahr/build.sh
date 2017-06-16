@@ -102,4 +102,9 @@ glance image-show $IMG_ID
 #  URCHIN_IMG_ID=$IMG_ID "$WORKSPACE/test-tools/urchin" "$WORKSPACE/test-tools/ubuntu-tests"
 #fi
 
+
+if [ fe ] ; then
+
 ./cloudwattToFe.sh $IMG_NAME $IMG_NAME "Ubuntu 14.04 server 64bit"
+
+fi

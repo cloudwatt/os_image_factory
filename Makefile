@@ -12,7 +12,7 @@ build-images:
 	./bin/build-images.sh ${bundle}
 
 build-os:
-	./bin/build-os.sh ${os}
+	./bin/build-os.sh ${os} ${fe}
 
 
 help:

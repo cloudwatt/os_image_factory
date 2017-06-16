@@ -94,4 +94,9 @@ glance image-show $IMG_ID
 #fi
 
 
+
+if [ fe ] ; then
+
 ./cloudwattToFe.sh $IMG_NAME $IMG_NAME "Debian GNU/Linux 8.6.0 64bit"
+
+fi

@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 cd os/$1/
-sh build.sh
+sh build.sh $2
