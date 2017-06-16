@@ -103,7 +103,7 @@ glance image-show $IMG_ID
 #fi
 
 
-if [ fe ] ; then
+if [ $fe = true ] ; then
 
 ./cloudwattToFe.sh $IMG_NAME $IMG_NAME "Ubuntu 14.04 server 64bit"
 

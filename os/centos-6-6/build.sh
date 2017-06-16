@@ -97,7 +97,7 @@ openstack image list | grep -E "$BASENAME-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{4}" |
 
 glance image-show $IMG_ID
 
-if [ fe ] ; then
+if [ $fe = true ] ; then
 
 ./cloudwattToFe.sh $IMG_NAME $IMG_NAME "CentOS 6.6 64bit"
 
