@@ -151,13 +151,14 @@ La démarche pour fabriquer une image OS et image image bundle est là même, c'
 Voici comment faire, vous pouvez démarrer un build en lançant la commande suivante :
  
 ```
-make build-os os=$OS_DIR_NAME
-```
+make build-os os=$OS_DIR_NAME fe=false
 
+```
 
 Si vous avez regardé le script ```build.sh``` qui se trouve dans chaque répertoire des OS, vous avez pu remarqué qu'une suite de test unitaire était lancé afin de tester l'image dans notre environnement Openstack.
 Celle ci est ecrite en Python et vous retrouverez l'ensemble des scripts dans le répertoire **test-tools/pytesting_os**.
 Pour information rien ne vous empeche d'ajouter vos propres tests ou de modifier les notres si besoin.
+Si vous voudriez de uploader l'image dans  ```Flexible Engine```, mettez true la valeur du variable fe.
 
 
 ## L'entrepôt
