@@ -1,5 +1,5 @@
 #!/bin/sh
-
+fe=$1
 BASENAME="debian-jessie"
 BUILDMARK="$(date +%Y-%m-%d-%H%M)"
 IMG_NAME="$BASENAME-$BUILDMARK"

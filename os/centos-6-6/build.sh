@@ -1,5 +1,5 @@
 #!/bin/sh
-
+fe=$1
 BASENAME="CentOS-6"
 # TENANT_ID="772be1ffb32e42a28ac8e0205c0b0b90"
 BUILDMARK="$(date +%Y-%m-%d-%H%M)"
