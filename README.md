@@ -152,14 +152,18 @@ Voici comment faire, vous pouvez démarrer un build en lançant la commande suiv
  
 ```
 make build-os os=$OS_DIR_NAME fe=false
-
 ```
 
 Si vous avez regardé le script ```build.sh``` qui se trouve dans chaque répertoire des OS, vous avez pu remarqué qu'une suite de test unitaire était lancé afin de tester l'image dans notre environnement Openstack.
 Celle ci est ecrite en Python et vous retrouverez l'ensemble des scripts dans le répertoire **test-tools/pytesting_os**.
 Pour information rien ne vous empeche d'ajouter vos propres tests ou de modifier les notres si besoin.
-Si vous voudriez de uploader l'image dans  ```Flexible Engine```, mettez true la valeur du variable fe.
 
+Si vous voudriez créer  l'image dans les deux plateforme ```Cloudwatt``` et ```OCB Flexible Engine```, d'abord
+il faut ajouter vos credentials ``` OCB Flexible Engine``` dans le fichier ```/var/lib/jenkins/honey.sh```, Puis lancez la commande suivante :
+
+```
+make build-os os=$OS_DIR_NAME fe=true
+```
 
 ## L'entrepôt
 
