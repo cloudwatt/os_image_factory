@@ -104,3 +104,4 @@ if [ $fe = true ] ; then
 ./cloudwattToFe.sh $IMG_NAME $IMG_NAME "Fedora 24 64bit"
 
 fi
+
