@@ -1,5 +1,0 @@
-INSERT INTO domain_admins (username, domain, active) VALUES ('admin@{{ mail_domain }}','ALL','1');
-INSERT INTO admin (username, password,superadmin,active) VALUES ('admin@{{ mail_domain }}','{{ password_admin }}','1','1');
-INSERT INTO domain (domain,description,aliases,mailboxes,maxquota,quota,transport,backupmx,active) VALUES ('{{mail_domain}}','my domain','50','50','100','2048','virtual','0','1');
-INSERT INTO mailbox (username,password,name,maildir,quota,local_part,domain,active) VALUES ('admin@{{mail_domain}}','{{ password_admin }}','admin','{{mail_domain}}/admin/','0','admin','{{mail_domain}}','1');
-

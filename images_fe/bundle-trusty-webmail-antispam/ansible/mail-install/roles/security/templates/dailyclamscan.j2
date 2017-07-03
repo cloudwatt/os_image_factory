@@ -1,5 +1,0 @@
-#!/bin/bash
-SCAN_DIR="/var/vmail/{{ mail_domain }}"
-LOG_FILE="/var/log/clamav/dailyclamscan.log"
-touch $LOG_FILE
-/usr/bin/clamscan --infected --remove --recursive $SCAN_DIR >> $LOG_FILE

@@ -1,6 +1,0 @@
----
-- hosts: localhost
-  user: cloud
-  sudo: true
-  roles:
-    - webmail

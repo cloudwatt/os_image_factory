@@ -1,8 +1,0 @@
----
-common:
-  ntp:
-    referrals:
-      - 'pool.ntp.org'
-      - 'pool.ntp.org'
-      - 'pool.ntp.org'
-      - 'pool.ntp.org'

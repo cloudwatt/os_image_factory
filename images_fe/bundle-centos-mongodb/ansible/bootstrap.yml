@@ -1,6 +1,0 @@
-- hosts: local
-  roles:
-    - mongodb-orange
-  become: yes
-
-
