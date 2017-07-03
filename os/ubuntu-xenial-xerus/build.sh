@@ -1,5 +1,4 @@
 #!/bin/sh
-fe=$(echo $1 | tr '[:upper:]' '[:lower:]')
 BASENAME="ubuntu-16.04"
 BUILDMARK="$(date +%Y-%m-%d-%H%M)"
 IMG_NAME="$BASENAME-$BUILDMARK"
@@ -104,8 +103,3 @@ glance image-show $IMG_ID
 #  URCHIN_IMG_ID=$IMG_ID "$WORKSPACE/test-tools/urchin" "$WORKSPACE/test-tools/ubuntu-tests"
 #fi
 
-if [ $fe = true ] ; then
-
-./cloudwattToFe.sh $IMG_NAME $IMG_NAME "Ubuntu 16.04 server 64bit"
-
-fi
