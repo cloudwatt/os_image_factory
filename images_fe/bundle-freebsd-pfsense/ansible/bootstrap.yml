@@ -1,0 +1,109 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+
+- hosts: local
+  user: root
+  sudo: true
+
+
+  vars_files:
+    - vars/aliases.yml
+
+  tasks:
+    - name: Create aliases directory
+      file:
+        path=/usr/local/www/aliases
+        state=directory
+        owner=root
+        group=root
+
+    - name: Upload PHP script
+      copy: src=files/index.php dest=/usr/local/www/aliases/index.php
+
+    - name: Remove aliases files
+      shell: rm /usr/local/www/aliases/*.inc
+
+    - name: Upload aliases
+      lineinfile: dest=/usr/local/www/aliases/{{item.0.filename}}.inc line={{item.1}} create=yes
+      with_subelements:
+        - fw_aliases
+        - ips
+
+    - name: Reload url tables
+      command: /etc/rc.update_alias_url_data
+
+    - name: Reload url tables
+      command: /etc/rc.update_urltables
+
+#    - name: Set DNS
+#      xml:
+#        file: /cf/conf/config.xml
+#        xpath: /pfsense/system
+#        set_children:
+#          - dnsserver: "10.168.1.1"
+    - name: Set DNS servers
+      pfsense_generic:
+        option: dns
+        value:
+          - 10.168.1.1
+      tags:
+        - dns
+
+    - name: Set hostname
+      pfsense_generic:
+        option: hostname
+        value: firewall1
+      tags:
+        - dns
+
+    - name: Set domain
+      pfsense_generic:
+        option: domain
+        value: do.main
+      tags:
+        - dns
+
+    - name: Set timezone
+      pfsense_generic:
+        option: timezone
+        value: CET
+      tags:
+        - dns
+
+    - name: Set NTP servers
+      pfsense_generic:
+        option: ntptimeserver
+        value:
+          - 1.europe.pool.ntp.org
+          - 0.europe.pool.ntp.org
+      tags:
+        - dns
+
+    - name: Set IP2_alias
+      pfsense_aliases:
+        name: IP2_alias 8
+        description: Test alias 2
+        type: hosts
+        listofvalues:
+            18.18.18.2: "fw far1"
+            18.18.18.6: "fw far2"
+            18.18.18.3: "fw far3"
+      tags:
+        - alias
+
+    - name: Delete IP2_alias
+      pfsense_aliases:
+        name: IP2_alias 8
+        action: absent
+        description: Test alias 2
+        type: hosts
+        listofvalues:
+            18.18.18.2: "fw far1"
+            18.18.18.6: "fw far2"
+            18.18.18.3: "fw far3"
+      tags:
+        - alias

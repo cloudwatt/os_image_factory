@@ -1,0 +1,87 @@
+- hosts: local
+  remote_user: cloud
+  become: yes
+
+  tasks:
+
+    - name: add epel repository
+      shell: rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+
+    - name: haveged installed
+      yum:
+        name=haveged
+        state=present
+        update_cache=yes
+
+    - name: haveged always running
+      service:
+        name=haveged
+        state=started
+        enabled=yes
+
+    - name: centos user removed
+      user:
+        name=centos
+        state=absent
+        remove=yes
+
+
+    - name: add zeroconf
+      lineinfile:
+        dest=/etc/sysconfig/network
+        line="NOZEROCONF=yes"
+
+    - name: sudo without tty
+      lineinfile:
+        dest=/etc/sudoers
+        state=absent
+        regexp="^Defaults\s*requiretty$"
+
+    - name: packages installed
+      yum:
+        pkg={{ item }}
+        state=present
+      with_items:
+        - parted
+        - git
+
+    - name: /etc/fstab contains /dev/vda1 rather than UUID
+      replace:
+        dest=/etc/fstab
+        regexp='^UUID=.*?\s'
+        replace='/dev/vda1 '
+
+    - name: /boot/grub/menu.lst contains /dev/vda1 rather than UUID
+      replace:
+        dest=/boot/grub/menu.lst
+        regexp='UUID=.*?\s'
+        replace='/dev/vda1 '
+
+    - name: Mr Clean
+      shell: rm -Rf {{ item }}
+      with_items:
+        - "/var/log/*-????????"
+        - "/var/log/*.gz"
+        - "/var/log/dmesg.old"
+        - "/var/log/anaconda"
+        - "/tmp/*"
+        - "/var/tmp/*"
+        - "/var/lib/cloud/instance"
+        - "/var/lib/cloud/instances/*"
+        - "/var/lib/cloud/data/*"
+        - "~root/.bash_history"
+        - "~root/.ssh/"
+        - "~root/anaconda-ks.cfg"
+        - "~cloud/.bash_history"
+        - "~cloud/.ssh/"
+        - "~cloud/anaconda-ks.cfg"
+      ignore_errors: true
+
+
+    - name: clean all centos and redhat
+      shell: |
+              sudo yum clean all -y
+              sudo sync
+      ignore_errors: true
+

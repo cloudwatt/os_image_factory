@@ -1,0 +1,38 @@
+---
+
+- include: mongodb_requirement.yml
+  become: yes
+  become_method: sudo
+  when: state!="absent"
+  tags: [ mongodb-orange-playbook, mongodb-orange-playbook-requirement ]
+
+- include: mongodb_dbconfig.yml
+  become: yes
+  become_method: sudo
+  when: state!="absent"
+  tags: [ mongodb-orange-playbook, mongodb-orange-playbook-db ]
+
+- include: mongodb_rsinit.yml
+  become: yes
+  become_method: sudo
+  when: monconf_replication=="enabled" and state!="absent"
+  tags: [ mongodb-orange-playbook, mongodb-orange-playbook-rsinit ]
+
+- include: mongodb_authent.yml
+  become: yes
+  become_method: sudo
+  when: inventory_hostname=="{{ mongodb_operator|default(inventory_hostname) }}" and monconf_authorization=="enabled" and state!="absent"
+  tags: [ mongodb-orange-playbook, mongodb-orange-playbook-authent ]
+
+- include: mongodb_rsconfig.yml
+  become: yes
+  become_method: sudo
+  when: monconf_replication=="enabled" or monconf_authorization=="enabled"
+  tags: [ mongodb-orange-playbook, mongodb-orange-playbook-authent, mongodb-orange-playbook-rsconfig ]
+
+- include: mongodb_authent_management.yml
+  become: yes
+  become_method: sudo
+  when: inventory_hostname=="{{ mongodb_operator|default(inventory_hostname) }}" and monconf_authorization=="enabled" and state!="absent"
+  tags: [ mongodb-orange-playbook, mongodb-orange-playbook-authent ]
+

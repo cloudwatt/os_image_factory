@@ -1,0 +1,29 @@
+---
+- name: "Download postfixadmin"
+  get_url: >
+    url=http://sourceforge.net/projects/postfixadmin/files/latest/download
+    dest=/tmp/postfixadmin-latest.tar.gz
+
+- name: "Prepare - create Path"
+  file:
+    dest: "/var/www/cw/postfixadmin"
+    state: directory
+    recurse: yes
+    mode: 77
+
+- name: "Untar postfixadmin"
+  shell: "tar -C /var/www/cw/postfixadmin --strip-components=1 -xvf /tmp/postfixadmin-latest.tar.gz"
+  args:
+    creates: "/var/www/cw/postfixadmin/index.php"
+
+- name: add permission
+  shell: "chown -R root:root /var/www/cw/postfixadmin && chmod -R 777 /var/www/cw/postfixadmin"
+
+
+- name: "Configure postfixadmin"
+  template: src=config.inc.php.j2 dest=/var/www/cw/postfixadmin/config.inc.php
+
+- name: enable imap
+  shell: /usr/sbin/php5enmod imap
+
+

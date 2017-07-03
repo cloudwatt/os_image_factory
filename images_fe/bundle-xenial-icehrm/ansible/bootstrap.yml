@@ -1,0 +1,52 @@
+---
+- hosts: local
+  become: yes
+
+  tasks:
+    - name: Adding APT key
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: "0xcbcb082a1bb943db"
+
+    - name: Adding a repository
+      apt_repository:
+        repo: deb http://mirror.aarnet.edu.au/pub/MariaDB/repo/5.5/debian wheezy main
+        state: present
+
+    - name: Unlock apt
+      shell: rm /var/lib/dpkg/lock && dpkg --configure -a
+
+    - name: Installation de Apache2, PHP, MariaDB, Galera, rsync, GlusterFS et des divers modules et dépendances
+      apt:
+        name: "{{item}}"
+        update_cache: yes
+        force: yes
+      with_items:
+        - apache2
+        - php
+        - mariadb-galera-server
+        - libapache2-mod-php
+        - php7.0-mysql
+        - python-mysqldb
+        - rsync
+        - galera
+        - glusterfs-server
+
+    - name: Téléchargement du zip de iceHRM
+      get_url:
+        url: https://github.com/gamonoid/icehrm/releases/download/v18.0.OS/icehrm_v18.0.OS.zip
+        dest: /root/icehrm.zip
+
+    - name: Ajout des playbooks et scripts à exécuter
+      copy:
+        src: "files/{{item}}"
+        dest: /root/
+      with_items:
+        - format
+        - mariadb_inst1.cnf
+        - mariadb_inst2.cnf
+        - config.yml
+        - config_inst1.yml
+        - config_inst2.yml
+        - rc.local
+        - testmysql

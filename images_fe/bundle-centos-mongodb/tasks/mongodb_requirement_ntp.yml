@@ -1,0 +1,17 @@
+# NTP SETTING
+
+- name: mongodb Requirement - NTP - comment entries
+  replace: dest=/etc/ntp.conf regexp='^{{ item }}(\s+.*)?$' replace='{{ playbook_comment }} {{ item }}\1'
+  when: item != ""
+  with_items: system_ntp_extra_comment
+  notify: ntp restart
+
+- name: mongodb Requirement - NTP - add entries
+  lineinfile: dest=/etc/ntp.conf regexp='.*{{ item }} {{ playbook_comment }}$' line="{{ item }} {{ playbook_comment }}" state=present
+  when: item != ""
+  with_items: system_ntp_extra
+  notify: ntp restart
+
+- name: mongodb Requirement - NTP - running
+  service: name=ntpd state=running enabled=yes
+

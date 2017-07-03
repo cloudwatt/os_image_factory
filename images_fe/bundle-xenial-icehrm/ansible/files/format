@@ -1,0 +1,6 @@
+#!/bin/bash
+eval $(sudo blkid /dev/vdb | awk '{print $3}')
+if [ "$TYPE" != "ext4" ]; then
+  wipefs -f /dev/vdb
+  mkfs.ext4 -F /dev/vdb
+fi

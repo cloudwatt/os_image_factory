@@ -1,0 +1,12 @@
+# HOSTS SETTTING
+
+- name: mongodb Requirement - HOSTS - add all servers entries (linked to {{ iface }} ip)
+  lineinfile: dest=/etc/hosts regexp='.*{{ item }} {{ playbook_comment }}$' line="{{ hostvars[item]['ansible_' + iface].ipv4.address }} {{ item }} {{ playbook_comment }}" state=present
+  when: hostvars[item]['ansible_' + iface].ipv4.address is defined
+  with_items: "{{ _rsconfig }}"
+
+- name: mongodb Requirement - HOSTS - add extra entries (system_hosts_extra)
+  lineinfile: dest=/etc/hosts regexp='.*{{ item }} {{ playbook_comment }}$' line="{{ item }} {{ playbook_comment }}" state=present
+  when: item != ""
+  with_items: system_hosts_extra
+

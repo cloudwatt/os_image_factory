@@ -1,0 +1,65 @@
+{% if arbiter_only is defined and arbiter_only=="yes" %}
+  {% set tmpjournalenabled = "false" %}
+  {% set tmpsmallFiles = "true" %}
+  {% set tmpoplogSizeMB = 1 %}
+{% else %}
+  {% set tmpjournalenabled = monconf_journalenabled %}
+  {% set tmpsmallFiles = monconf_mmapv1smallFiles %}
+  {% set tmpoplogSizeMB = monconf_oplogSizeMB %}
+{% endif %}
+{% if monconf_bindIp is not defined %}
+  {% set monconf_bindIp = inventory_hostname %}
+{% endif %}
+
+# monconf={{ monconf_version }}
+
+systemLog:
+    destination: file
+    path: {{ monconf_systemLogpath }}
+    logAppend: true
+{% if mongodb_version[:1] >= "3" %}
+    logRotate: reopen
+{% endif %}
+storage:
+{% if mongodb_version[:1] >= "3" %}
+    engine: {{ monconf_engine }}
+{% endif %}
+    dbPath: {{ monconf_dbPath }}
+    directoryPerDB: true
+    journal:
+        enabled: {{ tmpjournalenabled }}
+{% if mongodb_version[:1] == "2" %}
+    smallFiles: {{ tmpsmallFiles }}
+{% else %}
+{% if monconf_engine=="mmapv1" %}
+    mmapv1:
+        smallFiles: {{ tmpsmallFiles }}
+{% elif monconf_engine=="wiredTiger" %}
+    wiredTiger:
+        engineConfig:
+            cacheSizeGB: {{ monconf_wiredTigercacheSizeGB }}
+            directoryForIndexes: true
+{% endif %}
+{% endif %}
+processManagement:
+    fork: true
+    pidFilePath: {{ monconf_pidFilePath }}
+net:
+    bindIp: 127.0.0.1,{{ monconf_bindIp }}
+    port: {{ monconf_port }}
+    unixDomainSocket:
+        enabled: true
+        pathPrefix: {{ monconf_pathPrefix }}
+security:
+    authorization: {{ monconf_authorization }}
+{% if monconf_keyFile is defined and monconf_authorization == "enabled" %}
+    keyFile: {{ monconf_keyFile }}
+{% endif %}
+operationProfiling:
+    slowOpThresholdMs: {{ monconf_slowOpThresholdMs }}
+{% if monconf_replication == "enabled" %}
+replication:
+    replSetName: {{ monconf_replSetName }}
+    oplogSizeMB: {{ tmpoplogSizeMB }}
+{% endif %}
+

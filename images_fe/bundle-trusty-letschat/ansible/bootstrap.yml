@@ -1,0 +1,137 @@
+- hosts: local
+  user: cloud
+  sudo: true
+
+  tasks:
+    - name: apt-get update & upgrade
+      apt: upgrade=full update_cache=yes
+
+    - name: default sh is bash
+      file:
+        src=/bin/bash
+        dest=/bin/sh
+        state=link
+
+    - name: apache absent
+      apt: pkg=apache2 state=absent
+
+    - name: curl installed
+      apt: pkg="{{ item }}" state=present
+      with_items:
+        - nginx
+        - curl
+        - lsb-release
+        - apt-transport-https
+        - git
+
+    - name: nodejs apt repo key
+      apt_key: url=https://deb.nodesource.com/gpgkey/nodesource.gpg.key state=present
+
+    - name: nodejs apt repository
+      apt_repository: repo='deb https://deb.nodesource.com/node_0.12 {{ ansible_lsb.codename }} main' state=present
+
+    - name: nodejs apt src repository
+      apt_repository: repo='deb-src https://deb.nodesource.com/node_0.12 {{ ansible_lsb.codename }} main' state=present
+
+    - name: mongodb repository key trusted
+      shell: sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+
+    - name: mongodb repository added
+      apt_repository: repo='deb http://repo.mongodb.org/apt/ubuntu {{ ansible_lsb.codename }}/mongodb-org/3.0 multiverse' state=present
+
+    - name: packages installed
+      apt: pkg="{{ item }}" state=present update_cache=yes
+      with_items:
+        - mongodb-org
+        - nodejs
+        - build-essential
+
+    - name: Let's Chat github cloned
+      git:
+        dest=/var/lib/lets-chat
+        repo=https://github.com/sdelements/lets-chat.git
+        force=yes
+
+    # - name: hardcore patching
+    #   lineinfile: |
+    #     dest=/var/lib/lets-chat/package.json
+    #     regexp='passport.socketio'
+    #     line="    \"passport.socketio\": \"~3.5.1\","
+
+    - name: Let's Chat installed
+      shell: sudo npm install
+      args:
+        chdir: /var/lib/lets-chat
+      register: result
+      until: result|success
+      retries: 3
+      delay: 2
+
+    - name: settings file added
+      copy:
+        src=files/settings.yml
+        dest=/var/lib/lets-chat/settings.yml
+        owner=root
+        group=root
+        mode=0644
+
+    - name: mongodb started
+      service: name=mongod state=started enabled=yes
+
+    - name: lets-chat user exists
+      user:
+        name=lets-chat
+        system=yes
+        state=present
+
+    - name: lets-chat init script added
+      copy:
+        src=files/lets-chat.conf
+        dest=/etc/init/lets-chat.conf
+        owner=root
+        group=root
+        mode=0644
+
+    - name: lets-chat started
+      service: name=lets-chat state=started enabled=yes
+
+    - name: nginx started
+      service: name=nginx state=started enabled=yes
+
+    - name: nginx default disabled
+      file: path=/etc/nginx/sites-enabled/default state=absent
+
+    - name: nginx configuration
+      copy:
+        src=files/nginx.conf
+        dest=/etc/nginx/nginx.conf
+        owner=root
+        group=root
+        mode=0644
+
+    - name: nginx site configuration
+      copy:
+        src=files/lets-chat.nginx.site
+        dest=/etc/nginx/sites-available/lets-chat.conf
+        owner=root
+        group=root
+        mode=0644
+
+    - name: nginx site enabled
+      file:
+        src=/etc/nginx/sites-available/lets-chat.conf
+        dest=/etc/nginx/sites-enabled/lets-chat
+        state=link
+        owner=root
+        group=root
+
+    - name: restart nginx
+      service: name=nginx state=restarted
+
+    - name: /etc/lets-chat/ssl exists
+      file:
+        path=/etc/lets-chat/ssl
+        state=directory
+        owner=root
+        group=root
+        mode=0700

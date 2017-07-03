@@ -1,0 +1,16 @@
+---
+
+- name: mongodb authent - ADD/MODIFY - create/modify users
+  mongodb_authent:
+    login_user: "{{ mongodb_siteUserAdmin_name }}"
+    login_password: "{{ mongodb_siteUserAdmin_password }}"
+    login_host: "{{ rs_primary.host|default('localhost') }}"
+    login_port: "{{ rs_primary.port|default('27017') }}"
+    database: "{{ item.database }}"
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    roles: "{{ item.roles }}"
+  with_items:
+    - "{{ mongodb_managed_users }}"
+  when: mongodb_managed_users is defined and mongodb_managed_users
+

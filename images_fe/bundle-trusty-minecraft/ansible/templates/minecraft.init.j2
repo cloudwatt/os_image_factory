@@ -1,0 +1,20 @@
+# minecraft.init
+
+description "A  MineCraft 1.8.9 Server"
+
+start on started networking
+stop on runlevel [016]
+
+
+limit nofile 1000000 1000000
+
+
+console log
+
+script
+  mkdir -p {{ minecraft_home }}
+  cd {{ minecraft_home }}
+  sudo -u minecraft java -Xmx1024M -Xms1024M -jar minecraft_server.jar nogui
+end script
+
+respawn

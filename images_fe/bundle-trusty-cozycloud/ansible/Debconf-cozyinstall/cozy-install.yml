@@ -1,0 +1,97 @@
+- hosts: local
+  user: cloud
+  become: true
+
+  vars:
+    cozycloud:
+      floating_ip: "{{ lookup('file', '/etc/stack_floating_ip') }}"
+      email: "cozy@cloudwatt.com"
+
+
+  tasks:
+
+    - name: needed packages are installed
+      apt:
+        pkg={{ item }}
+        state=present
+      with_items:
+        - ca-certificates
+        - apt-transport-https
+        - cozy
+        - python
+        - python-dev
+        - python-virtualenv
+        - python-mysqldb
+        - gcc
+        - dialog
+        - libaugeas0
+        - libssl-dev
+        - libffi-dev
+        - ca-certificates
+        - python-pip
+        - git
+        - python2-pythondialog
+
+    - name: Debconf cozy
+      debconf:
+        name="{{ item.name }}"
+        question="{{ item.question }}"
+        value="{{ item.value }}"
+        vtype="{{ item.vtype }}"
+      with_items:
+        - { name: 'cozy', question: 'cozy/nodejs_minimum', vtype: "boolean", value: true }
+        - { name: 'cozy', question: 'cozy/fqdn', vtype: "string", value: "{{ cozycloud.floating_ip }}" }
+        - { name: 'cozy', question: 'cozy/purge_db', vtype: "boolean", value: true}
+        - { name: 'cozy', question: 'cozy/certificate', vtype: "note", value: "" }
+        - { name: 'cozy', question: 'cozy/nodejs_maximum', vtype: "boolean", value: true}
+        - { name: 'postfix', question: 'postfix/main_mailer_type', vtype: 'select', value: 'Local only'}
+        - { name: 'postfix', question: 'postfix/mailname', vtype: 'string', value: "{{ ansible_fqdn }}"}
+
+    - name: Reconfigure Cozy
+      shell:
+        dpkg-reconfigure -u -f noninteractive cozy
+
+    - name: Let's encrypt install
+      git:
+        repo=https://github.com/letsencrypt/letsencrypt
+        dest=/root/letsencrypt
+
+    - name: Backup CRT cozy
+      shell: |
+        mv /etc/cozy/server.key /etc/cozy/server.key.backup
+        mv /etc/cozy/server.crt /etc/cozy/server.crt.backup
+
+    - name: Include Vars FQDN
+      include_vars: /etc/ansible/cozy-vars.yml
+
+    - name: stop nginx
+      service:
+        name=nginx
+        state=stopped
+
+    - name: Generate let's encrypt certificate
+      shell: |
+        /root/letsencrypt/letsencrypt-auto certonly --standalone --agree-tos --email {{ cozycloud.email }} -d {{ cozy_domain }} --standalone-supported-challenges tls-sni-01
+
+    - name: Copy crt to cozy
+      file:
+        src={{ item.src }}
+        dest={{ item.dest }}
+        state=link
+      with_items:
+        - {src: "/etc/letsencrypt/live/{{ cozy_domain }}/privkey.pem", dest: "/etc/cozy/server.key" }
+        - {src: "/etc/letsencrypt/live/{{ cozy_domain }}/fullchain.pem", dest: "/etc/cozy/server.crt" }
+      notify: restart nginx
+
+    - name: Cron renew crt
+      cron:
+        name="renew crt cozy"
+        special_time=monthly
+        job="/root/renew_cert.sh"
+
+  handlers:
+    - name: restart nginx
+      service:
+        name=nginx
+        state=restarted
+

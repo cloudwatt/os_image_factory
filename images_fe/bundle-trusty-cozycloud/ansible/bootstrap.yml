@@ -1,0 +1,81 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+- hosts: local
+  user: cloud
+  become: true
+
+  tasks:
+    - name: desired locale are present
+      locale_gen: name="{{ item }}" state=present
+      with_items:
+        - fr_FR.UTF-8
+        - en_US.UTF-8
+
+    - name: system is up-to-date
+      apt:
+        upgrade=full
+        update_cache=yes
+        cache_valid_time=3600
+
+    - name: cozy-cloud apt repository key is trusted
+      apt_key:
+        url=https://ubuntu.cozycloud.cc/cozy.gpg.key
+        state=present
+
+    - name: cozy-cloud apt repository is known
+      apt_repository:
+        repo="deb https://ubuntu.cozycloud.cc/debian trusty main"
+        update_cache=yes
+        state=present
+
+    - name: post-install playbook directory is created
+      file:
+        path=/root/cozy-install
+        state=directory
+        owner=root
+        group=root
+        mode=0700
+
+    - name: post-install playbook is uploaded
+      copy:
+        src=Debconf-cozyinstall/cozy-install.yml
+        dest=/root/cozy-install/cozy-install.yml
+        owner=root
+        group=root
+        mode=0600
+
+    - name: Injection renew_cert.sh
+      copy:
+        src=Debconf-cozyinstall/renew_cert.sh
+        dest=/root/renew_cert.sh
+        owner=root
+        group=root
+        mode=700
+
+    - name: Debconf cozy #fichier de reponse#
+      debconf:
+        name="{{ item.name }}"
+        question="{{ item.question }}"
+        value="{{ item.value }}"
+        vtype="{{ item.vtype }}"
+      with_items:
+        - { name: 'cozy', question: 'cozy/nodejs_minimum', vtype: "boolean", value: true }
+        - { name: 'cozy', question: 'cozy/fqdn', vtype: "string", value: "127.0.0.1" }
+        - { name: 'cozy', question: 'cozy/purge_db', vtype: "boolean", value: true}
+        - { name: 'cozy', question: 'cozy/certificate', vtype: "note", value: "" }
+        - { name: 'cozy', question: 'cozy/nodejs_maximum', vtype: "boolean", value: true}
+        - { name: 'postfix', question: 'postfix/main_mailer_type', vtype: 'select', value: 'Local only'}
+        - { name: 'postfix', question: 'postfix/mailname', vtype: 'string', value: "{{ ansible_fqdn }}"}
+
+    - name: needed packages are installed
+      apt:
+        pkg={{ item }}
+        state=present
+      with_items:
+        - ca-certificates
+        - apt-transport-https
+        - cozy

@@ -1,0 +1,51 @@
+---
+
+- name: mongodb Requirement - REPO - Create the mongodb product Repository
+  template: src=repo_mongodb-product.j2 dest="{{ repo_mongo_file }}"
+  when: repo_mongo is defined and repo_mongo=="enabled"
+
+- name: mongodb Requirement - REPO - Create the extra package Repository
+  template: src=repo_extra-product.j2 dest="{{ repo_extra_file }}"
+  when: repo_extra is defined and repo_extra=="enabled"
+
+- include: RedHat_mongodb_requirement_install.yml
+  when: ansible_os_family=="RedHat"
+
+- include: Debian_mongodb_requirement_install.yml
+  when: ansible_os_family=="Debian"
+
+- include: mongodb_requirement_volume.yml
+  when: system_mount is defined and system_mount=="enabled"
+
+- include: mongodb_requirement_hosts.yml
+  when: system_hosts is defined and system_hosts=="enabled"
+
+- include: mongodb_requirement_ntp.yml
+  when: system_ntp is defined and system_ntp=="enabled"
+
+- name: mongodb Requirement - iptables disabled
+  service: name=iptables state=stopped enabled=no
+
+- name: mongodb Requirement - reclaim_mode disabled
+  sysctl: name=vm.zone_reclaim_mode value=0 state=present
+  ignore_errors: True
+
+- name: mongodb Requirement - TPH disabled - disable-transparent-hugepages installed
+  copy: src=disable-transparent-hugepages dest=/etc/init.d/disable-transparent-hugepages mode=0755
+
+- name: mongodb Requirement - TPH disabled - disable-transparent-hugepages enabled
+  service: name=disable-transparent-hugepages state=started enabled=yes
+
+- name: mongodb Requirement - TPH disabled - /etc/grub.conf checks
+  shell: grubby --info=DEFAULT | grep "transparent_hugepage=never" | wc -l
+  register: TPH
+  changed_when: TPH.stdout=="0"
+  no_log: True
+
+- name: mongodb Requirement - TPH disabled - /etc/grub.conf configuration
+  command: grubby --update-kernel=ALL --args=transparent_hugepage=never
+  when: TPH.stdout=="0"
+  notify:
+    - server restart
+    - waiting for server to come back
+

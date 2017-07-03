@@ -1,0 +1,43 @@
+---
+
+- name: mongodb Requirement - NTP - Install ntp
+  yum: name=ntp state=present enablerepo={{ repo_extra_name }}-ntp update_cache=yes
+  when: system_ntp is defined and system_ntp=="enabled"
+
+- name: mongodb Requirement - VOLUME MANAGEMENT - Install lvm2
+  yum: name=lvm2 state=present enablerepo={{ repo_extra_name }}-lvm update_cache=yes
+  when: system_mount is defined and system_mount=="enabled"
+
+- name: mongodb Requirement - LOGROTATE - Install logrotate
+  yum: name=logrotate state=present enablerepo={{ repo_extra_name }}-logrotate update_cache=yes
+  when: mongodb_logrotate is defined and mongodb_logrotate=="enabled"
+
+- name: mongodb Requirement - MONGOD - Install mongodb
+  yum: name={{ item }} state=present enablerepo={{ repo_mongo_name }} disable_gpg_check=yes update_cache=yes
+  with_items:
+   - "{{ mongodb_product_name }}-server-{{ mongodb_version }}"
+   - "{{ mongodb_product_name }}-shell-{{ mongodb_version }}"
+   - "{{ mongodb_product_name }}-tools-{{ mongodb_version }}"
+
+- name: mongodb Requirement - EASY_INSTALL - Install python-setuptools
+  yum: name=python-setuptools state=present enablerepo={{ repo_extra_name }}-setuptools update_cache=yes
+
+- name: mongodb Requirement - PYMONGO - Check if the mongo driver is needed
+  shell: python -c "import pymongo; print(pymongo.version+str(pymongo.has_c()))" 2>/dev/null | grep "^{{ mongodb_pymongo_version }}True$" | wc -l
+  register: PYMONGO
+  changed_when: PYMONGO.stdout=="0"
+  always_run: yes
+  no_log: True
+
+- name: mongodb Requirement - PYMONGO - Deploy the pymongo easy_install package (egg)
+  copy: src={{ mongodb_pymongo_name }} dest={{ mongodb_pymongo_path }}/{{ mongodb_pymongo_name }}
+  when: PYMONGO.stdout=="0"
+
+- name: mongodb Requirement - PYMONGO - Install the pymongo driver with easy_install
+  command: easy_install 'file://{{mongodb_pymongo_path }}/{{ mongodb_pymongo_name }}'
+  when: PYMONGO.stdout=="0"
+
+- name: mongodb Requirement - PYMONGO - Remove the pymongo easy_install package (egg)
+  command: rm -f "{{mongodb_pymongo_path }}/{{ mongodb_pymongo_name }}"
+  when: PYMONGO.stdout=="0"
+

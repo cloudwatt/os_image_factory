@@ -1,0 +1,66 @@
+---
+#
+##
+### Written by the CAT (Cloudwatt Automation Team)
+##
+#
+- hosts: local
+  user: cloud
+  become: true
+
+  vars:
+    wp_db_name: wordpress
+    wp_db_pass: "{{ lookup('password', '/tmp/keystore chars=ascii_letters,digits,hexdigits,punctuation') }}"
+
+  tasks:
+    - name: packages installed
+      apt:
+        pkg={{ item }}
+        state=present
+      with_items:
+        - apache2
+        - mysql-server
+        - wordpress
+        - python-mysqldb
+
+
+    - name: apache service started
+      service: name=apache2 state=started
+
+    - name: apache service enabled
+      service: name=apache2 enabled=yes
+
+    - name: apache site configuration
+      copy:
+        src=files/wordpress.apache2.conf
+        dest=/etc/apache2/sites-available/default-wp.conf
+        owner=root
+        group=root
+        mode=0644
+      notify: enable apache site
+
+    - name: wordpress content has correct ownership
+      file:
+        path="{{ item }}"
+        state=directory
+        owner=www-data
+        group=www-data
+        recurse=yes
+      with_items:
+        - /var/lib/wordpress/wp-content
+        - /usr/share/wordpress/wp-content
+
+    - name: Rewrite module activated
+      apache2_module:
+        name=rewrite
+        state=present
+
+  handlers:
+    - name: enable apache site
+      shell: /usr/sbin/a2dissite 000-default && /usr/sbin/a2ensite default-wp
+      notify: restart apache
+
+    - name: restart apache
+      service:
+        name=apache2
+        state=restarted

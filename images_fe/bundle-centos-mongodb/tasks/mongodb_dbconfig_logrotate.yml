@@ -1,0 +1,7 @@
+
+- name: mongodb Config - LOGROTATE - Install the logrotate process
+  yum: name=logrotate state=present enablerepo={{ repo_extra_name }} update_cache=yes
+
+- name: mongodb Config - LOGROTATE - Set up log rotation for mongod
+  template: src=mongod-logrotate.j2 dest=/etc/logrotate.d/mongod
+

@@ -1,0 +1,5 @@
+user = mailuser
+password = {{mysql_mailuser_password}}
+hosts = 127.0.0.1
+dbname = mailserver
+query = SELECT maildir FROM mailbox WHERE username='%s' AND active = 1

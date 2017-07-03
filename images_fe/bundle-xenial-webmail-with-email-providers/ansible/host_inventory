@@ -1,0 +1,2 @@
+[local]
+84.39.45.197  ansible_ssh_user=cloud ansible_ssh_private_key_file=~/.ssh/alikey.pem

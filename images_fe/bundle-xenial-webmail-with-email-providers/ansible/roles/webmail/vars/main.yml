@@ -1,0 +1,7 @@
+mysql_mailuser_password: 'changeme'
+password_admin: 'changeme'
+mail_domain: 'dalitun.fr'
+email_admin: 'admin@dalitun.fr'
+smtp_server: 'rien'
+smtp_username: 'test'
+smtp_password: 'test'

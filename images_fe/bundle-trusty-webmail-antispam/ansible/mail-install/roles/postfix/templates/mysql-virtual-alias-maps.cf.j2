@@ -1,0 +1,5 @@
+user = mailuser
+password = {{mysql_mailuser_password}}
+hosts = 127.0.0.1
+dbname = mailserver
+query = SELECT goto FROM alias WHERE address='%s' AND active = 1
