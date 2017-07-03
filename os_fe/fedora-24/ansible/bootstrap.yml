@@ -45,17 +45,17 @@
       dnf: name=ftp://195.220.108.108/linux/fedora/linux/releases/24/Everything/i386/os/Packages/r/rootfs-resize-2.0-7.fc24.noarch.rpm state=present
 
 
-    - name: /etc/fstab contains /dev/vda1 rather than UUID
+    - name: /etc/fstab contains /dev/xvda1 rather than UUID
       replace:
         dest=/etc/fstab
         regexp='^UUID=.*?\s'
-        replace='/dev/vda1 '
+        replace='/dev/xvda1 '
 
-    - name: /boot/grub/menu.lst contains /dev/vda1 rather than UUID
+    - name: /boot/grub/menu.lst contains /dev/xvda1 rather than UUID
       replace:
         dest=/boot/grub/menu.lst
         regexp='UUID=.*?\s'
-        replace='/dev/vda1 '
+        replace='/dev/xvda1 '
 
 
     - name: Mr Clean
