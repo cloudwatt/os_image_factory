@@ -70,6 +70,10 @@ fi
 
 IMG_ID="$(openstack image list --private | grep $IMG_NAME | tr "|" " " | tr -s " " | cut -d " " -f2)"
 
+if [ -z $IMG_ID ]
+ then
+ exit 1
+fi
 echo "IMG_ID for image '$IMG_NAME': $IMG_ID"
 
 
