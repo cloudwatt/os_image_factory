@@ -125,7 +125,7 @@ IMG_ID=$(create_image_via_ecs $TOKEN ${IMG_NAME} ${IMG_NAME}-tmp)
 
 
 ######### Purge Resources ##################
-openstack image delete $TMP_IMG_ID>/dev/null 2>&1
+openstack image delete ${TMP_IMG_NAME}>/dev/null 2>&1
 
 openstack server delete ${IMG_NAME}-tmp>/dev/null 2>&1
 
