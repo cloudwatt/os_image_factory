@@ -73,7 +73,7 @@ Les répertoires placés sous ```images_fe/``` sont des exemples de build. Pour 
              bootstrap.yml       # <-- playbook de provisionning du serveur
          output/
              my_stack_heat.yml.j2    # <-- template à générer à la fin du build, couramment une stack HEAT
-         build-vars-fe          # <-- variables de description du build, exploité par Packer et le playbook de pilotage
+         build-vars-fe          # <-- variables de description du build
  ```
  
 Les templates que vous placez dans le répertoire output de votre bundle seront interprétés par le playbook de pilotage

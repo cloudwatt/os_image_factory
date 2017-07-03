@@ -67,8 +67,7 @@ images/
             bootstrap.yml         # <-- Ansible playbook for server provisioning
         output/
             my_stack_heat.yml.j2  # <-- Template to generate at the end of the build, currently a Heat template
-        build-vars.yml            # <-- Build variables/settings, used by Packer and the piloting Ansible playbook
-
+        build-vars-fe           # <-- Build variables/settings
 ~~~
 
 The `.j2` ([Jinja2](http://jinja.pocoo.org/)) templates you place in `bundle-my-bundle/output/` will be interpreted by the piloting Ansible playbook. We use them to generate your bundle's Heat template:
