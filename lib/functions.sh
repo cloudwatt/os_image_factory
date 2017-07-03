@@ -121,14 +121,19 @@ export ANSIBLE_HOST_KEY_CHECKING=False
  if [ -z $2 ]
    then
    ansible-playbook ./ansible/bootstrap.yml -i host_inventory
+   if [ "$?" != "0" ]; then
+    echo "Ansible failed"
+    exit 1
+   fi
  else
     ansible-playbook ./$2/ansible/bootstrap.yml -i host_inventory
+    if [ "$?" != "0" ]; then
+     echo "Ansible failed"
+     exit 1
+    fi
     ansible-playbook purge_image_fe.yml -i host_inventory
  fi
- if [ "$?" != "0" ]; then
-  echo "Ansible failed"
-  exit 1
-fi
+
 
 rm -f host_inventory
 
