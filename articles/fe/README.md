@@ -166,7 +166,7 @@ cd os_fe/$OS_DIR_NAME/ && ./build_fe.sh
 ```
 
 Si vous avez regardé le script ```build.sh``` qui se trouve dans chaque répertoire des OS, vous avez pu remarquer qu'une suite de test unitaire était lancé afin de tester l'image dans notre environnement Openstack.
-Celle ci est ecrite en Python et vous retrouverez l'ensemble des scripts dans le répertoire **test-tools/pytesting_os**.
+Celle ci est ecrite en Python et vous retrouverez l'ensemble des scripts dans le répertoire **test-tools/pytesting_os_fe**.
 Pour information rien ne vous empeche d'ajouter vos propres tests ou de modifier les notres si besoin.
 
 
