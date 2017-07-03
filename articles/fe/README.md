@@ -147,7 +147,7 @@ cd images_fe && ./build_fe.sh $BUNDLE_NAME
 ```
 ```$BUNDLE_NAME``` doit correspondre au nom du répertoire sous ```images/``` dans lequel vous avez créé votre
  bundle.
- ![build](../statics/build.png)
+ ![build](../statics/build_fe.png)
   
 **7.** Sélectionnez **Archiver les artefacts** sous **Ajouter une action post-build** et saisir ```packer.latest.log, images/target/$BUNDLE_DIR_NAME/output/*``` . Cela n'est pas obligatoire, mais ca vous empêchera d'avoir des problèmes à générer le template HEAT ou les logs du playbook. En outre, les outputs sont enregistrés à chaque lancement de projet, ce qui signifie que vous pourrez retrouver les logs de vos anciennes actions.
 
