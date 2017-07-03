@@ -9,10 +9,10 @@ heat-create:
 	bash -c "sh bin/heat.sh"
 
 build-images:
-	./bin/build-images.sh ${bundle}
+	./bin/build-images.sh ${bundle} ${fe}
 
 build-os:
-	./bin/build-os.sh ${os}
+	./bin/build-os.sh ${os} ${fe}
 
 
 help:

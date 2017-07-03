@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 #./build_fe.sh bundle-trusty-lamp
 
