@@ -5,7 +5,7 @@ IMG_NAME="$BASENAME-$BUILDMARK"
 TMP_IMG_NAME="$BASENAME-tmp-$BUILDMARK"
 
 IMG=debian-8.7.1-20170215-openstack-amd64.qcow2
-IMG_URL=http://cdimage.debian.org/cdimage/openstack/current/$IMG
+IMG_URL=http://cdimage.debian.org/cdimage/openstack/archive/8.7.1-20170215/$IMG
 
 TMP_DIR=debian-jessie-guest
 
