@@ -51,6 +51,11 @@ EOF
 
 function wait_image_active {
 
+if [ -z $1 ]
+ then
+  exit 1
+fi
+
 status=$(openstack image show $1 | grep status |awk {'print $4'})>/dev/null 2>&1
 
 while [ "$status" != "active" ]

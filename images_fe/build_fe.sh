@@ -45,9 +45,6 @@ ansible_bootstrap $IP $BASENAME
 IMG_ID=$(create_image_via_ecs $TOKEN ${IMG_NAME} ${IMG_NAME}-tmp)
 
 
-echo "****************************" $IMG_ID
-#IMG_ID=$(openstack image list | grep "${IMG_NAME}" | awk {'print $2'}) >/dev/null 2>&1 || exit 1
-
 ## Purge
 openstack server delete ${IMG_NAME}-tmp>/dev/null 2>&1
 

@@ -136,8 +136,11 @@ release_floating_ip
 delete_keypair $BUILDMARK
 
 
-#tests image
-echo "========Test for image : " $ID "======================================"
+if [ -z $IMG_ID ]
+ then
+ exit 1
+fi
+echo "========Test for image : " $IMG_ID "======================================"
 export NOSE_IMAGE_ID=$IMG_ID
 
 export NOSE_FLAVOR=t2.small
