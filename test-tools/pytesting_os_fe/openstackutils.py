@@ -19,7 +19,7 @@ import time, paramiko,os,re,errno
 from socket import error as socket_error
 from os import environ as env
 import urllib3
-from cosmetique import extra
+
 
 class OpenStackUtils():
 
