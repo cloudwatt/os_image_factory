@@ -103,6 +103,17 @@ echo $ID
 
 }
 
+
+
+function delete_image {
+
+#delete_image $token $image_id
+
+curl -sS https://ims.$OS_REGION_NAME.prod-cloud-ocb.orange-business.com/v2/images/$2 -X DELETE -H "Accept: application/json" -H "X-Auth-Token: $1" >/dev/null 2>&1
+
+}
+
+}
 function ansible_bootstrap {
 
 #$1 is floating ip
