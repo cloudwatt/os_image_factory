@@ -40,12 +40,12 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 
 Install Suggested Plugins
 
-![plugins](statics/en/plugins.png)
+![plugins](../statics/en/plugins.png)
 
 Enter now your informations that will secure your jenkins. 
 Keep in mind that all of you Cloudwatt account information are saved by jenkins. That's why the security is a very important thing with this Factory.
 
-![info](statics/en/infos.png)
+![info](../statics/en/infos.png)
 
 Jenkins is now initialized.
 
@@ -109,21 +109,22 @@ You've coded your own bundle and set the variables in `build-vars.yml`. Ready to
 **1.** Make sure to push your copy of the *os_image_factory* to a remote Git repository; Github, Bitbucket, whatever you use.
 
 **2.** Open your Jenkins console in a browser and create a new job by clicking on **New Item**
- ![start](statics/en/start.png)
+ ![start](../statics/en/start.png)
 **3.** Fill in the **Item name** (preferably the name of your bundle for simplicity), select **Freestyle project**, and click **OK**.
- ![name](statics/en/name.png)
+ ![name](../statics/en/name.png)
 **4.** The first section of the settings is up to you; the default works fine. Under **Source Code Management** choose **Git**.
 
 **5.** Specify the **Repository URL**, as well as **Credentials** if the project cannot be cloned with public permissions. Other permissions are inconsequential.
- ![config](statics/en/conf.png)
+ ![config](../statics/en/conf.png)
 **6.** Near the end of the settings, choose **Execute shell** under **Add build step**, and input the following (replace `$BUNDLE_DIR_NAME`):
+
 ```
-make build-images bundle=$YOUR_BUNDLE_DIR_NAME
+cd images && ./build.sh $BUNDLE_NAME
 ```
 
 `$BUNDLE_DIR_NAME` must correspond to the directory under `images/` in which you have created your bundle. With the setup above, `$BUNDLE_DIR_NAME` would be `bundle-my-bundle`.
 
- ![build](statics/en/build.png)
+ ![build](../statics/en/build.png)
  
 **7.** Select **Archive the artifacts** under **Add post-build action** and input ```packer.latest.log,images/target/$BUNDLE_DIR_NAME/output/*```. This isn't required, but prevents you from having to fish around for the generated Heat template or playbook log. Also, artifacts are saved *per build*, meaning that artifacts aren't lost with every new build.
 
@@ -138,19 +139,13 @@ The process to make an OS image and Bundle image is almost the same, the start c
 Here's how to do this:
 
 ```
-make build-os os=$OS_DIR_NAME
+cd os/$OS_DIR_NAME/ && build.sh
  ```
 
 If you looked at the `build.sh` script in each OS directory, you might have noticed that a single test suite was running to test the image in our Openstack environment.
 This is written in Python and you will find all the scripts in the **test-tools / pytesting_os** directory.
 For information nothing prevents you from adding your own test or modifying our own if necessary.
 
-If you would like to create the image in both ```Cloudwatt``` and ```OCB Flexible Engine```, first
-Add your credentials ```OCB Flexible Engine``` in the ```/var/lib/jenkins/honey.sh``` file, and run the following command:
-
-```
-make build-os os=$OS_DIR_NAME fe=true
-```
 
 ## The Workspace
 

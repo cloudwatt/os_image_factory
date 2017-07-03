@@ -43,10 +43,10 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 
 Installer les plugins suggéré
  
- ![plugins](statics/plugins.png)
+ ![plugins](../statics/plugins.png)
  
 Entrez à présent vos informations qui serviront à sécuriser votre jenkins. Pour rappel celui-ci a connaissance de vos indentifiants Cloudwatt et est donc capable de piloter votre tenant.
- ![info](statics/infos.png)
+ ![info](../statics/infos.png)
  
 Jenkins est à présent initialisé.
   
@@ -128,15 +128,15 @@ export S3_HOSTNAME="oss.eu-west-0.prod-cloud-ocb.orange-business.com"
 
 **3.** Cliquez sur **"Créer un nouveau job"**
  
- ![start](statics/start.png)
+ ![start](../statics/start.png)
  
 **4.** Choisissez de faire un projet de type **free-style**
  
- ![name](statics/name.png)
+ ![name](../statics/name.png)
  
 **5.** Donnez maintenant un nom à votre projet, puis spécifiez le repos github à cloner pour lancer le build de votre image.
  
- ![config](statics/conf.png)
+ ![config](../statics/conf.png)
  
 **6.** Configurez maintenant la commande à exécuter pour lancer votre build, si vous avez cloner notre repos [OS_image_factory](https://github.com/cloudwatt/os_image_factory.git)
 
@@ -147,7 +147,7 @@ cd images_fe && ./build_fe.sh $BUNDLE_NAME
 ```
 ```$BUNDLE_NAME``` doit correspondre au nom du répertoire sous ```images/``` dans lequel vous avez créé votre
  bundle.
- ![build](statics/build.png)
+ ![build](../statics/build.png)
   
 **7.** Sélectionnez **Archiver les artefacts** sous **Ajouter une action post-build** et saisir ```packer.latest.log, images/target/$BUNDLE_DIR_NAME/output/*``` . Cela n'est pas obligatoire, mais ca vous empêchera d'avoir des problèmes à générer le template HEAT ou les logs du playbook. En outre, les outputs sont enregistrés à chaque lancement de projet, ce qui signifie que vous pourrez retrouver les logs de vos anciennes actions.
 
