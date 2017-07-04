@@ -1,0 +1,211 @@
+heat_template_version: 2014-10-16
+description: A simple server to run wordpress
+
+parameters:
+  key_name:
+    type: string
+    description: Name of an existing key pair to enable SSH access to the instance.
+  flavor_name:
+      default: c2.large
+      label: Instance Type (Flavor)
+      description: Flavor to use for the deployed instance
+      type: string
+      constraints:
+        - allowed_values:
+          - c2.large
+          - c2.2xlarge
+          - t2.micro
+          - t2.small
+          - s1.medium
+          - s1.xlarge
+          - m1.large
+  sg_name:
+    description: Name of the security group to be created
+    type: string
+    default: snat_sg
+  public_net_id:
+    type: string
+    description: ID of Public Network
+    default: 0a2228f2-7f8a-45f1-8e09-9039e1d09975
+  private_net_name:
+    type: string
+    description: Name of private network to be created
+    default: snat_subnet
+  private_net_cidr:
+    type: string
+    description: Private network address (CIDR notation)
+    default: 172.16.1.0/24
+  private_net_gateway:
+    type: string
+    description: Private network gateway address
+    default: 172.16.1.1
+  private_net_pool_start:
+    type: string
+    description: Start of private network IP address allocation pool
+    default: 172.16.1.4
+  private_net_pool_end:
+    type: string
+    description: End of private network IP address allocation pool
+    default: 172.16.1.252
+
+resources:
+  private_net:
+     type: OS::Neutron::Net
+     properties:
+       name: { get_param: private_net_name }
+
+  private_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: private_net }
+      cidr: { get_param: private_net_cidr }
+      gateway_ip: { get_param: private_net_gateway }
+      allocation_pools:
+        - start: { get_param: private_net_pool_start }
+          end: { get_param: private_net_pool_end }
+
+  router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info:
+        network: { get_param: public_net_id }
+
+  router_interface:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router_id: { get_resource: router }
+      subnet_id: { get_resource: private_subnet }
+
+
+  elb_loadbalancer:
+    type: OSE::ELB::LoadBalancer
+    properties:
+      name: LB_Lamp
+      vpc_id: { get_resource: router }
+      type: External
+      bandwidth: 300
+      admin_state_up: true
+
+  elb_listener:
+    type: OSE::ELB::Listener
+    properties:
+      name: elb_listener
+      loadbalancer_id: { get_resource: elb_loadbalancer }
+      protocol: HTTP
+      port: 80
+      backend_protocol: HTTP
+      backend_port: 80
+      lb_algorithm: leastconn
+      sticky_session_type: insert
+
+  elb_healthcheck:
+    type: OSE::ELB::HealthCheck
+    properties:
+      listener_id: { get_resource: elb_listener }
+      healthcheck_protocol: HTTP
+      healthcheck_timeout: 2
+      unhealthy_threshold: 3
+      healthcheck_interval: 5
+      healthy_threshold: 3
+      healthcheck_connect_port: 80
+      healthcheck_uri: /
+
+  elb_memberA:
+    type: OSE::ELB::Member
+    properties:
+      listener_id: { get_resource: elb_listener }
+      members:
+        - server_id: { get_resource: wpa }
+          address: { get_attr: [wpa, first_address] }
+
+  elb_memberB:
+    type: OSE::ELB::Member
+    properties:
+      listener_id: { get_resource: elb_listener }
+      members:
+        - server_id: { get_resource: wpb }
+          address: { get_attr: [wpb, first_address] }
+
+  security_group:
+      type: OS::Neutron::SecurityGroup
+      properties:
+       rules:
+        - { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
+        - { direction: ingress, protocol: TCP, port_range_min: 80, port_range_max: 80 }
+        - { direction: ingress, protocol: TCP, port_range_min: 443, port_range_max: 443 }
+        - { direction: ingress, protocol: ICMP }
+        - { direction: egress, protocol: ICMP }
+        - { direction: egress, protocol: TCP }
+        - { direction: egress, protocol: UDP }
+
+  wpa_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: private_net }
+      fixed_ips:
+        - subnet_id: { get_resource: private_subnet }
+
+  wpb_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: private_net }
+      fixed_ips:
+        - subnet_id: { get_resource: private_subnet }
+  wpa:
+    type: OS::Nova::Server
+    properties:
+       image: bundle-trusty-lamp-2017-06-29-1834
+       flavor: { get_param: flavor_name }
+       key_name: { get_param: key_name }
+       availability_zone: eu-west-0a
+       networks:
+         - port: { get_resource: wpa_port }
+       security_groups:
+        - { get_resource: security_group }
+
+  wpb:
+    type: OS::Nova::Server
+    properties:
+       image: bundle-trusty-lamp-2017-06-29-1834
+       flavor: { get_param: flavor_name }
+       key_name: { get_param: key_name }
+       availability_zone: eu-west-0b
+       networks:
+         - port: { get_resource: wpb_port }
+       security_groups:
+        - { get_resource: security_group }
+
+
+# WPA Volume
+  wpa_data:
+    type: OS::Cinder::Volume
+    properties:
+      size: 20
+      availability_zone: eu-west-0a
+  wpa_data_att:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: wpa }
+      volume_id: { get_resource: wpa_data}
+
+
+# WPB Volume
+
+  wpb_data:
+      type: OS::Cinder::Volume
+      properties:
+        size: 20
+        availability_zone: eu-west-0b
+  wpb_data_att:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: wpb }
+      volume_id: { get_resource: wpb_data}
+
+outputs:
+  wpa_instance_ip:
+    description: Public IP address of the newly created Nova instance.
+    value: { get_attr: [wpa, first_address] }
+  wpb_instance_ip:
+    description: Public IP address of the newly created Nova instance.
+    value: { get_attr: [wpb, first_address] }
