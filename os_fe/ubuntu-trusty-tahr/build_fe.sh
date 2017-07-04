@@ -5,7 +5,7 @@
 # os_version is "Ubuntu 16.04 server 64bit" ,"Ubuntu 14.04 server 64bit", "CentOS 7.3 64bit" ... juste the os_version was accepted by Flexible Engine
 
 BASENAME="ubuntu-14.04"
-BUILDMARK="$(date +%Y-%m-%d-%H%M)"
+BUILDMARK="$(date +%Y-%m-%d-%H%M%S)"
 IMG_NAME="$BASENAME-$BUILDMARK"
 IMG_URL=http://cloud-images.ubuntu.com/releases/14.04/14.04/ubuntu-14.04-server-cloudimg-amd64-disk1.img
 TMP_IMG_NAME="$BASENAME-tmp-$BUILDMARK"

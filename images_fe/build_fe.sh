@@ -3,7 +3,7 @@
 #./build_fe.sh bundle-trusty-lamp
 
 BASENAME=$1
-BUILDMARK=$(date +%Y-%m-%d-%H%M)
+BUILDMARK=$(date +%Y-%m-%d-%H%M%S)
 IMG_NAME=$BASENAME-$BUILDMARK
 
 unset OS_USERNAME
