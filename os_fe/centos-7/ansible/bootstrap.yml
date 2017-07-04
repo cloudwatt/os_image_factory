@@ -14,6 +14,12 @@
         state=present
         update_cache=yes
 
+    - name: stopping system logging for cleaning
+      service:
+        name=rsyslog
+        state=stopped
+        enabled=yes
+
     - name: haveged always running
       service:
         name=haveged
@@ -61,10 +67,7 @@
     - name: Mr Clean
       shell: rm -Rf {{ item }}
       with_items:
-        - "/var/log/*-????????"
-        - "/var/log/*.gz"
-        - "/var/log/dmesg.old"
-        - "/var/log/anaconda"
+        - "/var/log/*"
         - "/tmp/*"
         - "/var/tmp/*"
         - "/var/lib/cloud/instance"
