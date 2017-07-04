@@ -113,7 +113,7 @@ curl -sS https://ims.$OS_REGION_NAME.prod-cloud-ocb.orange-business.com/v2/image
 
 }
 
-}
+
 function ansible_bootstrap {
 
 #$1 is floating ip
@@ -234,6 +234,5 @@ for floating_id in $FREE_FLOATING_IP; do
   neutron floatingip-delete $floating_id >/dev/null 2>&1
 
 done
-
 
 }
