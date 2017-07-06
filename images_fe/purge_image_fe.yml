@@ -3,8 +3,35 @@
   sudo: true
   tasks:
 
+     - name: clean all fedora
+       shell: |
+                sudo dnf clean all -y
+                sudo sync
+       when: ansible_distribution == 'Fedora'
+       ignore_errors: true
+
+     - name: clean all centos and redhat
+       shell: |
+               sudo yum clean all -y
+               sudo sync
+       when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+      ignore_errors: true
+
+
+     - name: clean all debian and ubuntu
+       shell: |
+                sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" autoremove -y
+                sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" clean -y
+                cd /var/lib/cloud && sudo rm -Rf instance ; sudo rm -Rf instances/* ; sudo rm -Rf data/*
+                sudo rm -f /var/log/cloud-init-output.log
+                sudo sync
+       when: ansible_os_family == 'Debian'
+       ignore_errors: true
+
+
+
      - name: Mr Clean
-       shell: rm -Rf {{ item }}
+       shell: rm -rf {{ item }}
        with_items:
          - "/var/log/*"
          - "/tmp/*"
@@ -20,27 +47,3 @@
          - "~cloud/anaconda-ks.cfg"
        ignore_errors: true
 
-     - name: clean all fedora
-       shell: |
-              sudo dnf clean all -y
-              sudo sync
-       when: ansible_distribution == 'Fedora'
-       ignore_errors: true
-
-     - name: clean all centos and redhat
-       shell: |
-              sudo yum clean all -y
-              sudo sync
-       when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
-       ignore_errors: true
-
-
-     - name: clean all debian and ubuntu
-       shell: |
-             sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" autoremove -y
-             sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" clean -y
-             cd /var/lib/cloud && sudo rm -Rf instance ; sudo rm -Rf instances/* ; sudo rm -Rf data/*
-             sudo rm -f /var/log/cloud-init-output.log
-             sudo sync
-       when: ansible_os_family == 'Debian'
-       ignore_errors: true

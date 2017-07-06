@@ -45,7 +45,7 @@
 
 
     - name: Mr Clean
-      shell: rm -Rf {{ item }}
+      shell: rm -rf {{ item }}
       with_items:
         - "/var/log/*"
         - "/tmp/*"

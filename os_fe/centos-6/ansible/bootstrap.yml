@@ -83,7 +83,7 @@
       shell: |
               sudo yum clean all -y
               sudo sync
-    ignore_errors: true
+      ignore_errors: true
 
 
 
