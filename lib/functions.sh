@@ -30,8 +30,6 @@ echo $token
 
 
 
-
-
 function create_image_via_s3 {
 
 #create_image_via_s3 $TOKEN
@@ -198,7 +196,7 @@ curl -sS https://vpc.$OS_REGION_NAME.prod-cloud-ocb.orange-business.com/v1/$OS_P
  "dhcp_enable": "true",
  "primary_dns": "100.125.0.41",
  "secondary_dns": "100.126.0.41",
- "availability_zone":"",
+ "availability_zone":"$AZ_NAME",
  "vpc_id":"$2"
  }
 }
@@ -206,6 +204,7 @@ EOF
 ) | jq '.subnet.id' | sed -e 's/^"//'  -e 's/"$//'
 
 }
+
 
 
 function delete_all_net {
@@ -238,68 +237,3 @@ done
 }
 
 
-function datastore {
-
-curl -sS -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'X-Auth-Token: $1' -H 'X-Language: en-us' https://rds.eu-west-0.prod-cloud-ocb.orange-business.com/rds/v1/$OS_PROJECT_ID/datastores/MySQL/versions
-
-
-}
-
-
-function get_flavor_rds {
-
-curl -sS https://rds.$OS_REGION_NAME.prod-cloud-ocb.orange-business.com/rds/v1/$OS_PROJECT_ID/flavors -H 'Content-Type: application/json' -H 'Accept: application/json' -H "X-Auth-Token: $1" -H 'X-Language: en-us' | jq '.'
-
-
-
-
-}
-function create_rds {
-
-curl -sS https://rds.$OS_REGION_NAME.prod-cloud-ocb.orange-business.com/rds/v1/$OS_PROJECT_ID/instances -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -H "X-Auth-Token: $1" -H 'X-Language: en-us' -d @<(cat <<EOF
-{
- "instance": {
- "name": "rds-$BUILDMARK-ha",
- "datastore": {
- "type": "MySQL",
- "version": "5.6.35"
- },
- "flavorRef": "c5cac226-b5d3-4169-a7e9-3c19369b4072",
- "volume": {
- "type": "COMMON",
- "size": 100
- },
- "region": "$OS_REGION_NAME",
- "availabilityZone": "$AZ_NAME",
- "vpc": "$VPC_ID",
- "nics": {
- "subnetId": "$NET_ID"
- },
- "securityGroup": {
- "id": "71c89962-34a1-45e1-b985-c481a0dfa23e"
- },
- "backupStrategy": {
- "startTime": "00:00:00",
- "keepDays": 3
- },
- "dbRtPd": "$2",
- "ha": {
- "enable": true,
- "replicationMode": "async"
- }
- }
-}
-
-EOF
-) | jq '.instance.id' | sed -e 's/^"//'  -e 's/"$//'
-
-}
-
-
-function get_ip_rds {
-
-
-curl -sS -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "X-Auth-Token: $1" -H 'X-Language: en-us' https://rds.eu-west-0.prod-cloud-ocb.orange-business.com/rds/v1/0ea6597fb6a446c5b8d2daa6e3c39a33/instances/$2 |  jq '.instance.hostname' | sed -e 's/^"//'  -e 's/"$//'
-
-
-}
