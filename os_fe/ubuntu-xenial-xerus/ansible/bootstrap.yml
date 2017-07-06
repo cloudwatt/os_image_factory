@@ -34,6 +34,18 @@
         state=stopped
         enabled=yes
 
+
+
+    - name: clean all debian and ubuntu
+      shell: |
+              sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" autoremove -y
+              sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" clean -y
+              cd /var/lib/cloud && sudo rm -Rf instance ; sudo rm -Rf instances/* ; sudo rm -Rf data/*
+              sudo rm -f /var/log/cloud-init-output.log
+              sudo sync
+      ignore_errors: true
+
+
     - name: Mr Clean
       shell: rm -Rf {{ item }}
       with_items:
@@ -49,14 +61,5 @@
         - "~cloud/.bash_history"
         - "~cloud/.ssh/"
         - "~cloud/anaconda-ks.cfg"
-      ignore_errors: true
-
-    - name: clean all debian and ubuntu
-      shell: |
-              sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" autoremove -y
-              sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" clean -y
-              cd /var/lib/cloud && sudo rm -Rf instance ; sudo rm -Rf instances/* ; sudo rm -Rf data/*
-              sudo rm -f /var/log/cloud-init-output.log
-              sudo sync
       ignore_errors: true
 
