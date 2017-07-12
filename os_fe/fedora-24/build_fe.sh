@@ -10,7 +10,7 @@ IMG_URL=IMG_URL=http://ftp.lip6.fr/ftp/pub/linux/distributions/fedora/releases/2
 OS_VERSION="Fedora 24 64bit"
 MINDISK=40
 MINRAM=1024
-BUCKET=images
+BUCKET=factory
 AZ_NAME=eu-west-0a
 BUILDMARK="$(date +%Y-%m-%d-%H%M%S)"
 TMP_IMG_NAME="$BASENAME-tmp-$BUILDMARK"

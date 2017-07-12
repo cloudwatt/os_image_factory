@@ -13,7 +13,7 @@ TMP_IMG_NAME="$BASENAME-tmp-$BUILDMARK"
 OS_VERSION="Ubuntu 14.04 server 64bit"
 MINDISK=40
 MINRAM=1024
-BUCKET=images
+BUCKET=factory
 AZ_NAME=eu-west-0a
 IMG=$(echo "${IMG_URL##*/}")
 

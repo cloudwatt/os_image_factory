@@ -7,7 +7,6 @@ bucket_ret=$?
   if [ $bucket_ret -ne 0 ] ; then
     echo "------- could not find $1"
     echo "------- create the bucket $1"
-    s3 create $1
   else
     echo "------- found $1"
   fi
