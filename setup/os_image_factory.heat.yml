@@ -104,9 +104,8 @@ resources:
          str_replace:
             template: |
                         #!/bin/bash
-                        mkdir /etc/ansible
                         echo "[local]" >> hosts
-                        echo "127.0.0.1 ansible_connection=local" >> /etc/ansible/hosts
+                        echo "127.0.0.1 ansible_connection=local" >> hosts
                         cat << EOF > vars.yml
                         ---
                         OS_USERNAME:  $OS_USERNAME$
