@@ -131,7 +131,8 @@ resources:
       properties:
         config: |
           #!/bin/bash
-          systemctl restart jenkins
+          sudo yum install -y ansible
+          ansible-pull -U https://github.com/dalitun/os_image_factory.git setup/os_image_factory.playbook.yml
 
 
   init_server:
@@ -145,7 +146,7 @@ resources:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: keypair_name }
-      image: dc32060d-dde7-4e6f-81eb-bd671f660d15
+      image: CentOS 7.3
       flavor: { get_param: flavor_name }
       networks:
         - { network: { get_resource: dmz } }
@@ -161,6 +162,21 @@ resources:
     properties:
       floating_ip: { get_resource: ip }
       server_id: { get_resource: server }
+
+  cinder_volume:
+      type: OS::Cinder::Volume
+      properties:
+        size: 500
+        volume_type: standard
+
+  volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: { get_resource: cinder_volume }
+      instance_uuid: { get_resource: server }
+      mountpoint: /dev/vdb
+
+
 
 outputs:
   floating_ip:

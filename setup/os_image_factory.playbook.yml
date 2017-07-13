@@ -25,6 +25,8 @@
         - git
         - python-devel
         - python-setuptools
+        - gcc-c++
+        - make
       retries: 3
 
     - name: yum package pip is absent
@@ -136,12 +138,12 @@
     - name: openstack CLI is installed
       pip: name="{{ item.name }}"
       with_items:
+        - { name: python-openstackclient }
         - { name: python-glanceclient }
         - { name: python-novaclient }
         - { name: python-keystoneclient }
         - { name: python-neutronclient }
         - { name: python-heatclient }
-        - { name: python-openstackclient }
         - { name: python-cinderclient }
         - { name: python-swiftclient }
       register: result
@@ -168,6 +170,28 @@
       until: result|success
       retries: 3
       delay: 2
+
+
+    - name:
+      file:
+         path: /var/lib/jenkins/tmp
+         state: directory
+         owner: jenkins
+         group: jenkins
+         mode: 0755
+
+    - name: format cinder volume
+      filesystem: fstype=ext4 dev=/dev/vdb
+
+    - name: mount volume cinder
+      mount:
+        name: "/var/lib/jenkins/tmp"
+        src: "/dev/vdb"
+        fstype: ext4
+        state: mounted
+        ignore_errors: yes
+
+
 
     - name: jenkins service is up
       service: name=jenkins state=restarted enabled=yes
