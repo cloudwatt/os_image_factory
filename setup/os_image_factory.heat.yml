@@ -105,7 +105,7 @@ resources:
             template: |
                       #!/bin/bash
                         echo "[local]" > ~/hosts
-                        echo "127.0.0.1 ansible_connection=local" >> hosts
+                        echo "127.0.0.1 ansible_connection=local" >> ~/hosts
                         cat << EOF > ~/vars.yml
                         ---
                         OS_USERNAME:  $OS_USERNAME$
