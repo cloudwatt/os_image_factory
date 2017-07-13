@@ -191,6 +191,10 @@
         state: mounted
         ignore_errors: yes
 
+    -  name: Add env on /var/lib/jenkins/.profile
+       template: src=profile.j2 dest=/var/lib/jenkins/.profile
+       notify: restart dovecot
+
 
 
     - name: jenkins service is up

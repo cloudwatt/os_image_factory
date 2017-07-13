@@ -1,0 +1,16 @@
+export OS_USERNAME= {{ OS_USERNAME }}
+export OS_TENANT_NAME={{ OS_TENANT_NAME }}
+export OS_PASSWORD={{ OS_PASSWORD }}
+export OS_ENDPOINT_TYPE=publicURL
+export OS_INTERFACE=public
+export OS_IDENTITY_API_VERSION=2
+export OS_REGION_NAME="fr1"
+export OS_AUTH_URL="https://identity.fr1.cloudwatt.com/v2.0"
+export FACTORY_NETWORK_ID={{ network_id }}
+export FACTORY_SECURITY_GROUP_ID={{ security_group_id }}
+if [ ! -z "$OS_USERNAME" -a ! -z "$OS_PASSWORD" ]; then
+if [ ! -z "$OS_TENANT_NAME" ]; then
+export FACTORY_SECURITY_GROUP_NAME="$(neutron security-group-show $FACTORY_SECURITY_GROUP_ID | grep name | cut -d"|" -f3 | tr -d " ")"
+export OS_TENANT_ID="$(openstack project show $OS_TENANT_NAME$ | grep  "id" | awk '{print $4}')"
+fi
+fi
