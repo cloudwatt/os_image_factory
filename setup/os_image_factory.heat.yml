@@ -103,10 +103,10 @@ resources:
       user_data:
          str_replace:
             template: |
-                        #!/bin/bash
-                        echo "[local]" >> hosts
+                      #!/bin/bash
+                        echo "[local]" > ~/hosts
                         echo "127.0.0.1 ansible_connection=local" >> hosts
-                        cat << EOF > vars.yml
+                        cat << EOF > ~/vars.yml
                         ---
                         OS_USERNAME:  $OS_USERNAME$
                         OS_TENANT_NAME: $OS_TENANT_NAME$
@@ -114,9 +114,10 @@ resources:
                         network_id: $network_id$
                         security_group_id: $security_group_id$
                         EOF
-                        sudo yum install -y ansible
-                        ansible-pull -U https://github.com/dalitun/os_image_factory.git setup/os_image_factory.playbook.yml -i host -e @vars.yml
-
+                        sudo yum install -y ansible git
+                        git clone https://github.com/dalitun/os_image_factory.git
+                        ansible-playbook  ./os_image_factory/setup/os_image_factory.playbook.yml -i ~/host -e @~/vars.yml
+                        rm -rf ./os_image_factory hosts vars.yml
 
             params:
                    $network_id$: { get_resource: dmz }
