@@ -77,8 +77,6 @@
         group=root
         mode=0644
 
-    - name: default sh is bash
-      file: src=/bin/bash dest=/bin/sh state=link
 
     - name: check packer is installed
       stat: path=/usr/local/bin/packer
