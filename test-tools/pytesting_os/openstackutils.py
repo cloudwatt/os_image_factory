@@ -110,21 +110,20 @@ class OpenStackUtils():
         return ssh_connection
 
 
+
     def create_floating_ip(self):
-        return self.nova_client.floating_ips.create('public')
-
-
-    #def associate_floating_ip_to_port(self,floating_ip):
-     #   self.neutron_client.update_floatingip(floating_ip.id,{'floatingip': {'port_id': env['NOSE_PORT_ID'] }})
+        body_value={"floatingip": {"floating_network_id": "6ea98324-0f14-49f6-97c0-885d1b8dc517"}}
+        return self.neutron_client.create_floatingip(body=body_value)
 
 
     def associate_floating_ip_to_server(self,floating_ip, server):
-        self.nova_client.servers.get(server.id).add_floating_ip(floating_ip.ip)
+        self.nova_client.servers.get(server.id).add_floating_ip(floating_ip['floatingip']['floating_ip_address'])
         time.sleep(10)
 
 
     def delete_floating_ip(self,floating_ip):
-        self.nova_client.floating_ips.delete(floating_ip.id)
+        self.neutron_client.delete_floatingip(floating_ip['floatingip']['id'])
+
 
 
     def rescue(self,server):
