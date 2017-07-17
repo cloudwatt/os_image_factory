@@ -189,7 +189,7 @@
         name: /var/lib/jenkins/tmp
         src: /dev/vdb
         fstype: ext4
-        state: present
+        state: mounted
       ignore_errors: yes
 
     -  name: Add env on /var/lib/jenkins/.profile
