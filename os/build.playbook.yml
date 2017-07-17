@@ -32,7 +32,7 @@
       failed_when: packer_build|failed
 
     - name: retrieve built image id
-      shell: > openstack image list --private | grep {{ bundle_target_name }} | tr "|" " " | tr -s " " | cut -d " " -f2
+      shell: | openstack image list --private | grep {{ bundle_target_name }} | tr "|" " " | tr -s " " | cut -d " " -f2
       register: sh_img_id
       failed_when: sh_img_id.stdout | trim == ''
 
@@ -41,7 +41,7 @@
        result_img_id: "{{ sh_img_id.stdout }}"
 
     - name: build remove-property string for image cleanup
-      shell: > openstack image show -f value -c properties {{ result_img_id }} | tr ", " "\n" | grep -v "^$" | cut -d"=" -f1 | grep -v -E "(cw_os|cw_origin|hw_rng_model)" | sed 's/^/--remove-property /g' | tr "\n" " "
+      shell: | openstack image show -f value -c properties {{ result_img_id }} | tr ", " "\n" | grep -v "^$" | cut -d"=" -f1 | grep -v -E "(cw_os|cw_origin|hw_rng_model)" | sed 's/^/--remove-property /g' | tr "\n" " "
       register: sh_purge_props
 
     - name: remove useless properties from built image
