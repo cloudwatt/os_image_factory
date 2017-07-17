@@ -27,6 +27,8 @@
         - python-setuptools
         - gcc-c++
         - make
+        - jq
+        - libs3
       retries: 3
 
     - name: yum package pip is absent
