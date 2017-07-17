@@ -65,7 +65,7 @@
       service: name=jenkins state=restarted enabled=yes
 
     - name: jenkins is kvm member
-      user: name=jenkins groups=kvm append=yes
+      user: name=jenkins shell=/bin/bash groups=kvm,qemu,libvirt append=yes
 
     - name: common aliases
       copy:
@@ -183,6 +183,7 @@
     - name: format cinder volume
       filesystem: fstype=ext4 dev=/dev/vdb
 
+
     - name: mount volume cinder
       mount:
         name: "/var/lib/jenkins/tmp"
@@ -193,7 +194,7 @@
 
     -  name: Add env on /var/lib/jenkins/.profile
        template: src=profile.j2 dest=/var/lib/jenkins/.profile
-       notify: restart dovecot
+
 
 
     - name: jenkins service is up
