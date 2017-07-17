@@ -1,3 +1,4 @@
+export PS1='\n\e[0;31m\u@\h \e[0;35m[\w]\e[1;32m\n$ \e[0m'
 export OS_USERNAME={{ OS_USERNAME }}
 export OS_TENANT_NAME={{ OS_TENANT_NAME }}
 export OS_PASSWORD={{ OS_PASSWORD }}
@@ -11,6 +12,6 @@ export FACTORY_SECURITY_GROUP_ID={{ security_group_id }}
 if [ ! -z "$OS_USERNAME" -a ! -z "$OS_PASSWORD" ]; then
 if [ ! -z "$OS_TENANT_NAME" ]; then
 export FACTORY_SECURITY_GROUP_NAME="$(openstack security group show $FACTORY_SECURITY_GROUP_ID | grep name | cut -d"|" -f3 | tr -d " ")"
-export OS_TENANT_ID="$(openstack project show $OS_TENANT_NAME$ | grep  "id" | awk '{print $4}')"
+export OS_TENANT_ID="$(openstack project show $OS_TENANT_NAME | grep  "id" | awk '{print $4}')"
 fi
 fi
