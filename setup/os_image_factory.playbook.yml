@@ -196,6 +196,5 @@
        notify: restart dovecot
 
 
-
     - name: jenkins service is up
       service: name=jenkins state=restarted enabled=yes
