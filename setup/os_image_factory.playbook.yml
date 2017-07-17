@@ -186,8 +186,8 @@
 
     - name: mount volume cinder
       mount:
-        name: "/var/lib/jenkins/tmp"
-        src: "/dev/vdb"
+        name: /var/lib/jenkins/tmp
+        src: /dev/vdb
         fstype: ext4
         state: present
       ignore_errors: yes
