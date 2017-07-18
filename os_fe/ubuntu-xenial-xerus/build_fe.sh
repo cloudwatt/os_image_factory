@@ -137,6 +137,9 @@ release_floating_ip
 
 delete_keypair $BUILDMARK
 
+
+s3 delete $BUCKET/$TMP_IMG_NAME.qcow2
+
 s3 delete $BUCKET
 
 if [ -z $IMG_ID ]
