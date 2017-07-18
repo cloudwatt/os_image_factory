@@ -13,7 +13,7 @@ TMP_IMG_NAME="$BASENAME-tmp-$BUILDMARK"
 OS_VERSION="Ubuntu 14.04 server 64bit"
 MINDISK=40
 MINRAM=1024
-BUCKET=factory
+BUCKET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 AZ_NAME=eu-west-0a
 IMG=$(echo "${IMG_URL##*/}")
 
@@ -137,6 +137,7 @@ release_floating_ip
 
 delete_keypair $BUILDMARK
 
+s3 delete $BUCKET
 
 if [ -z $IMG_ID ]
  then

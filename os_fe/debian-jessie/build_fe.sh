@@ -10,7 +10,7 @@ IMG_URL=http://cdimage.debian.org/cdimage/openstack/archive/8.7.1-20170215/debia
 OS_VERSION="Debian GNU/Linux 8.7.0 64bit"
 MINDISK=40
 MINRAM=1024
-BUCKET=factory
+BUCKET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 AZ_NAME=eu-west-0a
 BUILDMARK="$(date +%Y-%m-%d-%H%M%S)"
 TMP_IMG_NAME="$BASENAME-tmp-$BUILDMARK"
@@ -124,6 +124,8 @@ sleep 60
 release_floating_ip
 
 delete_keypair $BUILDMARK
+
+s3 delete $BUCKET
 
 if [ -z $IMG_ID ]
  then
