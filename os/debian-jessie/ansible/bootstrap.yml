@@ -4,6 +4,11 @@
 
   tasks:
 
+    - name: apt-get update & upgrade
+      shell: |
+             apt-get update
+             apt-get -y install aptitude
+
 
     - name: apt-get update & upgrade
       apt:
