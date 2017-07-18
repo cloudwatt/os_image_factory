@@ -26,11 +26,6 @@
         state=absent
         remove=yes
 
-    - name: stopping system logging for cleaning
-      service:
-        name=rsyslog
-        state=stopped
-        enabled=yes
 
     - name: clean all debian and ubuntu
       shell: |
