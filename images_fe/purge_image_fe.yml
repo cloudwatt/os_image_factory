@@ -15,7 +15,7 @@
                sudo yum clean all -y
                sudo sync
        when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
-      ignore_errors: true
+       ignore_errors: true
 
 
      - name: clean all debian and ubuntu
