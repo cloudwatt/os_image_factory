@@ -10,9 +10,9 @@ IMG_URL=IMG_URL=http://ftp.lip6.fr/ftp/pub/linux/distributions/fedora/releases/2
 OS_VERSION="Fedora 24 64bit"
 MINDISK=40
 MINRAM=1024
-BUCKET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 AZ_NAME=eu-west-0a
 BUILDMARK="$(date +%Y-%m-%d-%H%M%S)"
+BUCKET=factory-$BUILDMARK
 TMP_IMG_NAME="$BASENAME-tmp-$BUILDMARK"
 IMG_NAME="$BASENAME-$BUILDMARK"
 IMG=$(echo "${IMG_URL##*/}")
