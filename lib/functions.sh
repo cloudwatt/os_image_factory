@@ -115,7 +115,7 @@ function ansible_bootstrap {
 
 #$1 is floating ip
 
-while ! nc -z $1 22; do
+while ! </dev/tcp/$1/22; do
   sleep 20
   echo "Wait for ssh connexion will be established"
 done
