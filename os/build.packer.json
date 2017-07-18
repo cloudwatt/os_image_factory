@@ -25,7 +25,8 @@
 
       {
         "type": "shell",
-         "inline": ["sudo apt-get update"
+         "inline": ["sudo apt-get update",
+                    "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" install  git build-essential libssl-dev libffi-dev python-dev -y"
 
                   ]
 
