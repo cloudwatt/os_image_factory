@@ -1,4 +1,5 @@
 #!/bin/sh
+source ~/.profile
 BASENAME="ubuntu-14.04"
 BUILDMARK="$(date +%Y-%m-%d-%H%M)"
 IMG_NAME="$BASENAME-$BUILDMARK"
