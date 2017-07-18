@@ -25,9 +25,9 @@
 
       {
         "type": "shell",
-         "inline": [
+         "inline": ["sudo apt-get update",
                     "sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" install aptitude git gcc python-dev python-setuptools libssl-dev libffi-dev -y"
-                 ]
+                  ]
 
 
       },
