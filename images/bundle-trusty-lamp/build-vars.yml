@@ -1,7 +1,7 @@
 ---
 bundle:
   name: bundle-trusty-lamp
-  img_base: ae3082cb-fac1-46b1-97aa-507aaa8f184f
+  img_base: 70a9c910-dd99-4065-bce9-11e89bc479fe
   properties:
     img_os: Ubuntu
     cw_bundle: LAMP
