@@ -61,7 +61,7 @@ sed -i "s/B_TARGET_NAME/$IMG_NAME/" $(dirname $0)/build-vars.yml
 
 
 cd $(dirname $0)/..
-./build.sh centos-6-6
+./build.sh centos-6
 
 BUILD_SUCCESS="$?"
 
