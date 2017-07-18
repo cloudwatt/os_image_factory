@@ -41,7 +41,7 @@
         state=stopped
         enabled=yes
     - name: clean all debian and ubuntu
-       shell: |
+      shell: |
               sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" autoremove -y
               sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confold\" clean -y
               cd /var/lib/cloud && sudo rm -Rf instance ; sudo rm -Rf instances/* ; sudo rm -Rf data/*
