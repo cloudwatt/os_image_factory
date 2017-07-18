@@ -1,6 +1,6 @@
 #!/bin/sh
 source  ~/.profile
-BASENAME="Centos"
+BASENAME="Centos-7"
 # TENANT_ID="772be1ffb32e42a28ac8e0205c0b0b90"
 BUILDMARK="$(date +%Y-%m-%d-%H%M)"
 IMG_NAME="$BASENAME-$BUILDMARK"
