@@ -11,7 +11,7 @@ sont préparées avec une pile applicative complète, pour avoir un démarrage p
 
 La boîte à outils pour assembler ces images est full Open Source, simple et efficace :
 
-* *Debian Jessie :* Comme système de référence pour l'usine.
+* *Centos 7 :* Comme système de référence pour l'usine.
 * *Openstack CLI :* Indispensable pour interagir avec notre plate-forme
 * *Packer :* Créé par Hashicorp, cet outil s'appuie sur un système de Builder et de Provisionners pour faire de l'assemblage
 d'images serveurs pour différentes plates-formes, notamment Openstack.

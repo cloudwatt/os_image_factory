@@ -6,7 +6,7 @@ If you've been with us for the last few months, you have certainly seen the [5 M
 
 Each episode presented a Heat stack based on a unique pre-built server image. These images were already packed with the related tools for a faster deployment. The toolbox used to create these practical images is simple and efficient... and completely open-source:
 
-* *Debian Jessie:* OS on which the Factory rests.
+* *Centos 7:* OS on which the Factory rests.
 * *Openstack CLI:* Crucial for integrating the images into the Cloudwatt Platform
 * *Packer:* Created by Hashicorp, this tool utilizes a Builder and Provisioner system to assemble the server images for various platforms, notably OpenStack.
 * *Ansible:* A configuration tool from the same family as Puppet, Chef, and SaltStack. The lack of need for an agent in order to function sets Ansible apart.
