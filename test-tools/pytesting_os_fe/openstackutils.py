@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -
-#import keystoneclient.v2_0.client as keystone
-#from keystoneauth1.identity import v2
-#from keystoneauth1 import session
+
 
 from keystoneclient.v3 import client as keystone
 from keystoneclient.auth.identity import v3
-from keystoneclient import session as session
-
+#from keystoneclient import session as session
+from keystoneauth1 import session
 
 import novaclient.client as nova
 import cinderclient.client as cinder
