@@ -7,7 +7,7 @@ sont préparées avec une pile applicative complète, pour avoir un démarrage p
 
 La boîte à outils pour assembler ces images est full Open Source, simple et efficace :
 
-* *Debian Jessie :* Comme système de référence pour l'usine.
+* *Centos 7 :* Comme système de référence pour l'usine.
 * *Openstack CLI :* Indispensable pour interagir avec notre plate-forme
 * *Packer :* Créé par Hashicorp, cet outil s'appuie sur un système de Builder et de Provisionners pour faire de l'assemblage
 d'images serveurs pour différentes plates-formes, notamment Openstack.
@@ -57,12 +57,9 @@ Avant tout commençons par découvrir la chaine d'assemblage afin de maitriser l
 Sur le github de [Cloudwatt](https://github.com/cloudwatt/os_image_factory) vous trouverez l'ensemble de nos scripts. 
 Dans le répertoire ```images/``` vous trouverez 4 fichiers, génériques pour toutes les images à assembler :
  
- * ```ansible_local_inventory``` : fichier de définition de groupe Ansible, injecté par Packer dans les images à
- provisionner, pour permettre à Ansible de cibler le serveur.
- * ```build.packer.json``` : fichier de build Packer. Il prend des paramètres qui lui seront fournis par le playbook
- de pilotage de build.
- * ```build.playbook.yml``` : playbook Ansible de pilotage de build.
- * ```build.sh``` : Micro script shell pour faciliter l'utilisation du playbook de build
+ 
+ * ```purge_image_fe.yml``` : playbook Ansible de pilotage de build.
+ * ```build_fe.sh``` : Micro script shell pour faciliter l'utilisation du playbook de build
  
 Les répertoires placés sous ```images_fe/``` sont des exemples de build. Pour écrire les vôtres, il vous suffit de respecter la norme suivante :
  
@@ -165,7 +162,7 @@ Voici comment faire, vous pouvez démarrer un build en lançant la commande suiv
 cd os_fe/$OS_DIR_NAME/ && ./build_fe.sh
 ```
 
-Si vous avez regardé le script ```build.sh``` qui se trouve dans chaque répertoire des OS, vous avez pu remarquer qu'une suite de test unitaire était lancé afin de tester l'image dans notre environnement Openstack.
+Si vous avez regardé le script ```build_fe.sh``` qui se trouve dans chaque répertoire des OS, vous avez pu remarquer qu'une suite de test unitaire était lancé afin de tester l'image dans notre environnement Openstack.
 Celle ci est ecrite en Python et vous retrouverez l'ensemble des scripts dans le répertoire **test-tools/pytesting_os_fe**.
 Pour information rien ne vous empeche d'ajouter vos propres tests ou de modifier les notres si besoin.
 
@@ -175,16 +172,14 @@ Pour information rien ne vous empeche d'ajouter vos propres tests ou de modifier
 Lors d'un build, deux outputs sont attendus :
 
 * Les images serveurs elles-mêmes, qui atterrissent dans votre catalogue d'images privées Glance. L'ID de l'image
-assemblée est visible dans les traces d'exécution du script ```build.sh```.
+assemblée est visible dans les traces d'exécution du script ```build_fe.sh```.
 
-* Les sorties des templates placés dans votre répertoire output : Une fois interprétés, ils sont placés dans le
-répertoire **images/target/my_bundle/output**.
 
 ## Voici les clés
 
 Le squelette est posé et la boite à outils rôdée. Si vous souhaitez faire vos propres réalisations, prenez exemple
 sur les builds présents dans le repository, approfondissez [Ansible](http://docs.ansible.com/ansible/index.html), ou hackez
-le ```build.packer.json``` pour utiliser plutôt Puppet ou Chef.
+le ```./lib/fuctions.sh``` pour utiliser plutôt Puppet ou Chef.
 
 Nous espérons que cela pourra vous servir pour bâtir vos propres architectures dans le futur.
 
