@@ -119,7 +119,8 @@ You've coded your own bundle and set the variables in `build-vars.yml`. Ready to
 **6.** Near the end of the settings, choose **Execute shell** under **Add build step**, and input the following (replace `$BUNDLE_DIR_NAME`):
 
 ```
-cd images && ./build.sh $BUNDLE_NAME
+cd images 
+./build.sh $BUNDLE_NAME
 ```
 
 `$BUNDLE_DIR_NAME` must correspond to the directory under `images/` in which you have created your bundle. With the setup above, `$BUNDLE_DIR_NAME` would be `bundle-my-bundle`.
@@ -139,7 +140,8 @@ The process to make an OS image and Bundle image is almost the same, the start c
 Here's how to do this:
 
 ```
-cd os/$OS_DIR_NAME/ && build.sh
+cd os/$OS_DIR_NAME/  
+./build.sh
  ```
 
 If you looked at the `build.sh` script in each OS directory, you might have noticed that a single test suite was running to test the image in our Openstack environment.
