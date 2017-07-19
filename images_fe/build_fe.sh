@@ -38,10 +38,11 @@ openstack server create --image $SOURCE_IMAGE_ID --flavor t2.micro --availabilit
 IP=$(openstack floating ip create admin_external_net | grep 'floating_ip_address' | awk {'print $4'})
 
 openstack server add floating ip ${IMG_NAME}-tmp $IP>/dev/null 2>&1
-
+echo "===========Provisionning by Ansible====================="
 ansible_bootstrap $IP $BASENAME
 
 ## create image
+echo "===========Wait for image will be active================="
 IMG_ID=$(create_image_via_ecs $TOKEN ${IMG_NAME} ${IMG_NAME}-tmp)
 
 
