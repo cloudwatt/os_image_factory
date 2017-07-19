@@ -6,7 +6,6 @@ Each episode presented a Heat stack based on a unique pre-built server image. Th
 
 * *Centos 7:* OS on which the Factory rests.
 * *Openstack CLI:* Crucial for integrating the images into the Cloudwatt Platform
-* *Packer:* Created by Hashicorp, this tool utilizes a Builder and Provisioner system to assemble the server images for various platforms, notably OpenStack.
 * *Ansible:* A configuration tool from the same family as Puppet, Chef, and SaltStack. The lack of need for an agent in order to function sets Ansible apart.
 * *Shell:* Bash is great.
 
@@ -56,7 +55,7 @@ In the `images_fe/` directory you will find 4 files essential to the creation of
 * `purge_image_fe.yml`: Ansible playbook which pilots the building of images.
 * `build_fe.sh`: Short shell script to simplify the use of the Ansible playbook.
 
-The `images/` subdirectories are build examples, each containing the files needed to create a server image. To create your own just apply to following norm:
+The `images_fe/` subdirectories are build examples, each containing the files needed to create a server image. To create your own just apply to following norm:
 
 ~~~
 images_fe/

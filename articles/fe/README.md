@@ -9,8 +9,7 @@ La boîte à outils pour assembler ces images est full Open Source, simple et ef
 
 * *Centos 7 :* Comme système de référence pour l'usine.
 * *Openstack CLI :* Indispensable pour interagir avec notre plate-forme
-* *Packer :* Créé par Hashicorp, cet outil s'appuie sur un système de Builder et de Provisionners pour faire de l'assemblage
-d'images serveurs pour différentes plates-formes, notamment Openstack.
+s serveurs pour différentes plates-formes, notamment Openstack.
 * *Ansible :* Outil de gestion de configuration, de la même famille que Puppet, Chef ou SaltStack. Sa principale
 particularité est de fonctionner sans agent.
 * *Shell :* What Else ?
