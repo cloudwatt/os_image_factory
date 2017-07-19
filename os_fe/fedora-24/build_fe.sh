@@ -5,7 +5,7 @@
 # os_version is "Ubuntu 16.04 server 64bit" ,"Ubuntu 14.04 server 64bit", "CentOS 7.3 64bit" ... juste the os_version was accepted by Flexible Engine
 
 BASENAME="Fedora-24"
-IMG_URL=IMG_URL=http://ftp.lip6.fr/ftp/pub/linux/distributions/fedora/releases/24/CloudImages/x86_64/images/Fedora-Cloud-Base-24-1.2.x86_64.qcow2
+IMG_URL=http://ftp.lip6.fr/ftp/pub/linux/distributions/fedora/releases/24/CloudImages/x86_64/images/Fedora-Cloud-Base-24-1.2.x86_64.qcow2
 #Fe variables
 OS_VERSION="Fedora 24 64bit"
 MINDISK=40
