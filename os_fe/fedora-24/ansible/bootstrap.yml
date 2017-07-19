@@ -1,5 +1,6 @@
 - hosts: local
   remote_user: cloud
+  gather_facts: false
   sudo: true
 
   tasks:
