@@ -4,6 +4,10 @@
 
   tasks:
 
+    - name: install packages for ansible support
+      raw: dnf -y -e0 -d0 install python python-dnf
+
+
     - name: haveged installed
       dnf:
         name=haveged

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#sudo apt-get install libs3-2
 # ./build_fe.sh ubuntu-trusty-tahr
 # os_version is "Ubuntu 16.04 server 64bit" ,"Ubuntu 14.04 server 64bit", "CentOS 7.3 64bit" ... juste the os_version was accepted by Flexible Engine
 
