@@ -11,7 +11,7 @@ from keystoneclient import session as session
 
 import novaclient.client as nova
 import cinderclient.client as cinder
-from glanceclient.v1 import client as glance
+from glanceclient import client as glance
 import neutronclient.v2_0.client as neutron
 import heatclient.client as heat
 
@@ -83,7 +83,7 @@ class OpenStackUtils():
 
 
     def destroy_image(self,image):
-        self.glance_client.images.delete(image.id)
+        self.glance_client.images.delete(image)
 
 
     def initiate_ssh(self,floating_ip,private_key_filename):
