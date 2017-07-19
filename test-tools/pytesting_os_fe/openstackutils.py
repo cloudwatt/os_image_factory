@@ -83,7 +83,7 @@ class OpenStackUtils():
 
 
     def destroy_image(self,image):
-        self.glance_client.images.delete(image)
+        self.glance_client.images.delete(image.id)
 
 
     def initiate_ssh(self,floating_ip,private_key_filename):
