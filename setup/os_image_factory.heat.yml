@@ -114,7 +114,7 @@ resources:
                         security_group_id: $security_group_id$
                       EOF
                       sudo yum install -y ansible git
-                      sudo git clone https://github.com/dalitun/os_image_factory.git
+                      sudo git clone https://github.com/cloudwatt/os_image_factory.git
                       sudo ansible-playbook  ./os_image_factory/setup/os_image_factory.playbook.yml -i ~/hosts -e @~/vars.yml
                       sudo rm -rf ./os_image_factory ~/hosts ~/vars.yml
 
