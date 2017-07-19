@@ -1,7 +1,6 @@
 #!/bin/sh
 source ~/.profile
 BASENAME="Fedora-24"
-# TENANT_ID="772be1ffb32e42a28ac8e0205c0b0b90"
 BUILDMARK="$(date +%Y-%m-%d-%H%M)"
 IMG_NAME="$BASENAME-$BUILDMARK"
 TMP_IMG_NAME="$BASENAME-tmp-$BUILDMARK"

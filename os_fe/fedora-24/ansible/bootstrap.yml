@@ -43,6 +43,7 @@
         - cloud-utils
         - cloud-init
         - parted
+        - libselinux-python
 
 
     - name: install linux-rootfs-resize
