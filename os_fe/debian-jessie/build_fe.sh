@@ -78,7 +78,7 @@ TOKEN=$(get_token)
 
 create_image_via_s3 $TOKEN
 
-echo "===========Wait for image will be active================="
+echo "===========Wait for tmp image will be active================="
 
 sleep 40
 
@@ -103,9 +103,13 @@ IP=$(openstack floating ip create admin_external_net | grep 'floating_ip_address
 
 openstack server add floating ip ${IMG_NAME}-tmp $IP
 
+echo "===========Provisionning by Ansible====================="
+
 ansible_bootstrap $IP
 
 ## create image
+
+echo "===========Wait for image will be active================="
 
 IMG_ID=$(create_image_via_ecs $TOKEN ${IMG_NAME} ${IMG_NAME}-tmp)
 
