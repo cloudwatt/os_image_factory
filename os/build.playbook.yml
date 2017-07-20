@@ -32,7 +32,7 @@
       failed_when: packer_build|failed
 
     - name: retrieve built image id
-      shell: openstack image list --private | grep {{ bundle_target_name }} | tr "|" " " | tr -s " " | cut -d " " -f2
+      shell: openstack image list --private | grep {{ bundle_target_name }} | awk {'print $2'}
       register: sh_img_id
       failed_when: sh_img_id.stdout | trim == ''
 

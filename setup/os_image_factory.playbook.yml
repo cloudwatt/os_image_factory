@@ -6,6 +6,7 @@
 #
 - hosts: all
   become: yes
+  user: cloud
 
   vars:
     os_image_factory:
@@ -14,45 +15,51 @@
         zip_url: "https://releases.hashicorp.com/packer/0.12.2/packer_0.12.2_linux_amd64.zip"
       jenkins:
         local_url: "http://127.0.0.1:8080"
-        repository: "deb http://pkg.jenkins-ci.org/debian binary/"
-        repo_key: "http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key"
+        repository: "http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo"
+        repo_key: "https://jenkins-ci.org/redhat/jenkins-ci.org.key"
 
   tasks:
     - name: toolkit packages present
-      apt: pkg="{{ item }}" state=present
+      yum: pkg="{{ item }}" state=present
       with_items:
-        - aptitude
         - git
-        - python-dev
+        - python-devel
         - python-setuptools
-        - libs3-2
+        - gcc-c++
+        - make
+        - jq
+        - libs3
       retries: 3
 
-    - name: apt package pip is absent
-      apt: pkg=python-pip state=absent purge=yes
+    - name: yum package pip is absent
+      yum: name=python-pip state=absent
 
     - name: system upgrade
-      apt: update_cache=yes upgrade=full
+      yum:
+        name: '*'
+        state: latest
 
     - name: jenkins key server is known
-      apt_key: url="{{ os_image_factory.jenkins.repo_key }}" state=present
+      rpm_key: key="{{ os_image_factory.jenkins.repo_key }}" state=present
 
-    - name: jenkins apt server is known
-      apt_repository: repo="{{ os_image_factory.jenkins.repository }}" state=present
+    - name: jenkins wget server is known
+      get_url:
+        url: "{{ os_image_factory.jenkins.repository }}"
+        dest: /etc/yum.repos.d/jenkins.repo
 
     - name: needed packages installed
-      apt: update_cache=yes pkg="{{ item }}" state=present
+      yum: name="{{ item }}" state=present
       with_items:
         - libguestfs-tools
-        - libffi-dev
+        - wget
+        - libffi-devel
         - python-cffi
-        - libssl-dev
-        - openjdk-7-jdk
-        - openjdk-7-jre
+        - openssl-devel
+        - java-1.8.0-openjdk
         - unzip
 
     - name: Install Jenkins
-      apt: update_cache=yes pkg="{{ item }}" state=present
+      yum: name="{{ item }}" state=present
       with_items:
         - jenkins
 
@@ -60,7 +67,7 @@
       service: name=jenkins state=restarted enabled=yes
 
     - name: jenkins is kvm member
-      user: name=jenkins groups=kvm append=yes
+      user: name=jenkins shell=/bin/bash groups=kvm,qemu,libvirt append=yes
 
     - name: common aliases
       copy:
@@ -70,8 +77,6 @@
         group=root
         mode=0644
 
-    - name: default sh is bash
-      file: src=/bin/bash dest=/bin/sh state=link
 
     - name: check packer is installed
       stat: path=/usr/local/bin/packer
@@ -104,7 +109,7 @@
         path=/usr/local/bin
         state=directory
         owner=root
-        group=staff
+        group=root
         mode=0755
 
     - name: unzip packer
@@ -114,7 +119,7 @@
         dest=/usr/local/bin
         copy=no
         owner=root
-        group=staff
+        group=root
         mode=0755
 
     - name: pip is installed
@@ -123,9 +128,7 @@
     - name: openstack CLI is installed
       pip: name="{{ item }}" state=latest
       with_items:
-        - pyopenssl
         - ndg-httpsclient
-        - pyasn1
         - pip
       register: result
       until: result|success
@@ -133,21 +136,66 @@
       delay: 2
 
     - name: openstack CLI is installed
-      pip: name="{{ item.name }}" version="{{ item.version }}"
+      pip: name="{{ item.name }}"
       with_items:
-        - { name: os-client-config, version: 1.7.5 }
-        - { name: python-glanceclient, version: 1.1.0 }
-        - { name: python-novaclient, version: 2.30.0 }
-        - { name: python-keystoneclient, version: 1.7.1 }
-        - { name: python-neutronclient, version: 3.1.0 }
-        - { name: python-heatclient, version: 0.6.0 }
-        - { name: python-openstackclient, version: 1.7.0 }
-        - { name: python-cinderclient, version: 1.4.0 }
-        - { name: python-swiftclient, version: 2.5.0 }
+        - { name: python-openstackclient }
+        - { name: python-glanceclient }
+        - { name: python-novaclient }
+        - { name: python-keystoneclient }
+        - { name: python-neutronclient }
+        - { name: python-heatclient }
+        - { name: python-cinderclient }
+        - { name: python-swiftclient }
       register: result
       until: result|success
       retries: 3
       delay: 2
+
+
+    - name: Dependance Python
+      pip: name="{{ item.name }}"
+      with_items:
+        - { name: monotonic }
+        - { name: msgpack-python }
+        - { name: netaddr, version }
+        - { name: netifaces  }
+        - { name: pyOpenSSL  }
+        - { name: requests }
+        - { name: requestsexceptions }
+        - { name: six }
+        - { name: nose }
+        - { name: paramiko }
+        - { name: python-dateutil }
+      register: result
+      until: result|success
+      retries: 3
+      delay: 2
+
+
+    - name:
+      file:
+         path: /var/lib/jenkins/tmp
+         state: directory
+         owner: jenkins
+         group: jenkins
+         mode: 0755
+
+    - name: format cinder volume
+      filesystem: fstype=ext4 dev=/dev/vdb
+
+
+    - name: mount volume cinder
+      mount:
+        name: /var/lib/jenkins/tmp
+        src: /dev/vdb
+        fstype: ext4
+        state: mounted
+      ignore_errors: yes
+
+    -  name: Add env on /var/lib/jenkins/.profile
+       template: src=profile.j2 dest=/var/lib/jenkins/.profile
+
+
 
     - name: jenkins service is up
       service: name=jenkins state=restarted enabled=yes

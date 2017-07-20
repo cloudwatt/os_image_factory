@@ -97,34 +97,30 @@ class OpenStackUtils():
     def initiate_ssh(self,floating_ip,private_key_filename):
         ssh_connection = paramiko.SSHClient()
         ssh_connection.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        retries_left = 5
-        while True:
-             try:
-                ssh_connection.connect(floating_ip.ip,username='cloud',key_filename=private_key_filename,timeout=180)
-                break
-             except socket_error as e:
-                    if e.errno != errno.ECONNREFUSED or retries_left <= 1:
-                       raise e
-             time.sleep(10)  # wait 10 seconds and retry
-             retries_left -= 1
+        flag=0
+        while flag==0:
+            try:
+                ssh_connection.connect(floating_ip['floatingip']['floating_ip_address'],username='cloud',key_filename=private_key_filename,timeout=10)
+                print "\n\n\nconnected successfully to: " + floating_ip['floatingip']['floating_ip_address']
+                flag=1
+            except:
+                print "ssh connection not yet successful to: " + floating_ip['floatingip']['floating_ip_address']
         return ssh_connection
 
 
     def create_floating_ip(self):
-        return self.nova_client.floating_ips.create('public')
-
-
-    #def associate_floating_ip_to_port(self,floating_ip):
-     #   self.neutron_client.update_floatingip(floating_ip.id,{'floatingip': {'port_id': env['NOSE_PORT_ID'] }})
+        body_value={"floatingip": {"floating_network_id": "6ea98324-0f14-49f6-97c0-885d1b8dc517"}}
+        return self.neutron_client.create_floatingip(body=body_value)
 
 
     def associate_floating_ip_to_server(self,floating_ip, server):
-        self.nova_client.servers.get(server.id).add_floating_ip(floating_ip.ip)
+        self.nova_client.servers.get(server.id).add_floating_ip(floating_ip['floatingip']['floating_ip_address'])
         time.sleep(10)
 
 
     def delete_floating_ip(self,floating_ip):
-        self.nova_client.floating_ips.delete(floating_ip.id)
+        self.neutron_client.delete_floatingip(floating_ip['floatingip']['id'])
+
 
 
     def rescue(self,server):

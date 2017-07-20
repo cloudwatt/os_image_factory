@@ -1,12 +1,12 @@
 #!/bin/sh
-fe=$(echo $1 | tr '[:upper:]' '[:lower:]')
+source  ~/.profile
 BASENAME="debian-jessie"
 BUILDMARK="$(date +%Y-%m-%d-%H%M)"
 IMG_NAME="$BASENAME-$BUILDMARK"
 TMP_IMG_NAME="$BASENAME-tmp-$BUILDMARK"
 
 IMG=debian-8.7.1-20170215-openstack-amd64.qcow2
-IMG_URL=http://cdimage.debian.org/cdimage/openstack/current/$IMG
+IMG_URL=http://cdimage.debian.org/cdimage/openstack/archive/8.7.1-20170215/$IMG
 
 TMP_DIR=debian-jessie-guest
 
@@ -61,8 +61,11 @@ if [ ! "$BUILD_SUCCESS" ]; then
 fi
 
 IMG_ID="$(openstack image list --private | grep $IMG_NAME | tr "|" " " | tr -s " " | cut -d " " -f2)"
+if [ -z $IMG_ID ]
+ then
+ exit 1
+fi
 echo "IMG_ID for image '$IMG_NAME': $IMG_ID"
-
 
 export NOSE_IMAGE_ID=$IMG_ID
 
@@ -93,9 +96,4 @@ glance image-show $IMG_ID
 #  URCHIN_IMG_ID=$IMG_ID "$WORKSPACE/test-tools/urchin" "$WORKSPACE/test-tools/ubuntu-tests"
 #fi
 
-if [ $fe = true ] ; then
-
-./cloudwattToFe.sh $IMG_NAME $IMG_NAME "Debian GNU/Linux 8.6.0 64bit"
-
-fi
 

@@ -1,5 +1,5 @@
 #!/bin/sh
-fe=$(echo $1 | tr '[:upper:]' '[:lower:]')
+source ~/.profile
 BASENAME="ubuntu-14.04"
 BUILDMARK="$(date +%Y-%m-%d-%H%M)"
 IMG_NAME="$BASENAME-$BUILDMARK"
@@ -71,6 +71,10 @@ fi
 
 IMG_ID="$(openstack image list --private | grep $IMG_NAME | tr "|" " " | tr -s " " | cut -d " " -f2)"
 
+if [ -z $IMG_ID ]
+ then
+ exit 1
+fi
 echo "IMG_ID for image '$IMG_NAME': $IMG_ID"
 
 
@@ -101,10 +105,4 @@ glance image-show $IMG_ID
 #  echo "URCHIN_IMG_ID=$IMG_ID $WORKSPACE/test-tools/urchin $WORKSPACE/test-tools/ubuntu-tests"
 #  URCHIN_IMG_ID=$IMG_ID "$WORKSPACE/test-tools/urchin" "$WORKSPACE/test-tools/ubuntu-tests"
 #fi
-
-if [ $fe = true ] ; then
-
-./cloudwattToFe.sh $IMG_NAME $IMG_NAME "Ubuntu 14.04 server 64bit"
-
-fi
 

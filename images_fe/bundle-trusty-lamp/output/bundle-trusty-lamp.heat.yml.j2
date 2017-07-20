@@ -1,0 +1,68 @@
+heat_template_version: 2014-10-16
+description: A simple server to run wordpress
+
+parameters:
+  key_name:
+    type: string
+    description: Name of an existing key pair to enable SSH access to the instance.
+  NetID:
+    type: string
+    description: Network ID for the server
+  flavor_name:
+      default: c2.large
+      label: Instance Type (Flavor)
+      description: Flavor to use for the deployed instance
+      type: string
+      constraints:
+        - allowed_values:
+          - c2.large
+          - c2.2xlarge
+          - t2.micro
+          - t2.small
+          - s1.medium
+          - s1.xlarge
+          - m1.large
+
+resources:
+  security_group:
+      type: OS::Neutron::SecurityGroup
+      properties:
+       rules:
+        - { direction: ingress, protocol: TCP, port_range_min: 22, port_range_max: 22 }
+        - { direction: ingress, protocol: TCP, port_range_min: 80, port_range_max: 80 }
+        - { direction: ingress, protocol: TCP, port_range_min: 443, port_range_max: 443 }
+        - { direction: ingress, protocol: ICMP }
+        - { direction: egress, protocol: ICMP }
+        - { direction: egress, protocol: TCP }
+        - { direction: egress, protocol: UDP }
+
+
+  server:
+    type: OS::Nova::Server
+    properties:
+       image: {{ result_img_id }}
+       flavor: { get_param: flavor_name }
+       key_name: { get_param: key_name }
+       availability_zone: eu-west-0a
+       networks:
+        - network: { get_param: NetID }
+       security_groups:
+        - { get_resource: security_group }
+
+
+  ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+       floating_network_id: 0a2228f2-7f8a-45f1-8e09-9039e1d09975
+
+  wp_internet_surface:
+     type: OS::Neutron::FloatingIPAssociation
+     properties:
+        floatingip_id: { get_resource: ip }
+        port_id: {get_attr: [server, addresses, {get_param: NetID}, 0, port]}
+
+
+outputs:
+  instance_ip:
+    description: Public IP address of the newly created Nova instance.
+    value: { get_attr: [server, first_address] }

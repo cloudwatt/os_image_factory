@@ -1,7 +1,6 @@
 #!/bin/sh
-fe=$(echo $1 | tr '[:upper:]' '[:lower:]')
+source ~/.profile
 BASENAME="Fedora-24"
-# TENANT_ID="772be1ffb32e42a28ac8e0205c0b0b90"
 BUILDMARK="$(date +%Y-%m-%d-%H%M)"
 IMG_NAME="$BASENAME-$BUILDMARK"
 TMP_IMG_NAME="$BASENAME-tmp-$BUILDMARK"
@@ -75,6 +74,10 @@ if [ ! "$BUILD_SUCCESS" ]; then
 fi
 
 IMG_ID="$(openstack image list --private | grep $IMG_NAME | tr "|" " " | tr -s " " | cut -d " " -f2)"
+if [ -z $IMG_ID ]
+ then
+ exit 1
+fi
 echo "IMG_ID for image '$IMG_NAME': $IMG_ID"
 
 export NOSE_IMAGE_ID=$IMG_ID
@@ -99,9 +102,4 @@ openstack image list | grep -E "$BASENAME-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{4}" |
 
 glance image-show $IMG_ID
 
-if [ $fe = true ] ; then
-
-./cloudwattToFe.sh $IMG_NAME $IMG_NAME "Fedora 24 64bit"
-
-fi
 
