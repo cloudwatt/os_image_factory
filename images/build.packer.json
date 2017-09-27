@@ -21,11 +21,34 @@
             "ssh_timeout": "10m"
         }
     ],
-    "provisioners": [
-        {
-        "type": "ansible",
-        "playbook_file": "{{ user `bundle_path` }}/ansible/bootstrap.yml"
-        }
-    ]
+   "provisioners": [
+
+     {
+      "type": "shell",
+      "inline": ["sudo apt-get update",
+        "sudo apt-get install -y python python-pip ansible aptitude git python-dev python-setuptools"
+
+        ]
+
+     },
+
+
+     {
+      "type": "ansible",
+      "playbook_file": "{{ user `bundle_path` }}/ansible/bootstrap.yml",
+      "host_alias": "local"
+
+     },
+     {
+      "type": "shell",
+      "inline": [
+        "sudo rm -rf /home/cloud/.ssh/authorized_keys",
+        "sudo rm -rf /var/log/cloud-init*",
+        "sudo rm -rf /home/cloud/known_hosts/",
+        "sudo rm -rf /home/cloud/.ansible",
+        "sudo sync"
+      ]
+    }
+  ]
 
 }
