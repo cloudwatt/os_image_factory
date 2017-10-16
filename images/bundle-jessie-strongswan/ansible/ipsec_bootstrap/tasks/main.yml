@@ -51,11 +51,11 @@
     state=present
   tags: init
 
-- name: ansible installed
-  pip:
-    name=ansible
-    state=latest
-  tags: init
+#- name: ansible installed
+#  pip:
+#    name=ansible
+#    state=latest
+#  tags: init
 
 
 - name: configuration files uploaded (files)
