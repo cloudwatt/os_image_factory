@@ -10,8 +10,9 @@
 - name: More python depends
   pip: virtualenv="/usr/local/share/letsencrypt/env" virtualenv_site_packages=no name=letsencrypt
 - name: Generate let's encrypt certificate
+# The parameter standalone-supported-challenges has been changed with preferred-challanges
   shell: |
-         /usr/local/share/letsencrypt/env/bin/letsencrypt certonly --standalone --agree-tos --email root@{{ mail_domain }} -d {{ mail_domain }} --standalone-supported-challenges tls-sni-01
+         /usr/local/share/letsencrypt/env/bin/letsencrypt certonly --standalone --agree-tos --email root@{{ mail_domain }} -d {{ mail_domain }} --preferred-challenges tls-sni-01,http
 - name: Copy crt to apache
   file:
       src={{ item.src }}
