@@ -1,7 +1,8 @@
 ---
 bundle:
   name: bundle-trusty-webmail
-  img_base: e9dc1515-47cc-4d52-8f54-48577ab5b216
+  #img_base: e9dc1515-47cc-4d52-8f54-48577ab5b216
+  img_base: 70a9c910-dd99-4065-bce9-11e89bc479fe
   properties:
     img_os: Ubuntu
     cw_bundle: WEBMAIL
